@@ -30,10 +30,11 @@ var aviao_obj = {
         materiais : {}
     },
     ponto: new THREE.Vector3(0, 0, 0),
-    velocidade_Max: 3,
+    velocidade_Max: 5,
     velocidade_atual: 0,
     aceleracao: 0.003,
-    velocidade_nivelamento: 0.01
+    velocidade_nivelamento: 0.01,
+    velocidade_Animacao: 0.02
 };
 
 // Geometria do aviao
@@ -751,13 +752,80 @@ function restart_Eixos() {
         }
     }
 }
-
+/**
+ * 
+ */
 function movimento() {
     if (aviao_obj.velocidade_atual > 0) {
         aviao_obj.fuselagem._estacionaria.translateY(-aviao_obj.velocidade_atual)
         aviao_obj.fuselagem._movel.motor.rotateY(aviao_obj.velocidade_atual/2)
     }
+
+    if (pressionadoUP) { // Desce o bico do avião
+        if (aviao_obj.fuselagem._movel.conjunto_flap_direito.cima.rotation.x < 0.45) {
+            aviao_obj.fuselagem._movel.conjunto_flap_direito.cima.rotateX(aviao_obj.velocidade_Animacao)
+            aviao_obj.fuselagem._movel.conjunto_flap_direito.baixo.rotateX(aviao_obj.velocidade_Animacao)
+            aviao_obj.fuselagem._movel.conjunto_flap_direito.atras.rotateX(aviao_obj.velocidade_Animacao)
+
+            aviao_obj.fuselagem._movel.conjunto_flap_esquerdo.cima.rotateX(aviao_obj.velocidade_Animacao)
+            aviao_obj.fuselagem._movel.conjunto_flap_esquerdo.baixo.rotateX(aviao_obj.velocidade_Animacao)
+            aviao_obj.fuselagem._movel.conjunto_flap_esquerdo.atras.rotateX(aviao_obj.velocidade_Animacao)
+        }
+    }else{
+        if (aviao_obj.fuselagem._movel.conjunto_flap_direito.cima.rotation.x > 0) {
+            aviao_obj.fuselagem._movel.conjunto_flap_direito.cima.rotateX(-aviao_obj.velocidade_Animacao)
+            aviao_obj.fuselagem._movel.conjunto_flap_direito.baixo.rotateX(-aviao_obj.velocidade_Animacao)
+            aviao_obj.fuselagem._movel.conjunto_flap_direito.atras.rotateX(-aviao_obj.velocidade_Animacao)
+            
+            aviao_obj.fuselagem._movel.conjunto_flap_esquerdo.cima.rotateX(-aviao_obj.velocidade_Animacao)
+            aviao_obj.fuselagem._movel.conjunto_flap_esquerdo.baixo.rotateX(-aviao_obj.velocidade_Animacao)
+            aviao_obj.fuselagem._movel.conjunto_flap_esquerdo.atras.rotateX(-aviao_obj.velocidade_Animacao)
+        }
+    }
     
+    if (pressionadoDown) { // Sobe o bico do avião
+        if (aviao_obj.fuselagem._movel.conjunto_flap_direito.cima.rotation.x > -0.45) {
+            
+            aviao_obj.fuselagem._movel.conjunto_flap_direito.cima.rotateX(-aviao_obj.velocidade_Animacao)
+            aviao_obj.fuselagem._movel.conjunto_flap_direito.baixo.rotateX(-aviao_obj.velocidade_Animacao)
+            aviao_obj.fuselagem._movel.conjunto_flap_direito.atras.rotateX(-aviao_obj.velocidade_Animacao)
+            
+            aviao_obj.fuselagem._movel.conjunto_flap_esquerdo.cima.rotateX(-aviao_obj.velocidade_Animacao)
+            aviao_obj.fuselagem._movel.conjunto_flap_esquerdo.baixo.rotateX(-aviao_obj.velocidade_Animacao)
+            aviao_obj.fuselagem._movel.conjunto_flap_esquerdo.atras.rotateX(-aviao_obj.velocidade_Animacao)
+        }
+    }else{
+        if (aviao_obj.fuselagem._movel.conjunto_flap_direito.cima.rotation.x < 0) {
+            aviao_obj.fuselagem._movel.conjunto_flap_direito.cima.rotateX(aviao_obj.velocidade_Animacao)
+            aviao_obj.fuselagem._movel.conjunto_flap_direito.baixo.rotateX(aviao_obj.velocidade_Animacao)
+            aviao_obj.fuselagem._movel.conjunto_flap_direito.atras.rotateX(aviao_obj.velocidade_Animacao)
+
+            aviao_obj.fuselagem._movel.conjunto_flap_esquerdo.cima.rotateX(aviao_obj.velocidade_Animacao)
+            aviao_obj.fuselagem._movel.conjunto_flap_esquerdo.baixo.rotateX(aviao_obj.velocidade_Animacao)
+            aviao_obj.fuselagem._movel.conjunto_flap_esquerdo.atras.rotateX(aviao_obj.velocidade_Animacao)
+        }
+    }
+
+    if (pressionadoLeft) { // Gira para esquerda
+        console.log(aviao_obj.fuselagem._movel.leme_meio.rotation)
+        if (aviao_obj.fuselagem._movel.leme_meio.rotation.y < 0.45) {
+            aviao_obj.fuselagem._movel.leme_meio.rotateX(aviao_obj.velocidade_Animacao)
+        }
+    }else{
+        if (aviao_obj.fuselagem._movel.leme_meio.rotation.y > 0) {
+            aviao_obj.fuselagem._movel.leme_meio.rotateX(-aviao_obj.velocidade_Animacao)
+        }
+    }
+    
+    if (pressionadoRight) { // Gira para direita
+        if (aviao_obj.fuselagem._movel.leme_meio.rotation.y > -0.45) {
+            aviao_obj.fuselagem._movel.leme_meio.rotateX(-aviao_obj.velocidade_Animacao)
+        }
+    }else{
+        if (aviao_obj.fuselagem._movel.leme_meio.rotation.y < 0) {
+            aviao_obj.fuselagem._movel.leme_meio.rotateX(aviao_obj.velocidade_Animacao)
+        }
+    }
 }
 
 // Enable Shadows in the Renderer
