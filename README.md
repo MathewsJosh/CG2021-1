@@ -2,6 +2,16 @@
 Repositório para resolução das atividades da disciplina DCC065 - Computação Gráfica, do curso de Engenharia Computacional da UFJF.
 
 
+Versão 01 do Trabalho de simulação de voo e modelagem de avião:
+![alt text](https://github.com/MathewsJosh/CG2021-1/tree/main/readme_imgs/Trabalho01.gif "Logo Title Text 1")
+
+
+
+
+
+
+
+
 
 Versão atual: r128dev
 
