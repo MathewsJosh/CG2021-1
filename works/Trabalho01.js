@@ -493,6 +493,7 @@ function buildInterface() { // Mostrando as informações na tela
     controls.show();
 }
 
+//Variaveis que salvam a posição do avião
 var aviao_auxiliar = {
     position: { x:aviao_obj.fuselagem._estacionaria.position.x, 
         y:aviao_obj.fuselagem._estacionaria.position.y, 
@@ -532,8 +533,9 @@ var cameraHolder_auxiliar = {
 
 
 // Muda e controla o comportamento das cameras
-function mudaCamera() { //Muda a porra toda da camera 
-    if (!isSimulacao) {// Mundança da simulação para a inspeção
+function mudaCamera() { //Muda a camera toda
+    if (!isSimulacao) {// Mudança da simulação para a inspeção
+        // Salva os valores de posição vindos da simulação
         aviao_auxiliar.position.x = aviao_obj.fuselagem._estacionaria.position.x
         aviao_auxiliar.position.y = aviao_obj.fuselagem._estacionaria.position.y
         aviao_auxiliar.position.z = aviao_obj.fuselagem._estacionaria.position.z
@@ -546,6 +548,7 @@ function mudaCamera() { //Muda a porra toda da camera
         cameraHolder_auxiliar.position.y = cameraHolder.position.y
         cameraHolder_auxiliar.position.z = cameraHolder.position.z
 
+        // Salva os valores de rotação vindos da simulação
         aviao_auxiliar.rotation.x = aviao_obj.fuselagem._estacionaria.rotation.x
         aviao_auxiliar.rotation.y = aviao_obj.fuselagem._estacionaria.rotation.y
         aviao_auxiliar.rotation.z = aviao_obj.fuselagem._estacionaria.rotation.z
@@ -558,10 +561,12 @@ function mudaCamera() { //Muda a porra toda da camera
         cameraHolder_auxiliar.rotation.y = cameraHolder.rotation.y
         cameraHolder_auxiliar.rotation.z = cameraHolder.rotation.z
 
+        // Salva os valores de up vindos da camera na simulação
         camera_auxiliar.up.x = camera.up.x
         camera_auxiliar.up.y = camera.up.y
         camera_auxiliar.up.z = camera.up.z
 
+        // Reposiciona o avião no centro da cena
         aviao_obj.fuselagem._estacionaria.position.set(0,0,4)
         aviao_obj.fuselagem._estacionaria.rotation.set(0,0,Math.PI)
 
@@ -571,7 +576,8 @@ function mudaCamera() { //Muda a porra toda da camera
         camera.position.set(0,-80,20)
         camera.rotation.set(Math.PI/2,0,0)
         camera.up.set(0,1,0)
-    }else{// Mundança da inspeção para a simulação  
+    }else{// Mudança da inspeção para a simulação  
+        // Pega os valores salvos no item anterior para tirar o avião da origem
         aviao_obj.fuselagem._estacionaria.position.set(
             aviao_auxiliar.position.x,
             aviao_auxiliar.position.y,
@@ -584,6 +590,7 @@ function mudaCamera() { //Muda a porra toda da camera
             aviao_auxiliar.rotation.z
         )
 
+        // Reposiciona a camera e o cameraHolder a partir dos valores salvos anteriormente
         cameraHolder.position.set(
             cameraHolder_auxiliar.position.x,
             cameraHolder_auxiliar.position.y,
@@ -634,23 +641,23 @@ function keyboardUpdate() {
         mudaCamera();
     }
 
+    // Tecla de Debug para testes
     if (keyboard.up("D")) {
         console.log("Holder: ", cameraHolder)
         console.log("==============================")
         console.log("Camera: ", camera)
         console.log("==============================")
-        // console.log(aviao_obj.fuselagem._estacionaria.rotation)
     }
+
     if(!isSimulacao)
     if (keyboard.pressed("Q")) { // Aceleração progressiva
         if (aviao_obj.velocidade_atual < aviao_obj.velocidade_Max) {
             aviao_obj.velocidade_atual += aviao_obj.aceleracao 
         }
     }
-    if (!isSimulacao 
-        && aviao_obj.velocidade_atual > 0  //Movimentação so caso tenha velocidade
-        ) { // Movimentação
 
+    // Movimentação só caso tenha velocidade
+    if (!isSimulacao && aviao_obj.velocidade_atual > 0) { // Movimentação
         if (keyboard.pressed("A")) { // Desaceleração progressiva
             if (aviao_obj.velocidade_atual > 0) {
                 aviao_obj.velocidade_atual -= aviao_obj.aceleracao 
@@ -675,17 +682,11 @@ function keyboardUpdate() {
         if (keyboard.pressed("left")) { // Gira para esquerda
             pressionadoLeft = true;
             aviao_obj.fuselagem._estacionaria.rotateZ(aviao_obj.velocidade_nivelamento)
-            // if (Math.abs(aviao_obj.fuselagem._estacionaria.rotation.y) < 0.45) {
-            //     aviao_obj.fuselagem._estacionaria.rotateY(aviao_obj.velocidade_nivelamento)
-            // }
             cameraHolder.rotateZ(aviao_obj.velocidade_nivelamento)
         }
         if (keyboard.pressed("right")) { // Gira para direita
             pressionadoRight = true;
             aviao_obj.fuselagem._estacionaria.rotateZ(-aviao_obj.velocidade_nivelamento)
-            // if (Math.abs(aviao_obj.fuselagem._estacionaria.rotation.y) > -0.45) {
-            //     aviao_obj.fuselagem._estacionaria.rotateY(-aviao_obj.velocidade_nivelamento)
-            // }
             cameraHolder.rotateZ(-aviao_obj.velocidade_nivelamento)
         }
 
@@ -710,9 +711,10 @@ function keyboardUpdate() {
         aviao_obj.fuselagem._estacionaria.position.z)
 }
 
+// Nivela o avião
 function restart_Eixos() {
     if (pressionadoDown == false && pressionadoUP == false){
-        //Reposiciona tecla UP
+        // Reposiciona tecla UP
         if(aviao_obj.fuselagem._estacionaria.rotation.x < 0){
             aviao_obj.fuselagem._estacionaria.rotation.x += aviao_obj.velocidade_nivelamento/2
             cameraHolder.rotation.x += aviao_obj.velocidade_nivelamento/2
@@ -721,7 +723,7 @@ function restart_Eixos() {
                 cameraHolder.rotation.x = 0
             }
         }
-        //Reposiciona tecla DOWN
+        // Reposiciona tecla DOWN
         else if(aviao_obj.fuselagem._estacionaria.rotation.x > 0){
             aviao_obj.fuselagem._estacionaria.rotation.x -= aviao_obj.velocidade_nivelamento/2
             cameraHolder.rotation.x -= aviao_obj.velocidade_nivelamento/2
@@ -731,7 +733,7 @@ function restart_Eixos() {
             }
         }
 
-        //Reposiciona tecla Lateral
+        // Reposiciona tecla Lateral
         if(aviao_obj.fuselagem._estacionaria.rotation.y < 0){
             aviao_obj.fuselagem._estacionaria.rotation.y += aviao_obj.velocidade_nivelamento/2
             cameraHolder.rotation.y += aviao_obj.velocidade_nivelamento/2
@@ -741,7 +743,7 @@ function restart_Eixos() {
             }
         }
 
-        //Reposiciona tecla Lateral
+        // Reposiciona tecla Lateral
         else if(aviao_obj.fuselagem._estacionaria.rotation.y > 0){
             aviao_obj.fuselagem._estacionaria.rotation.y -= aviao_obj.velocidade_nivelamento/2
             cameraHolder.rotation.y -= aviao_obj.velocidade_nivelamento/2
@@ -752,9 +754,8 @@ function restart_Eixos() {
         }
     }
 }
-/**
- * 
- */
+
+//Faz o movimento do avião e ativa a rotação dos flaps e leme ao pressionar diferentes teclas
 function movimento() {
     if (aviao_obj.velocidade_atual > 0) {
         aviao_obj.fuselagem._estacionaria.translateY(-aviao_obj.velocidade_atual)
@@ -834,6 +835,7 @@ renderer.shadowMap.type = THREE.BasicShadowMap;
 buildInterface();
 render();
 
+// Função de renderização do Three.js
 function render() {
     stats.update(); // Update FPS
     keyboardUpdate();
