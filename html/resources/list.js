@@ -1,5 +1,34 @@
 var list = {
 	"en": {
+		"Classes":{
+			"Aula 01": { 
+				"Exercicio 01":"works/aula01_ex01",
+				"Exercicio 02":"works/aula01_ex02",
+				"Exercicio 03":"works/aula01_ex03"
+			},
+			"Aula 02": { 
+				"Exercicio 01":"works/aula02_ex02",
+			},
+			"Aula 03": { 
+				"Exercicio 01":"works/aula03_ex01",
+			},
+			"Aula 04": { 
+				"Exercicio 01":"works/aula04_ex01",
+				"Exercicio 02":"works/aula04_ex02",
+			},
+			"Aula 05": { 
+				"Exercicio 01":"works/aula05",
+			},
+			"Aula 06": { 
+				"Exercicio 01":"works/aula06",
+			},
+		},
+		"Works":{
+			"Trabalho 01": { 
+				"Trabalho 01":"works/Trabalho01",
+
+			},
+		},
 		"Projects": {
 			"Basics":  {
 				"Basic Scene": "html/basicSceneInfo",
