@@ -89,8 +89,8 @@ export function getMaxSize(obj)
   }
 
   addParagraph() {
-    const paragraph = document.createElement("br")
-    this.infoBox.appendChild(paragraph);              ;
+    const paragraph = document.createElement("br");
+    this.infoBox.appendChild(paragraph);
   }
 
   add(text) {
@@ -311,7 +311,7 @@ export function initDefaultSpotlight(scene, initialPosition) {
 export function createLightSphere(scene, radius, widthSegments, heightSegments, position)
 {
   var geometry = new THREE.SphereGeometry(radius, widthSegments, heightSegments, 0, Math.PI * 2, 0, Math.PI);
-  var material = new THREE.MeshBasicMaterial({color:"rgb(255,255,50)"});
+  var material = new THREE.MeshBasicMaterial({color:"rgb(255,0,0)"});//"rgb(255,255,50)"
   var object = new THREE.Mesh(geometry, material);
     object.visible = true;
     object.position.copy(position);
