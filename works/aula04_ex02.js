@@ -4,7 +4,7 @@ import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
 import {GUI} from       '../build/jsm/libs/dat.gui.module.js';
 import {initRenderer, 
         initCamera,
-        initDefaultLighting,
+        initDefaultBasicLight,
         InfoBox,
         onWindowResize,
         lightFollowingCamera} from "../libs/util/util.js";
@@ -12,7 +12,7 @@ import {initRenderer,
 var stats = new Stats();          // To show FPS information
 var scene = new THREE.Scene();    // Create main scene
 var renderer = initRenderer();    // View function in util/utils
-var light  = initDefaultLighting(scene, new THREE.Vector3(7, 7, 7));
+var light  = initDefaultBasicLight(scene, new THREE.Vector3(7, 7, 7));
 var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
 camera.lookAt(0,0,0);
 camera.position.set(0, -40, 20);
