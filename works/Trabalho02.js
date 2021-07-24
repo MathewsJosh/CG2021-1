@@ -272,13 +272,13 @@ function cria_afuselagem(ponto) {
     asa_cima.add(esfera_fora_esquerda);
     esfera_fora_esquerda.position.set(asa_prancha.parameters.width / 2, 0, asa_prancha.parameters.depth / 2 + 0.001);
     // Motor
-    var protecao_geometria = new THREE.TorusGeometry(cabine_geometria.parameters.radiusBottom, cabine_geometria.parameters.radiusBottom / 2, 30, 6);
+    var protecao_geometria = new THREE.TorusGeometry(cabine_geometria.parameters.radiusBottom, cabine_geometria.parameters.radiusBottom / 5, 30, 6);
     var protecao = new THREE.Mesh(protecao_geometria, metal_cinza);
     cabine.add(protecao);
     protecao.rotateX(Math.PI / 2);
     protecao.position.set(0, - cabine_geometria.parameters.height / 2, 0);
 
-    var cone_motor_geometria = new THREE.ConeGeometry(cabine_geometria.parameters.radiusBottom, 3);
+    var cone_motor_geometria = new THREE.ConeGeometry(cabine_geometria.parameters.radiusBottom, 2);
     var cone_motor = new THREE.Mesh(cone_motor_geometria, tinta_azul);
     cabine.add(cone_motor);
 
@@ -494,7 +494,6 @@ function buildInterface() { // Mostrando as informações na tela
     controls.add("# Q  /  A - Acelera/Freia");
     controls.add("# ↥  /  ↧ - Sobe/Desce o bico do avião");
     controls.add("# ↤ /  ↦ - Vira para Esquerda/Direita");
-    // controls.add("# <  /  >  - Rotaciona o avião");
     controls.add("#  SPACE  - Camera em Inspeção/Simulador");
 
     controls.show();
@@ -596,40 +595,43 @@ function mudaCamera() { //Muda a camera toda
             aviao_auxiliar.rotation.y,
             aviao_auxiliar.rotation.z
         )
-
-        // Reposiciona a camera e o cameraHolder a partir dos valores salvos anteriormente
-        cameraHolder.position.set(
-            cameraHolder_auxiliar.position.x,
-            cameraHolder_auxiliar.position.y,
-            cameraHolder_auxiliar.position.z
-        )
-
-        cameraHolder.rotation.set(
-            cameraHolder_auxiliar.rotation.x,
-            cameraHolder_auxiliar.rotation.y,
-            cameraHolder_auxiliar.rotation.z
-        )
-
-        camera.position.set(
-            camera_auxiliar.position.x,
-            camera_auxiliar.position.y,
-            camera_auxiliar.position.z
-        )
-
-        camera.rotation.set(
-            camera_auxiliar.rotation.x,
-            camera_auxiliar.rotation.y,
-            camera_auxiliar.rotation.z
-        )
-
-        camera.up.set(
-            camera_auxiliar.up.x,
-            camera_auxiliar.up.y,
-            camera_auxiliar.up.z
-        )
+        simulationManagment()
     }
 
     isSimulacao = !isSimulacao
+}
+
+function simulationManagment(){
+    // Reposiciona a camera e o cameraHolder a partir dos valores salvos anteriormente
+    cameraHolder.position.set(
+        cameraHolder_auxiliar.position.x,
+        cameraHolder_auxiliar.position.y,
+        cameraHolder_auxiliar.position.z
+    )
+
+    cameraHolder.rotation.set(
+        cameraHolder_auxiliar.rotation.x,
+        cameraHolder_auxiliar.rotation.y,
+        cameraHolder_auxiliar.rotation.z
+    )
+
+    camera.position.set(
+        camera_auxiliar.position.x,
+        camera_auxiliar.position.y,
+        camera_auxiliar.position.z
+    )
+
+    camera.rotation.set(
+        camera_auxiliar.rotation.x,
+        camera_auxiliar.rotation.y,
+        camera_auxiliar.rotation.z
+    )
+
+    camera.up.set(
+        camera_auxiliar.up.x,
+        camera_auxiliar.up.y,
+        camera_auxiliar.up.z
+    )
 }
 
 //============================= Configurações de Movimentação =============================
@@ -638,6 +640,7 @@ var pressionadoUP = false;
 var pressionadoDown = false;
 var pressionadoLeft = false;
 var pressionadoRight = false;
+var pressionadoC = false;
 
 // Função controladora da camera a partir do teclado
 function keyboardUpdate() {
@@ -656,70 +659,93 @@ function keyboardUpdate() {
         console.log("==============================")
     }
 
-    if (keyboard.down("enter")) { // Aceleração progressiva
+    if (keyboard.down("enter")) { // Mostra o caminho                                           //FLIGHT SCHOOL - T2
         curveObject.visible = !curveObject.visible;
     }
 
-    if(!isSimulacao)
-    if (keyboard.pressed("Q")) { // Aceleração progressiva
-        if (aviao_obj.velocidade_atual < aviao_obj.velocidade_Max) {
-            aviao_obj.velocidade_atual += aviao_obj.aceleracao 
-        }
-    }
-
-    // Movimentação só caso tenha velocidade
-    if (!isSimulacao && aviao_obj.velocidade_atual > 0) { // Movimentação
-        if (keyboard.pressed("A")) { // Desaceleração progressiva
-            if (aviao_obj.velocidade_atual > 0) {
-                aviao_obj.velocidade_atual -= aviao_obj.aceleracao 
-            }else{
-                aviao_obj.velocidade_atual = 0
+    if(!isSimulacao){
+        if (keyboard.pressed("Q")) { // Aceleração progressiva
+            if (aviao_obj.velocidade_atual < aviao_obj.velocidade_Max) {
+                aviao_obj.velocidade_atual += aviao_obj.aceleracao;
             }
         }
 
-        if (keyboard.pressed("up")) { // Desce o bico do avião
-            pressionadoUP = true;
-            aviao_obj.fuselagem._estacionaria.rotateX(aviao_obj.velocidade_nivelamento)
-            cameraHolder.rotateX(-aviao_obj.velocidade_nivelamento)
-        }
-        
-        if (keyboard.pressed("down")) { // Sobe o bico do avião
-            pressionadoDown = true;
-            aviao_obj.fuselagem._estacionaria.rotateX(-aviao_obj.velocidade_nivelamento)
-            cameraHolder.rotateX(aviao_obj.velocidade_nivelamento)
+        if (keyboard.down("C")) { //Modo Cockpit                                             //FLIGHT SCHOOL - T2
+            pressionadoC = !pressionadoC;
+            if(pressionadoC){
+                console.log("cockpit ativado")
+                cameraHolder.position.x = aviao_obj.fuselagem._estacionaria.position.x;
+                cameraHolder.position.y = aviao_obj.fuselagem._estacionaria.position.y;
+                cameraHolder.position.z = aviao_obj.fuselagem._estacionaria.position.z;
+                camera.position.set(
+                    aviao_obj.fuselagem._estacionaria.position.x,
+                    aviao_obj.fuselagem._estacionaria.position.y-1,
+                    aviao_obj.fuselagem._estacionaria.position.z+6
+                )
+                camera.lookAt(
+                    aviao_obj.fuselagem._estacionaria.position.x,
+                    aviao_obj.fuselagem._estacionaria.position.y+500,
+                    aviao_obj.fuselagem._estacionaria.position.z
+                )
+            }
+            else{
+                console.log("volta")
+                simulationManagment();
+            }
+
         }
 
-        
-        if (keyboard.pressed("left")) { // Gira para esquerda
-            pressionadoLeft = true;
-            aviao_obj.fuselagem._estacionaria.rotateZ(aviao_obj.velocidade_nivelamento)
-            cameraHolder.rotateZ(aviao_obj.velocidade_nivelamento)
-        }
-        if (keyboard.pressed("right")) { // Gira para direita
-            pressionadoRight = true;
-            aviao_obj.fuselagem._estacionaria.rotateZ(-aviao_obj.velocidade_nivelamento)
-            cameraHolder.rotateZ(-aviao_obj.velocidade_nivelamento)
-        }
+        // Movimentação só caso tenha velocidade
+        if (aviao_obj.velocidade_atual > 0) { // Movimentação
+            if (keyboard.pressed("A")) { // Desaceleração progressiva
+                if (aviao_obj.velocidade_atual > 0) {
+                    aviao_obj.velocidade_atual -= aviao_obj.aceleracao;
+                }else{
+                    aviao_obj.velocidade_atual = 0;
+                }
+            }
 
-        // Guarda a mudança de estado das teclas
-        if (keyboard.up("up")) {
-            pressionadoUP = false;
+            if (keyboard.pressed("up")) { // Desce o bico do avião
+                pressionadoUP = true;
+                aviao_obj.fuselagem._estacionaria.rotateX(aviao_obj.velocidade_nivelamento)
+                cameraHolder.rotateX(-aviao_obj.velocidade_nivelamento)
+            }
+            
+            if (keyboard.pressed("down")) { // Sobe o bico do avião
+                pressionadoDown = true;
+                aviao_obj.fuselagem._estacionaria.rotateX(-aviao_obj.velocidade_nivelamento)
+                cameraHolder.rotateX(aviao_obj.velocidade_nivelamento)
+            }
+
+            
+            if (keyboard.pressed("left")) { // Gira para esquerda
+                pressionadoLeft = true;
+                aviao_obj.fuselagem._estacionaria.rotateZ(aviao_obj.velocidade_nivelamento)
+                cameraHolder.rotateZ(aviao_obj.velocidade_nivelamento)
+            }
+            if (keyboard.pressed("right")) { // Gira para direita
+                pressionadoRight = true;
+                aviao_obj.fuselagem._estacionaria.rotateZ(-aviao_obj.velocidade_nivelamento)
+                cameraHolder.rotateZ(-aviao_obj.velocidade_nivelamento)
+            }
+
+            // Guarda a mudança de estado das teclas
+            if (keyboard.up("up")) {
+                pressionadoUP = false;
+            }
+            if (keyboard.up("down")) {
+                pressionadoDown = false;
+            }
+            if (keyboard.up("left")) {
+                pressionadoLeft = false;
+            }
+            if (keyboard.up("right")) {
+                pressionadoRight = false;
+            }
+            restart_Eixos()
         }
-        if (keyboard.up("down")) {
-            pressionadoDown = false;
-        }
-        if (keyboard.up("left")) {
-            pressionadoLeft = false;
-        }
-        if (keyboard.up("right")) {
-            pressionadoRight = false;
-        }
-        restart_Eixos()
     }
-
-    cameraHolder.position.set(aviao_obj.fuselagem._estacionaria.position.x,
-        aviao_obj.fuselagem._estacionaria.position.y,
-        aviao_obj.fuselagem._estacionaria.position.z)
+    cameraHolder.position.set(aviao_obj.fuselagem._estacionaria.position.x, aviao_obj.fuselagem._estacionaria.position.y, aviao_obj.fuselagem._estacionaria.position.z);
 }
 
 // Nivela o avião
@@ -857,7 +883,7 @@ new THREE.Vector3( 0, getRandom(50,100), -800 ),            //1
 new THREE.Vector3( 800, getRandom(60,150), -1600 ),         //2
 new THREE.Vector3( -400, getRandom(70,200), -2400 ),        //3
 new THREE.Vector3( -800, getRandom(90,250), -1600 ),        //4
-new THREE.Vector3( -1600, getRandom(90,320), -1600 ),       //5
+new THREE.Vector3( -1000, getRandom(90,320), -1600 ),       //5
 new THREE.Vector3( -800, getRandom(50,250), -800 ),         //6
 new THREE.Vector3( 0, getRandom(200,320), 800),             //7
 new THREE.Vector3( 800, getRandom(20,220), 0),              //8
@@ -885,8 +911,7 @@ const checkpointmaterial = new THREE.MeshBasicMaterial( { color: 0x8a6521, opaci
 var checkpoint = [];
 
 function defineCheckpoints(){
-    for (var i=1, j=0; i<pontosDaLinha.length - 1; i++, j++)
-    {
+    for (var i=1, j=0; i<pontosDaLinha.length - 1; i++, j++){
         checkpoint[j] = new THREE.Mesh( checkpointgeometry, checkpointmaterial );
         checkpoint[j].position.x = pontosDaLinha[i].x;
         checkpoint[j].position.y = -pontosDaLinha[i].z;
@@ -941,13 +966,22 @@ var contadorChecks;
 // Conta quantos checkpoints foram atravessados. O valor é atualizado toda vez que um check é atravessado
 function contaCheckpoints(){
     contadorChecks = 0;
-    for (var j=0; j<checkpoint.length-1; j++){
+    for (var j=0; j<checkpoint.length; j++){
         if(checkpoint[j].visible == false)
         contadorChecks++;
     }
-    console.log("Checkpoints: " + contadorChecks);
+    if(contadorChecks == checkpoint.length){
+        aviao_obj.velocidade_atual = 0;
+        aviao_obj.velocidade_atual = 0;
+        document.getElementById(controls.infoBox.id).innerHTML = "";
+        controls.add("Parabéns por completar o percurso!")
+        controls.add("Checkpoint: " + contadorChecks)
+        controls.add("Tempo gasto: " + seconds + "s")
+        controls.add("Por favor, pressione F5 para reiniciar o jogo!")
+        notifyMe();
+        contadorChecks = 0;
+    }
 }
-
 
 
 var seconds = 0;
@@ -962,6 +996,46 @@ function contadorTempo(){
 setInterval(contadorTempo, 1000);
 
 
+// Mostra ao usuário o tempo que ele levou para completar o percurso
+function notifyMe() {
+    var not = "Parabéns por completar o circuito!" + 
+    "\nCheckpoints:" + contadorChecks + 
+    "\nTempo gasto: " + seconds + "s" + 
+    "\nPor favor, pressione F5 para reiniciar o jogo!";
+    
+    // Verifica se o browser suporta notificações
+    if (!("Notification" in window)) {
+        alert("Este browser não suporta notificações de Desktop");
+    }
+
+    // Verifica se as notificações ja foram permitidas
+    else if (Notification.permission === "granted") {
+        // Se estiver ok, vamos criar uma notificação
+        var notification = new Notification(not);
+    }
+
+    // Senão, vamos pedir permissão ao usuário
+    else if (Notification.permission !== 'denied') {
+        Notification.requestPermission(function (permission) {
+        // Se o usuário aceitar a permissão, exibiremos a notificação
+        if (permission === "granted") {
+            var notification = new Notification(not);
+        }
+        });
+    }
+}
+  
+
+/*
+function spawnNotification(corpo,icone,titulo) {
+    var opcoes = {
+        body: corpo,
+        icon: icone
+    }
+    var n = new Notification(titulo,opcoes);
+  }
+spawnNotification("la","le","li")
+*/
 /*
 controls.addParagraph();
 controls.add("Checkpoints: " + contadorChecks);
