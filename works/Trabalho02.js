@@ -111,6 +111,9 @@ function cria_afuselagem(ponto) {
     var leme_dir = new THREE.Mesh();
     var leme_esq = new THREE.Mesh();
     var leme_cima = new THREE.Mesh();
+    leme_dir.castShadow = true;
+    leme_esq.castShadow = true;
+    leme_cima.castShadow = true; 
     rabeta.add(leme_dir);
     rabeta.add(leme_esq);
     rabeta.add(leme_cima);
@@ -122,17 +125,18 @@ function cria_afuselagem(ponto) {
 
     // Asas
     var asa_prancha = new THREE.BoxGeometry(22, 5, 0.2);
+    asa_prancha.castShadow = true;
     // Cima
     var asa_cima = new THREE.Mesh();
-    asa_cima.castShadow = true;
     cabine.add(asa_cima);
     asa_cima.position.set(0, 1, cabine_geometria.parameters.radiusTop + 1.5);
+    asa_cima.castShadow = true;
 
     // Baixo
     var asa_baixo = new THREE.Mesh();
-    asa_baixo.castShadow = true;
     cabine.add(asa_baixo);
     asa_baixo.position.set(0, asa_cima.position.y, - cabine_geometria.parameters.radiusTop / 2);
+    asa_baixo.castShadow = true;
 
     // Enfeites
     // Geometria dos aredondados
@@ -154,6 +158,8 @@ function cria_afuselagem(ponto) {
     // Aredondados na asa baixo
     var cilindro_dir_asa_baixo = new THREE.Mesh(cilindro_geomeria_dir, casco);
     var cilindro_esq_asa_baixo = new THREE.Mesh(cilindro_geomeria_esq, casco);
+    cilindro_esq_asa_baixo.castShadow = true;
+    cilindro_dir_asa_baixo.castShadow = true;
     // Direito
     asa_baixo.add(cilindro_dir_asa_baixo);
     cilindro_dir_asa_baixo.rotateX(Math.PI / 2);
@@ -296,6 +302,7 @@ function cria_afuselagem(ponto) {
     // Motor
     var protecao_geometria = new THREE.TorusGeometry(cabine_geometria.parameters.radiusBottom, cabine_geometria.parameters.radiusBottom / 5, 30, 6);
     var protecao = new THREE.Mesh(protecao_geometria, metal_cinza);
+    protecao.castShadow = true;
     cabine.add(protecao);
     protecao.rotateX(Math.PI / 2);
     protecao.position.set(0, - cabine_geometria.parameters.height / 2, 0);
@@ -303,7 +310,6 @@ function cria_afuselagem(ponto) {
     var cone_motor_geometria = new THREE.ConeGeometry(cabine_geometria.parameters.radiusBottom, 2);
     var cone_motor = new THREE.Mesh(cone_motor_geometria, tinta_azul);
     cabine.add(cone_motor);
-
     cone_motor.rotateX(Math.PI);
     cone_motor.position.set(0, - cabine_geometria.parameters.height / 2 - cone_motor_geometria.parameters.height / 2, 0);
 
@@ -326,7 +332,11 @@ function cria_afuselagem(ponto) {
     pa04.rotateY(Math.PI / 2);
     pa04.position.set(- pa_geometria.parameters.depth / 2, 0, 0);
 
-    // # fuselagem.fuselagem._movel = { motor : cone_motor }
+    cone_motor.castShadow = true;
+    pa01.castShadow = true;
+    pa02.castShadow = true;
+    pa03.castShadow = true;
+    pa04.castShadow = true;
 
     // Flaps
     // Asa
@@ -342,45 +352,51 @@ function cria_afuselagem(ponto) {
     var flap_asa_direita_baixo = new THREE.Mesh(flap_asa_geometria, casco_degradado);
     asa_baixo.add(flap_asa_direita_baixo);
     flap_asa_direita_baixo.position.set(- asa_prancha.parameters.width / 3, asa_prancha.parameters.height / 2 - flap_asa_geometria.parameters.height / 2, 0);
+    flap_asa_direita_baixo.castShadow = true;
 
     var flap_asa_esquerda_baixo = new THREE.Mesh(flap_asa_geometria, casco_degradado);
     asa_baixo.add(flap_asa_esquerda_baixo);
     flap_asa_esquerda_baixo.position.set(asa_prancha.parameters.width / 2 - flap_asa_geometria.parameters.width / 2, asa_prancha.parameters.height / 2 - flap_asa_geometria.parameters.height / 2, 0);
-
-    // # fuselagem.fuselagem._movel = { conjunto_flap_direito : {cima: flap_asa_direita_cima , baixo: flap_asa_direita_baixo}, conjunto_flap_esquerdo :  {cima: flap_asa_esquerda_cima , baixo: flap_asa_esquerda_baixo}}
-
+    flap_asa_esquerda_baixo.castShadow = true;
+    
     // Asa dividida
     var asa_meio_geometria = new THREE.BoxGeometry(asa_prancha.parameters.width - 2 * flap_asa_geometria.parameters.width, asa_prancha.parameters.height, asa_prancha.parameters.depth);
     var asa_frente_geometria = new THREE.BoxGeometry(asa_prancha.parameters.width, asa_prancha.parameters.height - flap_asa_geometria.parameters.height, asa_prancha.parameters.depth);
 
     var asa_meio_cima = new THREE.Mesh(asa_meio_geometria, casco);
     asa_cima.add(asa_meio_cima);
-
+    
     var asa_frente_cima = new THREE.Mesh(asa_frente_geometria, casco);
     asa_cima.add(asa_frente_cima);
     asa_frente_cima.position.set(0, - flap_asa_geometria.parameters.height / 2, 0);
 
     var asa_meio_baixo = new THREE.Mesh(asa_meio_geometria, casco);
     asa_baixo.add(asa_meio_baixo);
+    asa_meio_baixo.castShadow = true;
 
     var asa_frente_baixo = new THREE.Mesh(asa_frente_geometria, casco);
     asa_baixo.add(asa_frente_baixo);
     asa_frente_baixo.position.set(0, - flap_asa_geometria.parameters.height / 2, 0);
+    asa_frente_baixo.castShadow = true;
+
     // Leme
-    var flap_leme_geomatria = new THREE.BoxGeometry(leme_geometria.parameters.height * 0.5, leme_geometria.parameters.width / 3, leme_geometria.parameters.depth);
+    var flap_leme_geometria = new THREE.BoxGeometry(leme_geometria.parameters.height * 0.5, leme_geometria.parameters.width / 3, leme_geometria.parameters.depth);
 
-    var flap_leme_dir = new THREE.Mesh(flap_leme_geomatria, casco_degradado);
+    var flap_leme_dir = new THREE.Mesh(flap_leme_geometria, casco_degradado);
     leme_dir.add(flap_leme_dir);
-    flap_leme_dir.position.set(- flap_leme_geomatria.parameters.width / 2, flap_leme_geomatria.parameters.height, 0);
+    flap_leme_dir.position.set(- flap_leme_geometria.parameters.width / 2, flap_leme_geometria.parameters.height, 0);
+    flap_leme_dir.castShadow = true;
 
-    var flap_leme_esq = new THREE.Mesh(flap_leme_geomatria, casco_degradado);
+    var flap_leme_esq = new THREE.Mesh(flap_leme_geometria, casco_degradado);
     leme_esq.add(flap_leme_esq);
-    flap_leme_esq.position.set(flap_leme_geomatria.parameters.width / 2, flap_leme_geomatria.parameters.height, 0);
+    flap_leme_esq.position.set(flap_leme_geometria.parameters.width / 2, flap_leme_geometria.parameters.height, 0);
+    flap_leme_esq.castShadow = true;
 
-    var flap_leme_cima = new THREE.Mesh(flap_leme_geomatria, casco_degradado);
+    var flap_leme_cima = new THREE.Mesh(flap_leme_geometria, casco_degradado);
     leme_cima.add(flap_leme_cima);
-    flap_leme_cima.position.set(- flap_leme_geomatria.parameters.height, flap_leme_geomatria.parameters.width / 2, 0);
+    flap_leme_cima.position.set(- flap_leme_geometria.parameters.height, flap_leme_geometria.parameters.width / 2, 0);
     flap_leme_cima.rotateZ(Math.PI / 2);
+    flap_leme_cima.castShadow = true;
 
     // Leme dividido
     var leme_meio_geometria = new THREE.BoxGeometry(leme_geometria.parameters.height * 0.3, leme_geometria.parameters.width / 3, leme_geometria.parameters.depth);
@@ -409,7 +425,7 @@ function cria_afuselagem(ponto) {
     // Meio
     var leme_cima_meio = new THREE.Mesh(leme_meio_geometria, casco);
     leme_cima.add(leme_cima_meio);
-    leme_cima_meio.position.set(- leme_meio_geometria.parameters.height, - flap_leme_geomatria.parameters.width * 0.3, 0);
+    leme_cima_meio.position.set(- leme_meio_geometria.parameters.height, - flap_leme_geometria.parameters.width * 0.3, 0);
     leme_cima_meio.rotateZ(Math.PI / 2);
 
     var leme_cima_frente = new THREE.Mesh(leme_frente_geometria, casco);
@@ -443,23 +459,6 @@ function cria_afuselagem(ponto) {
 
     return fuselagem;
 }
-
-/*
-    fuselagem.fuselagem._movel = {
-        motor: cone_motor,
-        conjunto_flap_direito: {
-            cima: flap_asa_direita_cima,
-            baixo: flap_asa_direita_baixo,
-            atras: flap_leme_dir
-        },
-        conjunto_flap_esquerdo: {
-            cima: flap_asa_esquerda_cima,
-            baixo: flap_asa_esquerda_baixo,
-            atras: flap_leme_esq
-        },
-        leme_meio: flap_leme_cima
-    };
-*/
 
 //================================== Posicionamento do avião ==================================
 // Adiciona o avião na cena definindo sua posição inicial
@@ -995,6 +994,7 @@ function movimento() {
 //==================================================== FLIGHT SCHOOL ====================================================
 //=======================================================================================================================
 
+//Função Auxiliar para conseguir números randomicos em determinado intervalo
 function getRandom(min, max) {
     return Math.random() * (max - min) + min;
   }
@@ -1007,13 +1007,13 @@ new THREE.Vector3( 800, getRandom(60,150), -1600 ),         //2
 new THREE.Vector3( -400, getRandom(70,200), -2400 ),        //3
 new THREE.Vector3( -800, getRandom(90,250), -1600 ),        //4
 new THREE.Vector3( -1000, getRandom(90,320), -1000 ),       //5
-new THREE.Vector3( -800, getRandom(150,250), -800 ),         //6
+new THREE.Vector3( -800, getRandom(150,250), -800 ),        //6
 new THREE.Vector3( 0, getRandom(200,320), 800),             //7
 new THREE.Vector3( 800, getRandom(70,220), 0),              //8
-new THREE.Vector3( 1600, getRandom(20,320), 800),           //9
-new THREE.Vector3( 2400, getRandom(20,220), 1600),          //10
-new THREE.Vector3( 800, getRandom(20,220), 1600),           //11
-new THREE.Vector3( 0, getRandom(20,120), 1600),             //12
+new THREE.Vector3( 1600, getRandom(50,320), 800),           //9
+new THREE.Vector3( 2400, getRandom(40,220), 1600),          //10
+new THREE.Vector3( 800, getRandom(50,220), 1600),           //11
+new THREE.Vector3( 0, getRandom(50,120), 1600),             //12
 new THREE.Vector3( 0, getRandom(40,150), 500),              //13
 new THREE.Vector3( 0, 0, 0 )]                               //end
 
@@ -1411,38 +1411,38 @@ function create_arvore(base, tipo, rotation, scale) {
 
 function randomTreePosition(num_arvores){
     for(var i=0; i<num_arvores ;i++){
-        var regiao = Math.round(getRandom(0,4));
+        var regiao = Math.round(getRandom(0,4.4));
         switch (regiao){
-        case 0:
-        create_arvore(new THREE.Vector3(getRandom(-2400,-50),getRandom(-2400,800),0), 1, 0, getRandom(2,5)) //2 - 5
-        create_arvore(new THREE.Vector3(getRandom(-2400,-50),getRandom(-2400,800),0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
-        create_arvore(new THREE.Vector3(getRandom(-2400,-50),getRandom(-2400,800),0), 3, 0, getRandom(10,15))
-        break;
-        case 1:
-        create_arvore(new THREE.Vector3(getRandom(50,2400),getRandom(-2400,800),0), 1, 0, getRandom(2,5)) //2 - 5
-        create_arvore(new THREE.Vector3(getRandom(50,2400),getRandom(-2400,800),0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
-        create_arvore(new THREE.Vector3(getRandom(50,2400),getRandom(-2400,800),0), 3, 0, getRandom(10,15))
-        break;
-        case 2:
-        create_arvore(new THREE.Vector3(getRandom(300,2400),getRandom(810,2400),0), 1, 0, getRandom(2,5)) //2 - 5
-        create_arvore(new THREE.Vector3(getRandom(300,2400),getRandom(810,2400),0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
-        create_arvore(new THREE.Vector3(getRandom(300,2400),getRandom(810,2400),0), 3, 0, getRandom(10,15))
-        break;
-        case 3:
-        create_arvore(new THREE.Vector3(getRandom(-2400,300),getRandom(1800,2400),0), 1, 0, getRandom(2,5)) //2 - 5
-        create_arvore(new THREE.Vector3(getRandom(-2400,300),getRandom(1800,2400),0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
-        create_arvore(new THREE.Vector3(getRandom(-2400,300),getRandom(1800,2400),0), 3, 0, getRandom(10,15))
-        break;
-        case 4:
-        create_arvore(new THREE.Vector3(getRandom(-2400,800),getRandom(-1000,2400),0), 1, 0, getRandom(2,5)) //2 - 5
-        create_arvore(new THREE.Vector3(getRandom(-2400,800),getRandom(-1000,2400),0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
-        create_arvore(new THREE.Vector3(getRandom(-2400,800),getRandom(-1000,2400),0), 3, 0, getRandom(10,15))
-        break;
+            case 0:
+            create_arvore(new THREE.Vector3(getRandom(-2400,-200), getRandom(-2400,800), 0), 1, 0, getRandom(2,5)) //2 - 5
+            create_arvore(new THREE.Vector3(getRandom(-2400,-200), getRandom(-2400,800), 0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
+            create_arvore(new THREE.Vector3(getRandom(-2400,-200), getRandom(-2400,800), 0), 3, 0, getRandom(8,10))
+            break;
+            case 1:
+            create_arvore(new THREE.Vector3(getRandom(200,2400), getRandom(-2400,800), 0), 1, 0, getRandom(2,5)) //2 - 5
+            create_arvore(new THREE.Vector3(getRandom(200,2400), getRandom(-2400,800), 0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
+            create_arvore(new THREE.Vector3(getRandom(200,2400), getRandom(-2400,800), 0), 3, 0, getRandom(8,10))
+            break;
+            case 2:
+            create_arvore(new THREE.Vector3(getRandom(300,2400), getRandom(810,2400), 0), 1, 0, getRandom(2,5)) //2 - 5
+            create_arvore(new THREE.Vector3(getRandom(300,2400), getRandom(810,2400), 0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
+            create_arvore(new THREE.Vector3(getRandom(300,2400), getRandom(810,2400), 0), 3, 0, getRandom(8,10))
+            break;
+            case 3:
+            create_arvore(new THREE.Vector3(getRandom(-2400,300), getRandom(1800,2400), 0), 1, 0, getRandom(2,5)) //2 - 5
+            create_arvore(new THREE.Vector3(getRandom(-2400,300), getRandom(1800,2400), 0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
+            create_arvore(new THREE.Vector3(getRandom(-2400,300), getRandom(1800,2400), 0), 3, 0, getRandom(8,10))
+            break;
+            case 4:
+            create_arvore(new THREE.Vector3(getRandom(-2400,800), getRandom(-1000,2400), 0), 1, 0, getRandom(2,5)) //2 - 5
+            create_arvore(new THREE.Vector3(getRandom(-2400,800), getRandom(-1000,2400), 0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
+            create_arvore(new THREE.Vector3(getRandom(-2400,800), getRandom(-1000,2400), 0), 3, 0, getRandom(8,10))
+            break;
         }
     }
 
 }
-randomTreePosition(20)
+randomTreePosition(50)
 
 
 
