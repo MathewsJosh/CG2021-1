@@ -5,13 +5,11 @@ import KeyboardState from "../libs/util/KeyboardState.js";
 import {ConvexGeometry} from '../build/jsm/geometries/ConvexGeometry.js'; // importante
 import {
     initRenderer,
-    initDefaultBasicLight,
     InfoBox,
     createGroundPlane,
-    createGroundPlaneWired,
+    SecondaryBox,
     onWindowResize,
     degreesToRadians,
-    radiansToDegrees
 } from "../libs/util/util.js";
 
 var stats = new Stats(); // To show FPS information
@@ -55,7 +53,7 @@ var aviao_obj = {
     ponto: new THREE.Vector3(0, 0, 0),
     velocidade_Max: 20,
     velocidade_atual: 0,
-    aceleracao: 0.01,
+    aceleracao: 0.02,
     velocidade_nivelamento: 0.01,
     velocidade_Animacao: 0.02
 };
@@ -129,7 +127,7 @@ function cria_afuselagem(ponto) {
     // Cima
     var asa_cima = new THREE.Mesh();
     cabine.add(asa_cima);
-    asa_cima.position.set(0, 1, cabine_geometria.parameters.radiusTop + 1.5);
+    asa_cima.position.set(0, 1, cabine_geometria.parameters.radiusTop + 2.2);
     asa_cima.castShadow = true;
 
     // Baixo
@@ -231,26 +229,26 @@ function cria_afuselagem(ponto) {
     var cilindro_apoio45_01 = new THREE.Mesh(cilindro_apoio_45_geometria, metal_ouro);
     asa_cima.add(cilindro_apoio45_01);
     cilindro_apoio45_01.rotateX(Math.PI / 2);
-    cilindro_apoio45_01.rotateZ(Math.PI / 2.7);
+    cilindro_apoio45_01.rotateZ(Math.PI / 2.9);
     cilindro_apoio45_01.position.set(-1 - cabine_geometria.parameters.radiusBottom - Math.abs(cilindro_apoio01.position.x - cilindro_apoio03.position.x) / 2, cilindro_apoio01.position.y, cilindro_apoio01.position.z);
 
     var cilindro_apoio45_02 = new THREE.Mesh(cilindro_apoio_45_geometria, metal_ouro);
     asa_cima.add(cilindro_apoio45_02);
     cilindro_apoio45_02.rotateX(Math.PI / 2);
-    cilindro_apoio45_02.rotateZ(-Math.PI / 2.7);
+    cilindro_apoio45_02.rotateZ(-Math.PI / 2.9);
     cilindro_apoio45_02.position.set(-1 - cabine_geometria.parameters.radiusBottom - Math.abs(cilindro_apoio01.position.x - cilindro_apoio03.position.x) / 2, cilindro_apoio01.position.y, cilindro_apoio01.position.z);
 
     // Frente
     var cilindro_apoio45_03 = new THREE.Mesh(cilindro_apoio_45_geometria, metal_ouro);
     asa_cima.add(cilindro_apoio45_03);
     cilindro_apoio45_03.rotateX(Math.PI / 2);
-    cilindro_apoio45_03.rotateZ(Math.PI / 2.7);
+    cilindro_apoio45_03.rotateZ(Math.PI / 2.9);
     cilindro_apoio45_03.position.set(-1 - cabine_geometria.parameters.radiusBottom - Math.abs(cilindro_apoio02.position.x - cilindro_apoio04.position.x) / 2, cilindro_apoio02.position.y, cilindro_apoio02.position.z);
 
     var cilindro_apoio45_04 = new THREE.Mesh(cilindro_apoio_45_geometria, metal_ouro);
     asa_cima.add(cilindro_apoio45_04);
     cilindro_apoio45_04.rotateX(Math.PI / 2);
-    cilindro_apoio45_04.rotateZ(-Math.PI / 2.7);
+    cilindro_apoio45_04.rotateZ(-Math.PI / 2.9);
     cilindro_apoio45_04.position.set(-1 - cabine_geometria.parameters.radiusBottom - Math.abs(cilindro_apoio02.position.x - cilindro_apoio04.position.x) / 2, cilindro_apoio02.position.y, cilindro_apoio02.position.z);
 
     // Esquerda
@@ -258,26 +256,26 @@ function cria_afuselagem(ponto) {
     var cilindro_apoio45_05 = new THREE.Mesh(cilindro_apoio_45_geometria, metal_ouro);
     asa_cima.add(cilindro_apoio45_05);
     cilindro_apoio45_05.rotateX(Math.PI / 2);
-    cilindro_apoio45_05.rotateZ(Math.PI / 2.7);
+    cilindro_apoio45_05.rotateZ(Math.PI / 2.9);
     cilindro_apoio45_05.position.set(1 + cabine_geometria.parameters.radiusBottom + Math.abs(cilindro_apoio05.position.x - cilindro_apoio07.position.x) / 2, cilindro_apoio05.position.y, cilindro_apoio05.position.z);
 
     var cilindro_apoio45_02 = new THREE.Mesh(cilindro_apoio_45_geometria, metal_ouro);
     asa_cima.add(cilindro_apoio45_02);
     cilindro_apoio45_02.rotateX(Math.PI / 2);
-    cilindro_apoio45_02.rotateZ(-Math.PI / 2.7);
+    cilindro_apoio45_02.rotateZ(-Math.PI / 2.9);
     cilindro_apoio45_02.position.set(1 + cabine_geometria.parameters.radiusBottom + Math.abs(cilindro_apoio05.position.x - cilindro_apoio07.position.x) / 2, cilindro_apoio05.position.y, cilindro_apoio05.position.z);
 
     // Frente
     var cilindro_apoio45_03 = new THREE.Mesh(cilindro_apoio_45_geometria, metal_ouro);
     asa_cima.add(cilindro_apoio45_03);
     cilindro_apoio45_03.rotateX(Math.PI / 2);
-    cilindro_apoio45_03.rotateZ(Math.PI / 2.7);
+    cilindro_apoio45_03.rotateZ(Math.PI / 2.9);
     cilindro_apoio45_03.position.set(1 + cabine_geometria.parameters.radiusBottom + Math.abs(cilindro_apoio06.position.x - cilindro_apoio08.position.x) / 2, cilindro_apoio06.position.y, cilindro_apoio06.position.z);
 
     var cilindro_apoio45_04 = new THREE.Mesh(cilindro_apoio_45_geometria, metal_ouro);
     asa_cima.add(cilindro_apoio45_04);
     cilindro_apoio45_04.rotateX(Math.PI / 2);
-    cilindro_apoio45_04.rotateZ(-Math.PI / 2.7);
+    cilindro_apoio45_04.rotateZ(-Math.PI / 2.9);
     cilindro_apoio45_04.position.set(1 + cabine_geometria.parameters.radiusBottom + Math.abs(cilindro_apoio06.position.x - cilindro_apoio08.position.x) / 2, cilindro_apoio06.position.y, cilindro_apoio06.position.z);
     // Marcas
     // Circulos
@@ -463,6 +461,7 @@ function cria_afuselagem(ponto) {
 //================================== Posicionamento do avião ==================================
 // Adiciona o avião na cena definindo sua posição inicial
 scene.add(cria_afuselagem({x: 0, y: 0, z: 4}).fuselagem._estacionaria);
+aviao_obj.fuselagem._estacionaria.castShadow = true;
 
 // Rotaciona o avião em relacão a X,Y,Z
 aviao_obj.fuselagem._estacionaria.rotateZ(Math.PI);
@@ -477,36 +476,15 @@ window.addEventListener("resize", function () {
     onWindowResize(camera, renderer);
 }, false);
 
-/*
-// create the ground plane
-var planeGeometry = new THREE.PlaneGeometry(5000, 5000);
-planeGeometry.translate(0.0, 0.0, -0.02); // To avoid conflict with the axeshelper
-var planeMaterial = new THREE.MeshBasicMaterial({
-    color: "#00f020",
-    side: THREE.DoubleSide,
-});
-var plano = new THREE.Mesh(planeGeometry, planeMaterial);
-// add the plane to the scene
-scene.add(plano);
-plano.receiveShadow = true;
-*/
-
-//Funciona as sombras
+// Cria um plano que receibe sombras
 var plano = createGroundPlane(5000, 5000, 40, 40); // width, height, resolutionW, resolutionH
 plano.material.color.r = 0
 plano.material.color.g = 199/255
 plano.material.color.b = 27/255
-
 scene.add(plano);
 plano.receiveShadow = true;
 
 
-/*
-// Criando o plano e adicionando na cena
-var plano = createGroundPlaneWired(5000, 5000, 20, 20); // width, height
-plano.rotation.set(0, 0, 0);
-scene.add(plano);
-*/
 // Cria uma variável para cuidar da mudança de tipo de câmera
 var keyboard = new KeyboardState();
 
@@ -514,7 +492,7 @@ var keyboard = new KeyboardState();
 //================================== Configurações de camera ==================================
 // Enable mouse rotation, pan, zoom etc.
 var trackballControls = new TrackballControls(camera, renderer.domElement);
-trackballControls.noPan = true
+trackballControls.noPan = true;
 // Camera padrão
 camera.position.set(
     aviao_obj.fuselagem._estacionaria.position.x, 
@@ -532,9 +510,9 @@ var cameraHolder = new THREE.Object3D();
 cameraHolder.add(camera)
 scene.add(cameraHolder);
 
-var controls = new InfoBox();
+
 function buildInterface() { // Mostrando as informações na tela
-    //var controls = new InfoBox();
+    var controls = new InfoBox();
     controls.add("Simulador de voo - Controles");
     controls.addParagraph(); // Setas:https://textkool.com/pt/symbols/arrows-symbols
     controls.add("# Q  /  A - Acelera/Freia");
@@ -677,95 +655,8 @@ function mudaCamera() { //Muda a camera toda
     isSimulacao = !isSimulacao
 }
 
-function entraCockpit(){
-    //if(!pressionadoSpace){
-    // Salva os valores de posição vindos da simulação
-    aviao_auxiliar.position.x = aviao_obj.fuselagem._estacionaria.position.x;
-    aviao_auxiliar.position.y = aviao_obj.fuselagem._estacionaria.position.y;
-    aviao_auxiliar.position.z = aviao_obj.fuselagem._estacionaria.position.z;
-    
-    camera_auxiliar.position.x = camera.position.x;
-    camera_auxiliar.position.y = camera.position.y;
-    camera_auxiliar.position.z = camera.position.z;
-    
-    cameraHolder_auxiliar.position.x = cameraHolder.position.x;
-    cameraHolder_auxiliar.position.y = cameraHolder.position.y;
-    cameraHolder_auxiliar.position.z = cameraHolder.position.z;
 
-    // Salva os valores de rotação vindos da simulação
-    aviao_auxiliar.rotation.x = aviao_obj.fuselagem._estacionaria.rotation.x;
-    aviao_auxiliar.rotation.y = aviao_obj.fuselagem._estacionaria.rotation.y;
-    aviao_auxiliar.rotation.z = aviao_obj.fuselagem._estacionaria.rotation.z;
-    
-    camera_auxiliar.rotation.x = camera.rotation.x;
-    camera_auxiliar.rotation.y = camera.rotation.y;
-    camera_auxiliar.rotation.z = camera.rotation.z;
-    
-    cameraHolder_auxiliar.rotation.x = cameraHolder.rotation.x;
-    cameraHolder_auxiliar.rotation.y = cameraHolder.rotation.y;
-    cameraHolder_auxiliar.rotation.z = cameraHolder.rotation.z;
 
-    // Salva os valores de up vindos da camera na simulação
-    camera_auxiliar.up.x = camera.up.x
-    camera_auxiliar.up.y = camera.up.y
-    camera_auxiliar.up.z = camera.up.z
-    
-
-    cameraHolder.position.set(0,0,0)
-    //cameraHolder.rotation.set(0,0,0)
-
-    camera.position.set(0, -3.5, 5.6)
-    camera.rotation.x = degreesToRadians(87);
-    //camera.up.set(0,1,0)
-}
-
-function saiCockpit(){
-    
-    // Pega os valores salvos no item anterior para tirar o avião da origem
-    aviao_obj.fuselagem._estacionaria.position.set(
-        aviao_auxiliar.position.x,
-        aviao_auxiliar.position.y,
-        aviao_auxiliar.position.z
-    )
-
-    aviao_obj.fuselagem._estacionaria.rotation.set(
-        aviao_auxiliar.rotation.x,
-        aviao_auxiliar.rotation.y,
-        aviao_auxiliar.rotation.z
-    )
-    
-    // Reposiciona a camera e o cameraHolder a partir dos valores salvos anteriormente
-    cameraHolder.position.set(
-        cameraHolder_auxiliar.position.x,
-        cameraHolder_auxiliar.position.y,
-        cameraHolder_auxiliar.position.z
-    )
-
-    cameraHolder.rotation.set(
-        cameraHolder_auxiliar.rotation.x,
-        cameraHolder_auxiliar.rotation.y,
-        cameraHolder_auxiliar.rotation.z
-    )
-
-    camera.position.set(
-        camera_auxiliar.position.x,
-        camera_auxiliar.position.y,
-        camera_auxiliar.position.z
-    )
-
-    camera.rotation.set(
-        camera_auxiliar.rotation.x,
-        camera_auxiliar.rotation.y,
-        camera_auxiliar.rotation.z
-    )
-
-    camera.up.set(
-        camera_auxiliar.up.x,
-        camera_auxiliar.up.y,
-        camera_auxiliar.up.z
-    )
-    
-}
 
 //============================= Configurações de Movimentação =============================
 // Controle de botões pressionados
@@ -776,7 +667,7 @@ var pressionadoRight = false;
 var pressionadoC = false;
 var pressionadoSpace = false;
 
-// Função controladora da camera a partir do teclado
+// Função de controle das entradas do teclado
 function keyboardUpdate() {
     keyboard.update();
 
@@ -988,32 +879,32 @@ function movimento() {
 }
 
 
-
-
-
-//==================================================== FLIGHT SCHOOL ====================================================
+//============================================= FLIGHT SCHOOL - Trabalho 02 =============================================
 //=======================================================================================================================
+
 
 //Função Auxiliar para conseguir números randomicos em determinado intervalo
 function getRandom(min, max) {
     return Math.random() * (max - min) + min;
   }
 
-
+//--------- Parte 1 - Caminhos, checkpoints e sistema para marcar tempo ---------
+//-------------------------------------------------------------------------------
+// Pontos do circuito que será criada
 var pontosDaLinha = 
 [new THREE.Vector3( 0, 0, 0 ),                              //Origin
-new THREE.Vector3( 0, getRandom(50,100), -800 ),            //1
-new THREE.Vector3( 800, getRandom(60,150), -1600 ),         //2
-new THREE.Vector3( -400, getRandom(70,200), -2400 ),        //3
-new THREE.Vector3( -800, getRandom(90,250), -1600 ),        //4
-new THREE.Vector3( -1000, getRandom(90,320), -1000 ),       //5
-new THREE.Vector3( -800, getRandom(150,250), -800 ),        //6
-new THREE.Vector3( 0, getRandom(200,320), 800),             //7
-new THREE.Vector3( 800, getRandom(70,220), 0),              //8
+new THREE.Vector3( 0, getRandom(80,150), -800 ),            //1
+new THREE.Vector3( 600, getRandom(150,350), -1200 ),         //2
+new THREE.Vector3( -400, getRandom(100,200), -2000 ),        //3
+new THREE.Vector3( -800, getRandom(200,450), -1600 ),        //4
+new THREE.Vector3( -1000, getRandom(120,300), -1000 ),       //5
+new THREE.Vector3( -800, getRandom(130,300), -800 ),        //6
+new THREE.Vector3( 0, getRandom(140,300), 400),             //7
+new THREE.Vector3( 800, getRandom(120,420), 200),              //8
 new THREE.Vector3( 1600, getRandom(50,320), 800),           //9
-new THREE.Vector3( 2400, getRandom(40,220), 1600),          //10
+new THREE.Vector3( 2400, getRandom(240,520), 1600),          //10
 new THREE.Vector3( 800, getRandom(50,220), 1600),           //11
-new THREE.Vector3( 0, getRandom(50,120), 1600),             //12
+new THREE.Vector3( 0, getRandom(250,520), 1600),             //12
 new THREE.Vector3( 0, getRandom(40,150), 500),              //13
 new THREE.Vector3( 0, 0, 0 )]                               //end
 
@@ -1032,34 +923,31 @@ scene.add(curveObject);
 const checkpointgeometry = new THREE.TorusGeometry( 20, 2, 3, 100 );
 const checkpointmaterial = new THREE.MeshBasicMaterial( { color: 0x8a6521, opacity: 0.8 , transparent: true } ); //0xfec2b8
 var checkpoint = [];
-
+// Cria os checkpoins com base na geometria Torus
 function defineCheckpoints(){
     for (var i=1, j=0; i<pontosDaLinha.length - 1; i++, j++){
         checkpoint[j] = new THREE.Mesh( checkpointgeometry, checkpointmaterial );
         checkpoint[j].position.x = pontosDaLinha[i].x;
         checkpoint[j].position.y = -pontosDaLinha[i].z;
         checkpoint[j].position.z = pontosDaLinha[i].y;
-        checkpoint[j].lookAt(checkpoint[j].position);
+        checkpoint[j].lookAt(checkpoint[j].position);   //Eles "olham" para o centro, ou seja, eles vão estar melhor posicionados em relação a curva
         checkpoint[j].rotateX(Math.PI/2);
     }
 }
-
 defineCheckpoints()
 
 //Deixa apenas o primeiro checkpoint visivel
 scene.add(checkpoint[0])
 
-//Deixa os checkpoints restantes perpendiculares à curva
+//Conserta os checkpoints restantes que ainda não estão perpendiculares à curva
 checkpoint[0].rotateY(-Math.PI/4)
 checkpoint[2].rotateY(Math.PI/2)
-//checkpoint[3].rotateY(Math.PI/2)
 checkpoint[6].rotateY(Math.PI/2)
 checkpoint[7].rotateY(Math.PI/2)
 checkpoint[8].rotateY(Math.PI/3)
 checkpoint[10].rotateY(Math.PI/2)
-//checkpoint[11].rotateY(Math.PI/2)
+checkpoint[11].rotateY(Math.PI/3)
 
-//4,6,9,12
 
 // Verifica se um checkpoint foi atravessado
 function verificaCheckpoint(){
@@ -1087,6 +975,15 @@ function verificaCheckpoint(){
     }
 }
 
+
+var information = new SecondaryBox("");
+// Função que acessa o campo de informação e o atualiza
+function showInfoOnScreen(text){
+    information.changeMessage(text);
+}
+showInfoOnScreen("Atravesse o primeiro checkpoint para começar!")
+
+
 var contadorChecks=0;
 // Conta quantos checkpoints foram atravessados. O valor é atualizado toda vez que um check é atravessado
 function contaCheckpoints(){
@@ -1094,20 +991,25 @@ function contaCheckpoints(){
     for (var j=0; j<checkpoint.length; j++){
         if(checkpoint[j].visible == false)
         contadorChecks++;
+        showInfoOnScreen("Checkpoints: " + contadorChecks);
     }
     if(contadorChecks == checkpoint.length){
         aviao_obj.velocidade_atual = 0;
         aviao_obj.velocidade_atual = 0;
+
+        showInfoOnScreen("Parabéns por ter concluído o circuito!\n\nCheckpoints: " + contadorChecks + "\nTempo gasto: " + seconds + "s\n\nPor favor, pressione o botão F5 para reiniciar a simulação!");
+        notifyMe();
+        contadorChecks = 0;
+        /*
         document.getElementById(controls.infoBox.id).innerHTML = "";
         controls.add("Parabéns por completar o percurso!")
         controls.add("Checkpoint: " + contadorChecks)
         controls.add("Tempo gasto: " + seconds + "s")
         controls.add("Por favor, pressione F5 para reiniciar o jogo!")
-        notifyMe();
-        contadorChecks = 0;
+        */
     }
+    
 }
-
 
 var seconds = 0;
 // Conta quanto tempo passa do momento que o primeiro checkpoint é atravessado até o ultimo ser atravessado
@@ -1119,7 +1021,6 @@ function contadorTempo(){
         return seconds;
 }
 setInterval(contadorTempo, 1000);
-
 
 // Mostra ao usuário o tempo que ele levou para completar o percurso
 function notifyMe() {
@@ -1151,8 +1052,8 @@ function notifyMe() {
 }
 
 
-//-----------------------------------//
-
+//--------- Parte 2 - Ambiente e aspectos visuais (montanhas e árvores) ---------
+//-------------------------------------------------------------------------------
 // Adiciona uma luz hemisphereLight no ambiente
 var hemisphereLight = new THREE.HemisphereLight( "white", "white", 0.2 );
 scene.add( hemisphereLight );
@@ -1170,22 +1071,15 @@ directionalLight.shadow.camera.bottom = -3000;
 directionalLight.shadow.mapSize.width = 8192;
 directionalLight.shadow.mapSize.height = 8192;
 // near and far
-directionalLight.shadow.camera.near = 100; // default 0.5
-directionalLight.shadow.camera.far = 7000; // default 500 // 151 because 150 didn't reach the ground plane
+directionalLight.shadow.camera.near = 100;
+directionalLight.shadow.camera.far = 7000;
 // Faz a fonte de luz gerar sombras
 directionalLight.castShadow = true;
 scene.add( directionalLight );
 
+//Tire este comentário para entender como ocorre o posicionamento da luz direcional
 //var directionalLightHelper = new THREE.CameraHelper( directionalLight.shadow.camera ); // creates a helper to better visualize the light
 //scene.add( directionalLightHelper );
-
-
-
-
-
-
-
-
 
 
 function create_Mountain(base, scale, neve, raio, n_pontos_base) { 
@@ -1445,12 +1339,101 @@ function randomTreePosition(num_arvores){
 randomTreePosition(50)
 
 
+//-------------------- Trabalho 02 - Parte 3 - Modo cockpit --------------------
+//------------------------------------------------------------------------------
 
+// Função Auxiliar para entrar no modo cockpit
+function entraCockpit(){
+    //if(!pressionadoSpace){
 
+    // Salva os valores de posição vindos do modo normal
+    aviao_auxiliar.position.x = aviao_obj.fuselagem._estacionaria.position.x;
+    aviao_auxiliar.position.y = aviao_obj.fuselagem._estacionaria.position.y;
+    aviao_auxiliar.position.z = aviao_obj.fuselagem._estacionaria.position.z;
+    
+    camera_auxiliar.position.x = camera.position.x;
+    camera_auxiliar.position.y = camera.position.y;
+    camera_auxiliar.position.z = camera.position.z;
+    
+    cameraHolder_auxiliar.position.x = cameraHolder.position.x;
+    cameraHolder_auxiliar.position.y = cameraHolder.position.y;
+    cameraHolder_auxiliar.position.z = cameraHolder.position.z;
 
+    // Salva os valores de rotação vindos do modo normal
+    aviao_auxiliar.rotation.x = aviao_obj.fuselagem._estacionaria.rotation.x;
+    aviao_auxiliar.rotation.y = aviao_obj.fuselagem._estacionaria.rotation.y;
+    aviao_auxiliar.rotation.z = aviao_obj.fuselagem._estacionaria.rotation.z;
+    
+    camera_auxiliar.rotation.x = camera.rotation.x;
+    camera_auxiliar.rotation.y = camera.rotation.y;
+    camera_auxiliar.rotation.z = camera.rotation.z;
+    
+    cameraHolder_auxiliar.rotation.x = cameraHolder.rotation.x;
+    cameraHolder_auxiliar.rotation.y = cameraHolder.rotation.y;
+    cameraHolder_auxiliar.rotation.z = cameraHolder.rotation.z;
 
+    // Salva os valores de up vindos da camera no modo normal
+    camera_auxiliar.up.x = camera.up.x
+    camera_auxiliar.up.y = camera.up.y
+    camera_auxiliar.up.z = camera.up.z
+    
 
+    cameraHolder.position.set(0,0,0)
+    //cameraHolder.rotation.set(0,0,0)
 
+    camera.position.set(0, -3.5, 5.65)
+    camera.rotation.x = degreesToRadians(95);
+    //camera.up.set(0,1,0)
+}
+
+// Função Auxiliar para sair do modo cockpit
+function saiCockpit(){
+    
+    // Pega os valores salvos no item anterior para tirar o avião da origem
+    aviao_obj.fuselagem._estacionaria.position.set(
+        aviao_auxiliar.position.x,
+        aviao_auxiliar.position.y,
+        aviao_auxiliar.position.z
+    )
+
+    aviao_obj.fuselagem._estacionaria.rotation.set(
+        aviao_auxiliar.rotation.x,
+        aviao_auxiliar.rotation.y,
+        aviao_auxiliar.rotation.z
+    )
+    
+    // Reposiciona a camera e o cameraHolder a partir dos valores salvos anteriormente
+    cameraHolder.position.set(
+        cameraHolder_auxiliar.position.x,
+        cameraHolder_auxiliar.position.y,
+        cameraHolder_auxiliar.position.z
+    )
+
+    cameraHolder.rotation.set(
+        cameraHolder_auxiliar.rotation.x,
+        cameraHolder_auxiliar.rotation.y,
+        cameraHolder_auxiliar.rotation.z
+    )
+
+    camera.position.set(
+        camera_auxiliar.position.x,
+        camera_auxiliar.position.y,
+        camera_auxiliar.position.z
+    )
+
+    camera.rotation.set(
+        camera_auxiliar.rotation.x,
+        camera_auxiliar.rotation.y,
+        camera_auxiliar.rotation.z
+    )
+
+    camera.up.set(
+        camera_auxiliar.up.x,
+        camera_auxiliar.up.y,
+        camera_auxiliar.up.z
+    )
+    
+}
 
 
 
