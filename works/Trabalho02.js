@@ -2,10 +2,12 @@ import * as THREE from "../build/three.module.js";
 import Stats from "../build/jsm/libs/stats.module.js";
 import {TrackballControls} from "../build/jsm/controls/TrackballControls.js";
 import KeyboardState from "../libs/util/KeyboardState.js";
+import {ConvexGeometry} from '../build/jsm/geometries/ConvexGeometry.js'; // importante
 import {
     initRenderer,
     initDefaultBasicLight,
     InfoBox,
+    createGroundPlane,
     createGroundPlaneWired,
     onWindowResize,
     degreesToRadians,
@@ -15,10 +17,24 @@ import {
 var stats = new Stats(); // To show FPS information
 var scene = new THREE.Scene(); // Create main scene
 var renderer = initRenderer(); // View function in util/utils
-const light = new THREE.HemisphereLight( 0xffffbb, 0x080820, 1 );
-scene.add( light );
-var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
+//const light = new THREE.HemisphereLight( 0xffffbb, 0x080820, 1 );
+//scene.add( light );
+var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100000);
 
+
+// Painel de FPS
+function createStats() {
+    stats.setMode(0);
+    
+    stats.domElement.style.position = 'absolute';
+    stats.domElement.style.left = '0';
+    stats.domElement.style.top = '0';
+  
+    return stats;
+  }
+  // To show FPS
+  stats = createStats();
+  document.body.appendChild( stats.domElement );
 
 
 //=================================================== FLIGHT SIMULATOR ===================================================
@@ -77,6 +93,7 @@ function cria_afuselagem(ponto) {
     // Cabine
     var cabine_geometria = new THREE.CylinderGeometry(1.5, 1.5, 10, 50);
     var cabine = new THREE.Mesh(cabine_geometria, casco);
+    cabine.castShadow=true;
     fuselagem_objeto.add(cabine);
     // Setando os valores na variavel
     fuselagem.fuselagem._estacionaria = cabine;
@@ -85,6 +102,7 @@ function cria_afuselagem(ponto) {
     // Rabo
     var rabeta_geomeria = new THREE.CylinderGeometry(0.5, 1.5, 10, 50);
     var rabeta = new THREE.Mesh(rabeta_geomeria, casco);
+    rabeta.castShadow = true;
     fuselagem_objeto.add(rabeta);
     rabeta.position.set(cabine.position.x, cabine.position.y + cabine.geometry.parameters.height, cabine.position.z);
 
@@ -106,11 +124,13 @@ function cria_afuselagem(ponto) {
     var asa_prancha = new THREE.BoxGeometry(22, 5, 0.2);
     // Cima
     var asa_cima = new THREE.Mesh();
+    asa_cima.castShadow = true;
     cabine.add(asa_cima);
     asa_cima.position.set(0, 1, cabine_geometria.parameters.radiusTop + 1.5);
 
     // Baixo
     var asa_baixo = new THREE.Mesh();
+    asa_baixo.castShadow = true;
     cabine.add(asa_baixo);
     asa_baixo.position.set(0, asa_cima.position.y, - cabine_geometria.parameters.radiusTop / 2);
 
@@ -458,11 +478,36 @@ window.addEventListener("resize", function () {
     onWindowResize(camera, renderer);
 }, false);
 
+/*
+// create the ground plane
+var planeGeometry = new THREE.PlaneGeometry(5000, 5000);
+planeGeometry.translate(0.0, 0.0, -0.02); // To avoid conflict with the axeshelper
+var planeMaterial = new THREE.MeshBasicMaterial({
+    color: "#00f020",
+    side: THREE.DoubleSide,
+});
+var plano = new THREE.Mesh(planeGeometry, planeMaterial);
+// add the plane to the scene
+scene.add(plano);
+plano.receiveShadow = true;
+*/
+
+//Funciona as sombras
+var plano = createGroundPlane(5000, 5000, 40, 40); // width, height, resolutionW, resolutionH
+plano.material.color.r = 0
+plano.material.color.g = 199/255
+plano.material.color.b = 27/255
+
+scene.add(plano);
+plano.receiveShadow = true;
+
+
+/*
 // Criando o plano e adicionando na cena
 var plano = createGroundPlaneWired(5000, 5000, 20, 20); // width, height
 plano.rotation.set(0, 0, 0);
 scene.add(plano);
-
+*/
 // Cria uma variável para cuidar da mudança de tipo de câmera
 var keyboard = new KeyboardState();
 
@@ -746,10 +791,6 @@ function keyboardUpdate() {
 
     // Tecla de Debug para testes
     if (keyboard.up("D")) {
-        console.log("Holder: ", cameraHolder)
-        console.log("==============================")
-        console.log("Camera: ", camera)
-        console.log("==============================")
     }
 
     if (keyboard.down("enter")) { // Mostra o caminho                                           //FLIGHT SCHOOL - T2
@@ -1110,30 +1151,319 @@ function notifyMe() {
 }
 
 
-// Default light position
-var lightPosition = new THREE.Vector3(2500, 2500, 1000);
+//-----------------------------------//
 
-// Sphere to represent the light
-//var lightSphere = createLightSphere(scene, 0.05, 10, 10, lightPosition);
+// Adiciona uma luz hemisphereLight no ambiente
+var hemisphereLight = new THREE.HemisphereLight( "white", "white", 0.2 );
+scene.add( hemisphereLight );
+// Luz do sol direcional posicionada no canto superior direito do plano
+var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.75 );
+directionalLight.position.set(2500, 2500, 2000);
+directionalLight.distance = 1000;
+directionalLight.penumbra = 0.2;
+// Sombras
+directionalLight.shadow.camera.left = -2000;
+directionalLight.shadow.camera.right = 2000;
+directionalLight.shadow.camera.top = 3000;
+directionalLight.shadow.camera.bottom = -3000;
+// Resolução das sombras
+directionalLight.shadow.mapSize.width = 8192;
+directionalLight.shadow.mapSize.height = 8192;
+// near and far
+directionalLight.shadow.camera.near = 100; // default 0.5
+directionalLight.shadow.camera.far = 7000; // default 500 // 151 because 150 didn't reach the ground plane
+// Faz a fonte de luz gerar sombras
+directionalLight.castShadow = true;
+scene.add( directionalLight );
 
-//---------------------------------------------------------
-// Create and set the spotlight
-var spotLight = new THREE.SpotLight("rgb(255,255,255)");
-  spotLight.position.copy(lightPosition);
-  spotLight.distance = 0;
-  spotLight.castShadow = true;
-  spotLight.decay = 1;
-  spotLight.penumbra = 0.5;
-  spotLight.angle= degreesToRadians(40);
-  spotLight.intensity = 0.7;
-  // Shadow Parameters
-  spotLight.shadow.mapSize.width = 512;
-  spotLight.shadow.mapSize.height = 512;
-  spotLight.shadow.camera.fov = radiansToDegrees(spotLight.angle);
-  spotLight.shadow.camera.near = .2;    
-  spotLight.shadow.camera.far = 20.0;        
+//var directionalLightHelper = new THREE.CameraHelper( directionalLight.shadow.camera ); // creates a helper to better visualize the light
+//scene.add( directionalLightHelper );
 
-scene.add(spotLight);
+
+
+
+
+
+
+
+
+
+function create_Mountain(base, scale, neve, raio, n_pontos_base) { 
+    let ponto_aux = []
+    let passos = 6
+    let x = raio, y = raio, z = 0
+    let angle = Math.PI*2 / n_pontos_base
+    let n_pontos_aux = n_pontos_base 
+    let pontos = []
+  
+    for(let i = 0; i < 4; i++){
+      n_pontos_aux = Math.floor(n_pontos_base - (n_pontos_base/(4)) * i)
+      for (let j = 0; j < n_pontos_aux; j++) {
+        let zaux = (z*Math.random() + z*0.8)
+        let xaux = (x*Math.random() + x*0.8)
+        let yaux = (y*Math.random() + y*0.8)
+        pontos.push(new THREE.Vector3(xaux * Math.cos(angle*j), yaux * Math.sin(angle*j), zaux))
+        ponto_aux.push(new THREE.Vector3(xaux * Math.cos(angle*j), yaux * Math.sin(angle*j), zaux))
+      }
+      x = (1 - Math.random()*0.2)*x
+      y = (1 - Math.random()*0.2)*y
+      z = (1 + Math.random()*0.2)*z + i
+      angle = Math.PI*2 / n_pontos_aux
+    }
+  
+    let montanha_base = new THREE.Mesh(new ConvexGeometry(pontos), new THREE.MeshLambertMaterial({color: '#00f020'}))
+    scene.add(montanha_base)
+    montanha_base.position.set(base.x, base.y, base.z)
+    montanha_base.scale.set(scale,scale,scale)
+    montanha_base.castShadow = true;
+    montanha_base.receiveShadow = true;
+
+    pontos = []
+    for (let i = ponto_aux.length-1; i > ponto_aux.length - n_pontos_aux - 1 - Math.floor((n_pontos_base/(4)) * 3); i--) {
+      pontos.push(ponto_aux[i])
+    }
+  
+    n_pontos_aux = n_pontos_base
+  
+    for(let i = 0; i < passos; i++){
+      n_pontos_aux = Math.floor(n_pontos_base - (n_pontos_base/(passos)) * i)
+      for (let j = 0; j < n_pontos_aux; j++) {
+        let zaux = (z*Math.random() + z*0.8)
+        let xaux = (x*Math.random() + x*0.6)
+        let yaux = (y*Math.random() + y*0.6)
+        pontos.push(new THREE.Vector3(xaux * Math.cos(angle*j), yaux * Math.sin(angle*j), zaux))
+      }
+      x = (1 - Math.random()*0.4)*x
+      y = (1 - Math.random()*0.4)*y
+      z = (1 + Math.random()*0.2)*z
+      angle = Math.PI*2 / n_pontos_aux
+    }
+  
+    if (neve) { // Nivelar o anterior
+      let ponto_neve = []
+      let menor_ponto_X = 0
+      let maior_ponto_X = 0
+      let menor_ponto_Y = 0
+      let maior_ponto_Y = 0
+      let maior_ponto_Z = 0
+  
+      for (let index = Math.floor((n_pontos_base/(passos)*4)); index >= 0; index--) {
+        ponto_neve.push(new THREE.Vector3(pontos[pontos.length - 1 - index].x,
+          pontos[pontos.length - 1 - index].y,
+          pontos[pontos.length - 1 - index].z))
+      }
+  
+      ponto_neve.sort(function(a, b){return a.z-b.z})
+  
+      maior_ponto_Z = ponto_neve[ponto_neve.length-1] // maior Z
+  
+      ponto_neve.sort(function(a, b){return b.x-a.x})
+      for (let i = 0; i < 4; i++) {
+        maior_ponto_X = ponto_neve[i] // maior x
+        menor_ponto_X = ponto_neve[ponto_neve.length-1-i] // menor x
+        maior_ponto_X.z = maior_ponto_Z.z
+        menor_ponto_X.z = maior_ponto_Z.z
+        pontos.push(maior_ponto_X)
+        pontos.push(menor_ponto_X)
+      }
+  
+      ponto_neve.sort(function(a, b){return b.y-a.y})
+      for (let i = 0; i < 4; i++) {
+        maior_ponto_Y = ponto_neve[i] // maior x
+        menor_ponto_Y = ponto_neve[ponto_neve.length-1-i] // menor x
+        maior_ponto_Y.z = maior_ponto_Z.z
+        menor_ponto_Y.z = maior_ponto_Z.z
+        pontos.push(maior_ponto_Y)
+        pontos.push(menor_ponto_Y)
+      }
+  
+      let figura_2 = new THREE.Mesh(new ConvexGeometry(pontos), new THREE.MeshLambertMaterial({color: '#804000'}))
+      scene.add(figura_2)
+      figura_2.position.set(base.x, base.y, base.z)
+      figura_2.scale.set(scale,scale,scale)
+      figura_2.castShadow = true;
+      figura_2.receiveShadow = true;
+
+      let n_pontos_neve = ponto_neve.length
+      //console.log("Npontoneve " + n_pontos_neve)
+      for (let index = 0; index < passos; index++) {
+        n_pontos_aux = Math.floor(n_pontos_neve - Math.floor(n_pontos_neve/passos) * index)
+        //console.log("npontosaux " + n_pontos_aux + " I> " + index)
+        for (let j = 0; j < n_pontos_aux; j++) {
+          let zaux = (z)
+          let xaux = (x*Math.random() + x*0.6)
+          let yaux = (y*Math.random() + y*0.6)
+          ponto_neve.push(new THREE.Vector3(xaux * Math.cos(angle*j), yaux * Math.sin(angle*j), zaux))
+         }
+        x = (1 - Math.random()*0.3)*x
+        y = (1 - Math.random()*0.3)*y
+        z = z + index
+        angle = Math.PI*2 / n_pontos_aux
+      }
+  
+      let figura_neve = new THREE.Mesh(new ConvexGeometry(ponto_neve), new THREE.MeshBasicMaterial({color: '#f0f0f0'}))
+      scene.add(figura_neve)
+      figura_neve.position.set(base.x, base.y, base.z)
+      figura_neve.scale.set(scale,scale,scale)
+      figura_neve.castShadow = true;
+      figura_neve.receiveShadow = true;
+  
+    }else{
+      let figura_2 = new THREE.Mesh(new ConvexGeometry(pontos), new THREE.MeshLambertMaterial({color: '#804000'}))
+      scene.add(figura_2)
+      figura_2.position.set(base.x, base.y, base.z)
+      figura_2.scale.set(scale,scale,scale)
+      figura_2.castShadow = true;
+      figura_2.receiveShadow = true;
+    }
+  }
+
+
+create_Mountain(new THREE.Vector3(-700,1300,0), 16, false, 8, 30)
+create_Mountain(new THREE.Vector3(-350,1300,0), 30, true, 7, 40)
+create_Mountain(new THREE.Vector3(-100,1500,0), 25, true, 7, 35)
+
+
+
+
+
+function create_arvore(base, tipo, rotation, scale) {
+    switch (tipo) {
+      case 1:
+        let caule_1 = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 1, 5, 30),  new THREE.MeshLambertMaterial({color: '#804000'}))
+        let folhas_1 = new THREE.Mesh(new THREE.DodecahedronGeometry(2.5,1) ,  new THREE.MeshLambertMaterial({color: '#408000'}))
+        caule_1.scale.set(scale,scale,scale)
+        scene.add(caule_1)
+        caule_1.add(folhas_1)
+        caule_1.position.set(base.x,base.y,base.z + caule_1.geometry.parameters.height/2 * scale)
+        caule_1.rotateX(Math.PI/2)
+        folhas_1.position.set(0, folhas_1.geometry.parameters.radius,0)
+        caule_1.castShadow = true;
+        folhas_1.castShadow = true;
+        break;
+
+      case 2:
+        const caule_2_1 = new THREE.Mesh( new THREE.CylinderGeometry(0.6,0.6,3,30,1), new THREE.MeshLambertMaterial( { color : '#804000' } ) );
+        caule_2_1.scale.set(scale,scale,scale)
+        scene.add(caule_2_1)
+        caule_2_1.rotateX(Math.PI/2)
+        caule_2_1.position.set(base.x,base.y,base.z + caule_2_1.geometry.parameters.height/2 * scale)
+  
+        const caule_2_2 = new THREE.Mesh( new THREE.CylinderGeometry(0.35,0.35,2,30,1), new THREE.MeshLambertMaterial( { color : '#804000' } ) );
+        caule_2_1.add(caule_2_2)
+        caule_2_2.rotateZ(-Math.PI/6)
+        caule_2_2.position.set(caule_2_1.geometry.parameters.radiusTop/2 + Math.cos(-Math.PI/6) - caule_2_2.geometry.parameters.radiusTop, caule_2_2.geometry.parameters.height/2 + caule_2_1.geometry.parameters.height/2 + Math.sin(-Math.PI/6), 0)
+        
+        const caule_2_3 = new THREE.Mesh( new THREE.CylinderGeometry(0.35,0.35,2,30,1), new THREE.MeshLambertMaterial( { color : '#804000' } ) );
+        caule_2_1.add(caule_2_3)
+        caule_2_3.rotateZ(Math.PI/6)
+        caule_2_3.position.set(-caule_2_1.geometry.parameters.radiusTop/2 -Math.cos(Math.PI/6) + caule_2_3.geometry.parameters.radiusTop, caule_2_1.geometry.parameters.height/2 + caule_2_3.geometry.parameters.height/2 + Math.sin(-Math.PI/6), 0)
+        
+        const folha_2_1 = new THREE.Mesh(new THREE.DodecahedronGeometry(2,1) ,  new THREE.MeshLambertMaterial({color: '#408000'}))
+        caule_2_1.add(folha_2_1)
+        folha_2_1.position.set(0, caule_2_1.geometry.parameters.height + Math.sin(-Math.PI/6) + folha_2_1.geometry.parameters.radius/2 + caule_2_1.geometry.parameters.height/4, 0)
+
+        const folha_2_2 = new THREE.Mesh(new THREE.DodecahedronGeometry(1.5,1) ,  new THREE.MeshLambertMaterial({color: '#408000'}))
+        caule_2_1.add(folha_2_2)
+        folha_2_2.position.set(caule_2_1.geometry.parameters.radiusTop + Math.cos(-Math.PI/6) - caule_2_2.geometry.parameters.radiusTop, caule_2_1.geometry.parameters.height + caule_2_2.geometry.parameters.height/2 + Math.sin(-Math.PI/6), 0)
+        
+        const folha_2_3 = new THREE.Mesh(new THREE.DodecahedronGeometry(1.5,1) ,  new THREE.MeshLambertMaterial({color: '#408000'}))
+        caule_2_1.add(folha_2_3)
+        folha_2_3.position.set(-caule_2_1.geometry.parameters.radiusTop - Math.cos(-Math.PI/6) + caule_2_2.geometry.parameters.radiusTop, caule_2_1.geometry.parameters.height + caule_2_3.geometry.parameters.height/2 + Math.sin(-Math.PI/6),0)
+
+        caule_2_1.castShadow = true;
+        caule_2_2.castShadow = true;
+        caule_2_3.castShadow = true;
+        folha_2_1.castShadow = true;
+        folha_2_2.castShadow = true;
+        folha_2_3.castShadow = true;
+        
+        caule_2_1.rotateY(rotation)
+        break;
+  
+      case 3:
+        const caule_3 = new THREE.Mesh( new THREE.CylinderGeometry(0.4,0.1,6,30,1), new THREE.MeshLambertMaterial( { color : '#804000' } ) );
+        caule_3.scale.set(scale,scale,scale)
+        scene.add(caule_3)
+        caule_3.rotateX(-Math.PI/2)
+        caule_3.position.set(base.x,base.y,base.z + caule_3.geometry.parameters.height/2 * scale)
+  
+        const folha_3_1 = new THREE.Mesh( new THREE.CylinderGeometry(2,0,5,30,1), new THREE.MeshLambertMaterial( { color : '#408000' } ) );
+        caule_3.add(folha_3_1)
+        folha_3_1.position.set(0,0,0)
+        
+        const folha_3_2 = new THREE.Mesh( new THREE.CylinderGeometry(0.6,0,1,30,1), new THREE.MeshLambertMaterial( { color : '#408000' } ) );
+        caule_3.add(folha_3_2)
+        folha_3_2.position.set(0, -caule_3.geometry.parameters.height/2, 0)
+        
+        caule_3.castShadow = true;
+        folha_3_1.castShadow = true;
+        folha_3_2.castShadow = true;
+
+        break;
+    
+      default:
+        console.error("ERRO: " + tipo + " incorespondente")
+        break;
+    }
+  }
+
+
+function randomTreePosition(num_arvores){
+    for(var i=0; i<num_arvores ;i++){
+        var regiao = Math.round(getRandom(0,4));
+        switch (regiao){
+        case 0:
+        create_arvore(new THREE.Vector3(getRandom(-2400,-50),getRandom(-2400,800),0), 1, 0, getRandom(2,5)) //2 - 5
+        create_arvore(new THREE.Vector3(getRandom(-2400,-50),getRandom(-2400,800),0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
+        create_arvore(new THREE.Vector3(getRandom(-2400,-50),getRandom(-2400,800),0), 3, 0, getRandom(10,15))
+        break;
+        case 1:
+        create_arvore(new THREE.Vector3(getRandom(50,2400),getRandom(-2400,800),0), 1, 0, getRandom(2,5)) //2 - 5
+        create_arvore(new THREE.Vector3(getRandom(50,2400),getRandom(-2400,800),0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
+        create_arvore(new THREE.Vector3(getRandom(50,2400),getRandom(-2400,800),0), 3, 0, getRandom(10,15))
+        break;
+        case 2:
+        create_arvore(new THREE.Vector3(getRandom(300,2400),getRandom(810,2400),0), 1, 0, getRandom(2,5)) //2 - 5
+        create_arvore(new THREE.Vector3(getRandom(300,2400),getRandom(810,2400),0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
+        create_arvore(new THREE.Vector3(getRandom(300,2400),getRandom(810,2400),0), 3, 0, getRandom(10,15))
+        break;
+        case 3:
+        create_arvore(new THREE.Vector3(getRandom(-2400,300),getRandom(1800,2400),0), 1, 0, getRandom(2,5)) //2 - 5
+        create_arvore(new THREE.Vector3(getRandom(-2400,300),getRandom(1800,2400),0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
+        create_arvore(new THREE.Vector3(getRandom(-2400,300),getRandom(1800,2400),0), 3, 0, getRandom(10,15))
+        break;
+        case 4:
+        create_arvore(new THREE.Vector3(getRandom(-2400,800),getRandom(-1000,2400),0), 1, 0, getRandom(2,5)) //2 - 5
+        create_arvore(new THREE.Vector3(getRandom(-2400,800),getRandom(-1000,2400),0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
+        create_arvore(new THREE.Vector3(getRandom(-2400,800),getRandom(-1000,2400),0), 3, 0, getRandom(10,15))
+        break;
+        }
+    }
+
+}
+randomTreePosition(20)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
   
