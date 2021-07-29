@@ -15,8 +15,6 @@ import {
 var stats = new Stats(); // To show FPS information
 var scene = new THREE.Scene(); // Create main scene
 var renderer = initRenderer(); // View function in util/utils
-//const light = new THREE.HemisphereLight( 0xffffbb, 0x080820, 1 );
-//scene.add( light );
 var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100000);
 
 
@@ -76,7 +74,7 @@ function cria_afuselagem(ponto) {
 
     var metal_ouro = new THREE.MeshPhongMaterial({color: 0xe1d663, side: THREE.DoubleSide});
 
-    var tinta_azul = new THREE.MeshToonMaterial({color: 0x0031e7, side: THREE.DoubleSide});
+    var tinta_azul = new THREE.MeshPhongMaterial({color: 0x0031e7, side: THREE.DoubleSide});
 
     var casco_degradado = new THREE.MeshPhongMaterial({color: 0xc0c0c0, side: THREE.DoubleSide});
 
@@ -465,6 +463,8 @@ function cria_afuselagem(ponto) {
 // Adiciona o avião na cena definindo sua posição inicial
 scene.add(cria_afuselagem({x: 0, y: 0, z: 4}).fuselagem._estacionaria);
 aviao_obj.fuselagem._estacionaria.castShadow = true;
+aviao_obj.fuselagem._estacionaria.receiveShadow = true;
+aviao_obj.fuselagem._estacionaria.name = "aviao";
 
 // Rotaciona o avião em relacão a X,Y,Z
 aviao_obj.fuselagem._estacionaria.rotateZ(Math.PI);
@@ -522,6 +522,9 @@ function buildInterface() { // Mostrando as informações na tela
     controls.add("# ↥  /  ↧ - Sobe/Desce o bico do avião");
     controls.add("# ↤ /  ↦ - Vira para Esquerda/Direita");
     controls.add("#  SPACE  - Camera em Inspeção/Simulador");
+    controls.addParagraph()
+    controls.add("# C - Camera no modo cockpit");
+    controls.add("#  ENTER  - Camera em Inspeção/Simulador");
 
     controls.show();
 }
@@ -669,6 +672,15 @@ var pressionadoLeft = false;
 var pressionadoRight = false;
 var pressionadoC = false;
 var pressionadoSpace = false;
+var pressionadoD = true;
+
+function deixaInvisivel(visivel){
+    aviao_obj.fuselagem._estacionaria.visible = true;
+    for(var i=0; i<scene.children.length; i++){
+        if (scene.children[i].name!="aviao" && scene.children[i].name!="hemisphereLight" && scene.children[i].name!="dirligh")
+            scene.children[i].visible = visivel;
+    }
+}
 
 // Função de controle das entradas do teclado
 function keyboardUpdate() {
@@ -683,6 +695,7 @@ function keyboardUpdate() {
     }
 
     // Tecla de Debug para testes
+    
     if (keyboard.up("D")) {
     }
 
@@ -1010,23 +1023,29 @@ function contaCheckpoints(){
     for (var j=0; j<checkpoint.length; j++){
         if(checkpoint[j].visible == false)
         contadorChecks++;
-        showInfoOnScreen("Checkpoints: " + contadorChecks);
+        //showInfoOnScreen("Checkpoints: " + contadorChecks);
+        if(contabrs==0)
+            information.textnode.nodeValue = "Checkpoints: " + contadorChecks;
     }
+
     if(contadorChecks == checkpoint.length ){
         aviao_obj.velocidade_atual = 0;
         aviao_obj.velocidade_atual = 0;
 
         if(contabrs<1){
             contabrs++;
+
             var y = document.getElementById('box');
-
-            information.textnode.nodeValue = "Parabéns por ter concluído o circuito!"
+            information.textnode.nodeValue = "C ";
+            var textNode = document.createTextNode("");
+            y.appendChild(textNode)
+            
+            information.textnode.nodeValue = "Parabéns por ter concluído o circuito!";
             var br = document.createElement("br");
             y.appendChild(br)
             var br = document.createElement("br");
             y.appendChild(br)
 
-            //information.textnode.nodeValue = "Parabéns por ter concluído o circuito!2";
             var textNode = document.createTextNode("Checkpoints: " + contadorChecks);
             y.appendChild(textNode)
             var br = document.createElement("br");
@@ -1101,9 +1120,11 @@ function notifyMe() {
 
 // Adiciona uma luz hemisphereLight no ambiente
 var hemisphereLight = new THREE.HemisphereLight( "white", "white", 0.2 );
+hemisphereLight.name = "hemisphereLight"
 scene.add( hemisphereLight );
 // Luz do sol direcional posicionada no canto superior direito do plano
 var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.80 );
+directionalLight.name = "dirligh"
 directionalLight.position.set(2500, 2500, 2000);
 directionalLight.distance = 1000;
 directionalLight.penumbra = 0.2;
@@ -1128,143 +1149,140 @@ scene.add( directionalLight );
 
 
 /**
- * Função de criação dos 3 tipos de montanhas
+ * Função de criação dos 3 tipos de montanhas - ADAPTADO PARA NÃO GERAR OS PONTOS ALEATORIAMENTE - USANDO THREE.MathUtils.seededRandom()
  * @param {*} base posição
  * @param {*} scale escala do objeto, essa escala aumenta o tamanho do objeto sem afetar o ponto z(altura) onde o objeto foi posicionado
  * @param {*} neve booleano para definir se a montanha tem neve no pico
  * @param {*} raio raio onde serão gerados os pontos da montanha
  * @param {*} n_pontos_base numero de pontos para geração da montanha
  */
-function create_Mountain(base, scale, neve, raio, n_pontos_base) { 
+ function create_Mountain(base, scale, neve, raio, n_pontos_base) {
     let ponto_aux = []
     let passos = 6
     let x = raio, y = raio, z = 0
-    let angle = Math.PI*2 / n_pontos_base
-    let n_pontos_aux = n_pontos_base 
+    let angle = Math.PI * 2 / n_pontos_base
+    let n_pontos_aux = n_pontos_base
     let pontos = []
-  
-    for(let i = 0; i < 4; i++){
-      n_pontos_aux = Math.floor(n_pontos_base - (n_pontos_base/(4)) * i)
-      for (let j = 0; j < n_pontos_aux; j++) {
-        let zaux = (z*Math.random() + z*0.8)
-        let xaux = (x*Math.random() + x*0.8)
-        let yaux = (y*Math.random() + y*0.8)
-        pontos.push(new THREE.Vector3(xaux * Math.cos(angle*j), yaux * Math.sin(angle*j), zaux))
-        ponto_aux.push(new THREE.Vector3(xaux * Math.cos(angle*j), yaux * Math.sin(angle*j), zaux))
-      }
-      x = (1 - Math.random()*0.2)*x
-      y = (1 - Math.random()*0.2)*y
-      z = (1 + Math.random()*0.2)*z + i
-      angle = Math.PI*2 / n_pontos_aux
+
+    for (let i = 0; i < 4; i++) {
+          n_pontos_aux = Math.floor(n_pontos_base - (n_pontos_base / (4)) * i)
+          for (let j = 0; j < n_pontos_aux; j++) {
+                let zaux = (z * THREE.MathUtils.seededRandom() + z * 0.8)
+                let xaux = (x * THREE.MathUtils.seededRandom() + x * 0.8)
+                let yaux = (y * THREE.MathUtils.seededRandom() + y * 0.8)
+                pontos.push(new THREE.Vector3(xaux * Math.cos(angle * j), yaux * Math.sin(angle * j), zaux))
+                ponto_aux.push(new THREE.Vector3(xaux * Math.cos(angle * j), yaux * Math.sin(angle * j), zaux))
+          }
+          x = (1 - THREE.MathUtils.seededRandom() * 0.2) * x
+          y = (1 - THREE.MathUtils.seededRandom() * 0.2) * y
+          z = (1 + THREE.MathUtils.seededRandom() * 0.2) * z + i
+          angle = Math.PI * 2 / n_pontos_aux
     }
-  
-    let montanha_base = new THREE.Mesh(new ConvexGeometry(pontos), new THREE.MeshLambertMaterial({color: '#00f020'}))
+
+    let montanha_base = new THREE.Mesh(new ConvexGeometry(pontos), new THREE.MeshLambertMaterial({ color: '#00f020' }))
     scene.add(montanha_base)
     montanha_base.position.set(base.x, base.y, base.z)
-    montanha_base.scale.set(scale,scale,scale)
+    montanha_base.scale.set(scale, scale, scale)
     montanha_base.castShadow = true;
     montanha_base.receiveShadow = true;
 
     pontos = []
-    for (let i = ponto_aux.length-1; i > ponto_aux.length - n_pontos_aux - 1 - Math.floor((n_pontos_base/(4)) * 3); i--) {
-      pontos.push(ponto_aux[i])
+    for (let i = ponto_aux.length - 1; i > ponto_aux.length - n_pontos_aux - 1 - Math.floor((n_pontos_base / (4)) * 3); i--) {
+          pontos.push(ponto_aux[i])
     }
-  
+
     n_pontos_aux = n_pontos_base
-  
-    for(let i = 0; i < passos; i++){
-      n_pontos_aux = Math.floor(n_pontos_base - (n_pontos_base/(passos)) * i)
-      for (let j = 0; j < n_pontos_aux; j++) {
-        let zaux = (z*Math.random() + z*0.8)
-        let xaux = (x*Math.random() + x*0.6)
-        let yaux = (y*Math.random() + y*0.6)
-        pontos.push(new THREE.Vector3(xaux * Math.cos(angle*j), yaux * Math.sin(angle*j), zaux))
-      }
-      x = (1 - Math.random()*0.4)*x
-      y = (1 - Math.random()*0.4)*y
-      z = (1 + Math.random()*0.2)*z
-      angle = Math.PI*2 / n_pontos_aux
+
+    for (let i = 0; i < passos; i++) {
+          n_pontos_aux = Math.floor(n_pontos_base - (n_pontos_base / (passos)) * i)
+          for (let j = 0; j < n_pontos_aux; j++) {
+                let zaux = (z * THREE.MathUtils.seededRandom() + z * 0.8)
+                let xaux = (x * THREE.MathUtils.seededRandom() + x * 0.6)
+                let yaux = (y * THREE.MathUtils.seededRandom() + y * 0.6)
+                pontos.push(new THREE.Vector3(xaux * Math.cos(angle * j), yaux * Math.sin(angle * j), zaux))
+          }
+          x = (1 - THREE.MathUtils.seededRandom() * 0.4) * x
+          y = (1 - THREE.MathUtils.seededRandom() * 0.4) * y
+          z = (1 + THREE.MathUtils.seededRandom() * 0.2) * z
+          angle = Math.PI * 2 / n_pontos_aux
     }
-  
+
     if (neve) { // Nivelar o anterior
-      let ponto_neve = []
-      let menor_ponto_X = 0
-      let maior_ponto_X = 0
-      let menor_ponto_Y = 0
-      let maior_ponto_Y = 0
-      let maior_ponto_Z = 0
-  
-      for (let index = Math.floor((n_pontos_base/(passos)*4)); index >= 0; index--) {
-        ponto_neve.push(new THREE.Vector3(pontos[pontos.length - 1 - index].x,
-          pontos[pontos.length - 1 - index].y,
-          pontos[pontos.length - 1 - index].z))
-      }
-  
-      ponto_neve.sort(function(a, b){return a.z-b.z})
-  
-      maior_ponto_Z = ponto_neve[ponto_neve.length-1] // maior Z
-  
-      ponto_neve.sort(function(a, b){return b.x-a.x})
-      for (let i = 0; i < 4; i++) {
-        maior_ponto_X = ponto_neve[i] // maior x
-        menor_ponto_X = ponto_neve[ponto_neve.length-1-i] // menor x
-        maior_ponto_X.z = maior_ponto_Z.z
-        menor_ponto_X.z = maior_ponto_Z.z
-        pontos.push(maior_ponto_X)
-        pontos.push(menor_ponto_X)
-      }
-  
-      ponto_neve.sort(function(a, b){return b.y-a.y})
-      for (let i = 0; i < 4; i++) {
-        maior_ponto_Y = ponto_neve[i] // maior x
-        menor_ponto_Y = ponto_neve[ponto_neve.length-1-i] // menor x
-        maior_ponto_Y.z = maior_ponto_Z.z
-        menor_ponto_Y.z = maior_ponto_Z.z
-        pontos.push(maior_ponto_Y)
-        pontos.push(menor_ponto_Y)
-      }
-  
-      let figura_2 = new THREE.Mesh(new ConvexGeometry(pontos), new THREE.MeshLambertMaterial({color: '#804000'}))
-      scene.add(figura_2)
-      figura_2.position.set(base.x, base.y, base.z)
-      figura_2.scale.set(scale,scale,scale)
-      figura_2.castShadow = true;
-      figura_2.receiveShadow = true;
+          let ponto_neve = []
+          let menor_ponto_X = 0
+          let maior_ponto_X = 0
+          let menor_ponto_Y = 0
+          let maior_ponto_Y = 0
+          let maior_ponto_Z = 0
 
-      let n_pontos_neve = ponto_neve.length
-      //console.log("Npontoneve " + n_pontos_neve)
-      for (let index = 0; index < passos; index++) {
-        n_pontos_aux = Math.floor(n_pontos_neve - Math.floor(n_pontos_neve/passos) * index)
-        //console.log("npontosaux " + n_pontos_aux + " I> " + index)
-        for (let j = 0; j < n_pontos_aux; j++) {
-          let zaux = (z)
-          let xaux = (x*Math.random() + x*0.6)
-          let yaux = (y*Math.random() + y*0.6)
-          ponto_neve.push(new THREE.Vector3(xaux * Math.cos(angle*j), yaux * Math.sin(angle*j), zaux))
-         }
-        x = (1 - Math.random()*0.3)*x
-        y = (1 - Math.random()*0.3)*y
-        z = z + index
-        angle = Math.PI*2 / n_pontos_aux
-      }
-  
-      let figura_neve = new THREE.Mesh(new ConvexGeometry(ponto_neve), new THREE.MeshBasicMaterial({color: '#f0f0f0'}))
-      scene.add(figura_neve)
-      figura_neve.position.set(base.x, base.y, base.z)
-      figura_neve.scale.set(scale,scale,scale)
-      figura_neve.castShadow = true;
-      figura_neve.receiveShadow = true;
-  
-    }else{
-      let figura_2 = new THREE.Mesh(new ConvexGeometry(pontos), new THREE.MeshLambertMaterial({color: '#804000'}))
-      scene.add(figura_2)
-      figura_2.position.set(base.x, base.y, base.z)
-      figura_2.scale.set(scale,scale,scale)
-      figura_2.castShadow = true;
-      figura_2.receiveShadow = true;
+          for (let index = Math.floor((n_pontos_base / (passos) * 4)); index >= 0; index--) {
+                ponto_neve.push(new THREE.Vector3(pontos[pontos.length - 1 - index].x,
+                      pontos[pontos.length - 1 - index].y,
+                      pontos[pontos.length - 1 - index].z))
+          }
+
+          ponto_neve.sort(function (a, b) { return a.z - b.z })
+
+          maior_ponto_Z = ponto_neve[ponto_neve.length - 1] // maior Z
+
+          ponto_neve.sort(function (a, b) { return b.x - a.x })
+          for (let i = 0; i < 4; i++) {
+                maior_ponto_X = ponto_neve[i] // maior x
+                menor_ponto_X = ponto_neve[ponto_neve.length - 1 - i] // menor x
+                maior_ponto_X.z = maior_ponto_Z.z
+                menor_ponto_X.z = maior_ponto_Z.z
+                pontos.push(maior_ponto_X)
+                pontos.push(menor_ponto_X)
+          }
+
+          ponto_neve.sort(function (a, b) { return b.y - a.y })
+          for (let i = 0; i < 4; i++) {
+                maior_ponto_Y = ponto_neve[i] // maior y
+                menor_ponto_Y = ponto_neve[ponto_neve.length - 1 - i] // menor y
+                maior_ponto_Y.z = maior_ponto_Z.z
+                menor_ponto_Y.z = maior_ponto_Z.z
+                pontos.push(maior_ponto_Y)
+                pontos.push(menor_ponto_Y)
+          }
+
+          let figura_2 = new THREE.Mesh(new ConvexGeometry(pontos), new THREE.MeshLambertMaterial({ color: '#804000' }))
+          scene.add(figura_2)
+          figura_2.position.set(base.x, base.y, base.z)
+          figura_2.scale.set(scale, scale, scale)
+          figura_2.castShadow = true;
+          figura_2.receiveShadow = true;
+
+          let n_pontos_neve = ponto_neve.length
+          for (let index = 0; index < passos; index++) {
+                n_pontos_aux = Math.floor(n_pontos_neve - Math.floor(n_pontos_neve / passos) * index)
+                for (let j = 0; j < n_pontos_aux; j++) {
+                      let zaux = (z * THREE.MathUtils.seededRandom() + z * 0.6)
+                      let xaux = (x * THREE.MathUtils.seededRandom() + x * 0.6)
+                      let yaux = (y * THREE.MathUtils.seededRandom() + y * 0.6)
+                      ponto_neve.push(new THREE.Vector3(xaux * Math.cos(angle * j), yaux * Math.sin(angle * j), zaux))
+                }
+                x = (1 - THREE.MathUtils.seededRandom() * 0.3) * x
+                y = (1 - THREE.MathUtils.seededRandom() * 0.3) * y
+                z = z + 0.5
+                angle = Math.PI * 2 / n_pontos_aux
+          }
+
+          let figura_neve = new THREE.Mesh(new ConvexGeometry(ponto_neve), new THREE.MeshBasicMaterial({ color: '#f0f0f0' }))
+          scene.add(figura_neve)
+          figura_neve.position.set(base.x, base.y, base.z)
+          figura_neve.scale.set(scale, scale, scale)
+          figura_neve.castShadow = true;
+          figura_neve.receiveShadow = true;
+
+    } else {
+          let figura_2 = new THREE.Mesh(new ConvexGeometry(pontos), new THREE.MeshLambertMaterial({ color: '#804000' }))
+          scene.add(figura_2)
+          figura_2.position.set(base.x, base.y, base.z)
+          figura_2.scale.set(scale, scale, scale)
+          figura_2.castShadow = true;
+          figura_2.receiveShadow = true;
     }
-  }
-
+}
 create_Mountain(new THREE.Vector3(-700,1300,0), 16, false, 8, 30)
 create_Mountain(new THREE.Vector3(-350,1300,0), 30, true, 7, 40)
 create_Mountain(new THREE.Vector3(-100,1500,0), 25, true, 7, 35)
@@ -1366,15 +1384,15 @@ function randomTreePosition(num_arvores){
         var regiao = Math.round(getRandom(0,4.4));
         switch (regiao){
             case 0:
-            create_arvore(new THREE.Vector3(getRandom(-2400, -80), getRandom(-2400, 800), 0), 1, 0, getRandom(2,5)) //2 - 5
-            create_arvore(new THREE.Vector3(getRandom(-2400, -80), getRandom(-2400, 800), 0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
-            create_arvore(new THREE.Vector3(getRandom(-2400, -80), getRandom(-2400, 800), 0), 3, 0, getRandom(8,10))
+            create_arvore(new THREE.Vector3(getRandom(-2400, -60), getRandom(-2400, 800), 0), 1, 0, getRandom(2,5)) //2 - 5
+            create_arvore(new THREE.Vector3(getRandom(-2400, -60), getRandom(-2400, 800), 0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
+            create_arvore(new THREE.Vector3(getRandom(-2400, -60), getRandom(-2400, 800), 0), 3, 0, getRandom(8,10))
             break;
 
             case 1:
-            create_arvore(new THREE.Vector3(getRandom(80, 2400), getRandom(-2400, 800), 0), 1, 0, getRandom(2,5)) //2 - 5
-            create_arvore(new THREE.Vector3(getRandom(80, 2400), getRandom(-2400, 800), 0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
-            create_arvore(new THREE.Vector3(getRandom(80, 2400), getRandom(-2400, 800), 0), 3, 0, getRandom(8,10))
+            create_arvore(new THREE.Vector3(getRandom(60, 2400), getRandom(-2400, 800), 0), 1, 0, getRandom(2,5)) //2 - 5
+            create_arvore(new THREE.Vector3(getRandom(60, 2400), getRandom(-2400, 800), 0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
+            create_arvore(new THREE.Vector3(getRandom(60, 2400), getRandom(-2400, 800), 0), 3, 0, getRandom(8,10))
             break;
 
             case 2:
@@ -1398,8 +1416,8 @@ function randomTreePosition(num_arvores){
     }
 
 }
-randomTreePosition(100)
-
+randomTreePosition(100);
+//create_arvore(new THREE.Vector3(1200, -1000, 0), 2, degreesToRadians(getRandom(0,90)), 120) //rotation entre 0 e 90 e 4 até 6
 
 //-------------------- Trabalho 02 - Parte 3 - Modo cockpit --------------------
 //------------------------------------------------------------------------------
@@ -1440,7 +1458,9 @@ function render() {
         trackballControls.update();
         plano.visible = false;
         axesHelper.visible = true;
+        deixaInvisivel(false);
     }else{
+        deixaInvisivel(true);
         plano.visible = true;
         axesHelper.visible = false;
         movimento();
