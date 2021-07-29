@@ -920,7 +920,7 @@ curveObject.visible = true;
 scene.add(curveObject);
 
 
-const checkpointgeometry = new THREE.TorusGeometry( 20, 2, 3, 100 );
+const checkpointgeometry = new THREE.TorusGeometry( 20, 2, 15, 100 );
 const checkpointmaterial = new THREE.MeshBasicMaterial( { color: 0x8a6521, opacity: 0.8 , transparent: true } ); //0xfec2b8
 var checkpoint = [];
 // Cria os checkpoins com base na geometria Torus
@@ -1344,104 +1344,17 @@ randomTreePosition(50)
 
 // Função Auxiliar para entrar no modo cockpit
 function entraCockpit(){
-    //if(!pressionadoSpace){
-
-    // Salva os valores de posição vindos do modo normal
-    aviao_auxiliar.position.x = aviao_obj.fuselagem._estacionaria.position.x;
-    aviao_auxiliar.position.y = aviao_obj.fuselagem._estacionaria.position.y;
-    aviao_auxiliar.position.z = aviao_obj.fuselagem._estacionaria.position.z;
-    
-    camera_auxiliar.position.x = camera.position.x;
-    camera_auxiliar.position.y = camera.position.y;
-    camera_auxiliar.position.z = camera.position.z;
-    
-    cameraHolder_auxiliar.position.x = cameraHolder.position.x;
-    cameraHolder_auxiliar.position.y = cameraHolder.position.y;
-    cameraHolder_auxiliar.position.z = cameraHolder.position.z;
-
-    // Salva os valores de rotação vindos do modo normal
-    aviao_auxiliar.rotation.x = aviao_obj.fuselagem._estacionaria.rotation.x;
-    aviao_auxiliar.rotation.y = aviao_obj.fuselagem._estacionaria.rotation.y;
-    aviao_auxiliar.rotation.z = aviao_obj.fuselagem._estacionaria.rotation.z;
-    
-    camera_auxiliar.rotation.x = camera.rotation.x;
-    camera_auxiliar.rotation.y = camera.rotation.y;
-    camera_auxiliar.rotation.z = camera.rotation.z;
-    
-    cameraHolder_auxiliar.rotation.x = cameraHolder.rotation.x;
-    cameraHolder_auxiliar.rotation.y = cameraHolder.rotation.y;
-    cameraHolder_auxiliar.rotation.z = cameraHolder.rotation.z;
-
-    // Salva os valores de up vindos da camera no modo normal
-    camera_auxiliar.up.x = camera.up.x
-    camera_auxiliar.up.y = camera.up.y
-    camera_auxiliar.up.z = camera.up.z
-    
-
-    cameraHolder.position.set(0,0,0)
-    //cameraHolder.rotation.set(0,0,0)
-
     camera.position.set(0, -3.5, 5.65)
     camera.rotation.x = degreesToRadians(95);
-    //camera.up.set(0,1,0)
 }
 
 // Função Auxiliar para sair do modo cockpit
 function saiCockpit(){
-    
-    // Pega os valores salvos no item anterior para tirar o avião da origem
-    aviao_obj.fuselagem._estacionaria.position.set(
-        aviao_auxiliar.position.x,
-        aviao_auxiliar.position.y,
-        aviao_auxiliar.position.z
-    )
-
-    aviao_obj.fuselagem._estacionaria.rotation.set(
-        aviao_auxiliar.rotation.x,
-        aviao_auxiliar.rotation.y,
-        aviao_auxiliar.rotation.z
-    )
-    
-    // Reposiciona a camera e o cameraHolder a partir dos valores salvos anteriormente
-    cameraHolder.position.set(
-        cameraHolder_auxiliar.position.x,
-        cameraHolder_auxiliar.position.y,
-        cameraHolder_auxiliar.position.z
-    )
-
-    cameraHolder.rotation.set(
-        cameraHolder_auxiliar.rotation.x,
-        cameraHolder_auxiliar.rotation.y,
-        cameraHolder_auxiliar.rotation.z
-    )
-
-    camera.position.set(
-        camera_auxiliar.position.x,
-        camera_auxiliar.position.y,
-        camera_auxiliar.position.z
-    )
-
-    camera.rotation.set(
-        camera_auxiliar.rotation.x,
-        camera_auxiliar.rotation.y,
-        camera_auxiliar.rotation.z
-    )
-
-    camera.up.set(
-        camera_auxiliar.up.x,
-        camera_auxiliar.up.y,
-        camera_auxiliar.up.z
-    )
-    
+    // Reposiciona a camera
+    camera.position.set(0,-80,20)
+    camera.rotation.set(Math.PI/2,0,0)
+    camera.up.set(0,1,0)
 }
-
-
-
-
-
-
-
-
 
 
 
