@@ -35,7 +35,7 @@ function createStats() {
   document.body.appendChild( stats.domElement );
 
 
-//=================================================== FLIGHT SIMULATOR ===================================================
+//============================================ FLIGHT SIMULATOR - Trabalho 01 ============================================
 //========================================================================================================================
 
 //================================== Modelagem do Avião ==================================
@@ -404,10 +404,12 @@ function cria_afuselagem(ponto) {
     var leme_dir_meio = new THREE.Mesh(leme_meio_geometria, casco);
     leme_dir.add(leme_dir_meio);
     leme_dir_meio.position.set(leme_meio_geometria.parameters.width / 2, leme_meio_geometria.parameters.height, 0);
+    leme_dir_meio.castShadow = true;
 
     var leme_dir_frente = new THREE.Mesh(leme_frente_geometria, casco);
     leme_dir.add(leme_dir_frente);
     leme_dir_frente.position.set(0, - leme_meio_geometria.parameters.height / 2, 0);
+    leme_dir_frente.castShadow = true;
     // # fuselagem.fuselagem._movel = { conjunto_flap_direito : flap_leme_dir}
 
     // Esquerdo
@@ -425,6 +427,7 @@ function cria_afuselagem(ponto) {
     leme_cima.add(leme_cima_meio);
     leme_cima_meio.position.set(- leme_meio_geometria.parameters.height, - flap_leme_geometria.parameters.width * 0.3, 0);
     leme_cima_meio.rotateZ(Math.PI / 2);
+    leme_cima_meio.castShadow = true;
 
     var leme_cima_frente = new THREE.Mesh(leme_frente_geometria, casco);
     leme_cima.add(leme_cima_frente);
@@ -883,7 +886,12 @@ function movimento() {
 //=======================================================================================================================
 
 
-//Função Auxiliar para conseguir números randomicos em determinado intervalo
+/**
+ * Função Auxiliar para conseguir números randomicos em determinado intervalo
+ * @param {*} min Valor min para random
+ * @param {*} max Valor max para random
+ * @returns retorna um valor randômico
+ */
 function getRandom(min, max) {
     return Math.random() * (max - min) + min;
   }
@@ -923,7 +931,9 @@ scene.add(curveObject);
 const checkpointgeometry = new THREE.TorusGeometry( 20, 2, 15, 100 );
 const checkpointmaterial = new THREE.MeshBasicMaterial( { color: 0x8a6521, opacity: 0.8 , transparent: true } ); //0xfec2b8
 var checkpoint = [];
-// Cria os checkpoins com base na geometria Torus
+/**
+ * Cria os checkpoins com base na geometria Torus
+ */
 function defineCheckpoints(){
     for (var i=1, j=0; i<pontosDaLinha.length - 1; i++, j++){
         checkpoint[j] = new THREE.Mesh( checkpointgeometry, checkpointmaterial );
@@ -949,7 +959,9 @@ checkpoint[10].rotateY(Math.PI/2)
 checkpoint[11].rotateY(Math.PI/3)
 
 
-// Verifica se um checkpoint foi atravessado
+/**
+ * Verifica se um checkpoint foi atravessado
+ */
 function verificaCheckpoint(){
     //Posições do checkpoint
     var raio = checkpointgeometry.parameters.radius;
@@ -977,15 +989,22 @@ function verificaCheckpoint(){
 
 
 var information = new SecondaryBox("");
-// Função que acessa o campo de informação e o atualiza
+/**
+ * Função que acessa o campo de informação e o atualiza
+ * @param {*} text texto a ser exibido na tela
+ */
 function showInfoOnScreen(text){
-    information.changeMessage(text);
+    //information.changeMessage(text);
+    information.textnode.nodeValue = text;
 }
 showInfoOnScreen("Atravesse o primeiro checkpoint para começar!")
 
 
 var contadorChecks=0;
-// Conta quantos checkpoints foram atravessados. O valor é atualizado toda vez que um check é atravessado
+var contabrs = 0;
+/**
+ * Conta quantos checkpoints foram atravessados. O valor é atualizado toda vez que um check é atravessado
+ */
 function contaCheckpoints(){
     contadorChecks = 0;
     for (var j=0; j<checkpoint.length; j++){
@@ -993,26 +1012,48 @@ function contaCheckpoints(){
         contadorChecks++;
         showInfoOnScreen("Checkpoints: " + contadorChecks);
     }
-    if(contadorChecks == checkpoint.length){
+    if(contadorChecks == checkpoint.length ){
         aviao_obj.velocidade_atual = 0;
         aviao_obj.velocidade_atual = 0;
 
-        showInfoOnScreen("Parabéns por ter concluído o circuito!\n\nCheckpoints: " + contadorChecks + "\nTempo gasto: " + seconds + "s\n\nPor favor, pressione o botão F5 para reiniciar a simulação!");
+        if(contabrs<1){
+            contabrs++;
+            var y = document.getElementById('box');
+
+            information.textnode.nodeValue = "Parabéns por ter concluído o circuito!"
+            var br = document.createElement("br");
+            y.appendChild(br)
+            var br = document.createElement("br");
+            y.appendChild(br)
+
+            //information.textnode.nodeValue = "Parabéns por ter concluído o circuito!2";
+            var textNode = document.createTextNode("Checkpoints: " + contadorChecks);
+            y.appendChild(textNode)
+            var br = document.createElement("br");
+            y.appendChild(br)
+
+            var textNode = document.createTextNode("Tempo gasto: " + seconds + "s");
+            y.appendChild(textNode)
+            var br = document.createElement("br");
+            y.appendChild(br)
+            var br = document.createElement("br");
+            y.appendChild(br)
+
+            var textNode = document.createTextNode("Por favor, pressione o botão F5 para reiniciar a simulação!");
+            y.appendChild(textNode)
+            var br = document.createElement("br");
+            y.appendChild(br)
+        }
         notifyMe();
         contadorChecks = 0;
-        /*
-        document.getElementById(controls.infoBox.id).innerHTML = "";
-        controls.add("Parabéns por completar o percurso!")
-        controls.add("Checkpoint: " + contadorChecks)
-        controls.add("Tempo gasto: " + seconds + "s")
-        controls.add("Por favor, pressione F5 para reiniciar o jogo!")
-        */
     }
-    
 }
 
 var seconds = 0;
-// Conta quanto tempo passa do momento que o primeiro checkpoint é atravessado até o ultimo ser atravessado
+/**
+ * Conta quanto tempo passa do momento que o primeiro checkpoint é atravessado até o ultimo ser atravessado
+ * @returns retorna o numero de segundos caso o ultimo checkpoint tenha sido atravessado
+ */
 function contadorTempo(){
     if(checkpoint[0].visible==false && checkpoint[checkpoint.length-1].visible==true){
         seconds++;
@@ -1022,7 +1063,10 @@ function contadorTempo(){
 }
 setInterval(contadorTempo, 1000);
 
-// Mostra ao usuário o tempo que ele levou para completar o percurso
+
+/**
+ * Mostra uma notificação de desktop ao usuário, informando-o sobre tempo gasto para completar o percurso
+ */
 function notifyMe() {
     var not = "Parabéns por completar o circuito!" + 
     "\nCheckpoints:" + contadorChecks + 
@@ -1054,11 +1098,12 @@ function notifyMe() {
 
 //--------- Parte 2 - Ambiente e aspectos visuais (montanhas e árvores) ---------
 //-------------------------------------------------------------------------------
+
 // Adiciona uma luz hemisphereLight no ambiente
 var hemisphereLight = new THREE.HemisphereLight( "white", "white", 0.2 );
 scene.add( hemisphereLight );
 // Luz do sol direcional posicionada no canto superior direito do plano
-var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.75 );
+var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.80 );
 directionalLight.position.set(2500, 2500, 2000);
 directionalLight.distance = 1000;
 directionalLight.penumbra = 0.2;
@@ -1082,6 +1127,14 @@ scene.add( directionalLight );
 //scene.add( directionalLightHelper );
 
 
+/**
+ * Função de criação dos 3 tipos de montanhas
+ * @param {*} base posição
+ * @param {*} scale escala do objeto, essa escala aumenta o tamanho do objeto sem afetar o ponto z(altura) onde o objeto foi posicionado
+ * @param {*} neve booleano para definir se a montanha tem neve no pico
+ * @param {*} raio raio onde serão gerados os pontos da montanha
+ * @param {*} n_pontos_base numero de pontos para geração da montanha
+ */
 function create_Mountain(base, scale, neve, raio, n_pontos_base) { 
     let ponto_aux = []
     let passos = 6
@@ -1212,18 +1265,20 @@ function create_Mountain(base, scale, neve, raio, n_pontos_base) {
     }
   }
 
-
 create_Mountain(new THREE.Vector3(-700,1300,0), 16, false, 8, 30)
 create_Mountain(new THREE.Vector3(-350,1300,0), 30, true, 7, 40)
 create_Mountain(new THREE.Vector3(-100,1500,0), 25, true, 7, 35)
 
-
-
-
-
+/**
+ * Função de criação dos 3 tipos de arvores
+ * @param {*} base posição
+ * @param {*} tipo valor de 1 a 3 referente a arvore que você quer girar
+ * @param {*} rotation valor de rotação utilizado apenas na arvore de tipo 2
+ * @param {*} scale escala do objeto, essa escala aumenta o tamanho do objeto sem afetar o ponto z(altura) onde o objeto foi posicionado
+ */
 function create_arvore(base, tipo, rotation, scale) {
     switch (tipo) {
-      case 1:
+      case 1:   //1° Tipo de arvore
         let caule_1 = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 1, 5, 30),  new THREE.MeshLambertMaterial({color: '#804000'}))
         let folhas_1 = new THREE.Mesh(new THREE.DodecahedronGeometry(2.5,1) ,  new THREE.MeshLambertMaterial({color: '#408000'}))
         caule_1.scale.set(scale,scale,scale)
@@ -1236,7 +1291,7 @@ function create_arvore(base, tipo, rotation, scale) {
         folhas_1.castShadow = true;
         break;
 
-      case 2:
+      case 2:   //2° Tipo de arvore
         const caule_2_1 = new THREE.Mesh( new THREE.CylinderGeometry(0.6,0.6,3,30,1), new THREE.MeshLambertMaterial( { color : '#804000' } ) );
         caule_2_1.scale.set(scale,scale,scale)
         scene.add(caule_2_1)
@@ -1275,7 +1330,7 @@ function create_arvore(base, tipo, rotation, scale) {
         caule_2_1.rotateY(rotation)
         break;
   
-      case 3:
+      case 3:   //3° Tipo de arvore
         const caule_3 = new THREE.Mesh( new THREE.CylinderGeometry(0.4,0.1,6,30,1), new THREE.MeshLambertMaterial( { color : '#804000' } ) );
         caule_3.scale.set(scale,scale,scale)
         scene.add(caule_3)
@@ -1293,9 +1348,8 @@ function create_arvore(base, tipo, rotation, scale) {
         caule_3.castShadow = true;
         folha_3_1.castShadow = true;
         folha_3_2.castShadow = true;
-
         break;
-    
+
       default:
         console.error("ERRO: " + tipo + " incorespondente")
         break;
@@ -1303,52 +1357,64 @@ function create_arvore(base, tipo, rotation, scale) {
   }
 
 
+/**
+ * Função que posiciona as arvores randomicamente - EXCLUINDO A AREA DA MONTANHA E DA DECOLAGEM E POUSO DO AVIÃO
+ * @param {*} num_arvores numero de arvores que vc quer posicionar na cena
+ */
 function randomTreePosition(num_arvores){
     for(var i=0; i<num_arvores ;i++){
         var regiao = Math.round(getRandom(0,4.4));
         switch (regiao){
             case 0:
-            create_arvore(new THREE.Vector3(getRandom(-2400,-200), getRandom(-2400,800), 0), 1, 0, getRandom(2,5)) //2 - 5
-            create_arvore(new THREE.Vector3(getRandom(-2400,-200), getRandom(-2400,800), 0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
-            create_arvore(new THREE.Vector3(getRandom(-2400,-200), getRandom(-2400,800), 0), 3, 0, getRandom(8,10))
+            create_arvore(new THREE.Vector3(getRandom(-2400, -80), getRandom(-2400, 800), 0), 1, 0, getRandom(2,5)) //2 - 5
+            create_arvore(new THREE.Vector3(getRandom(-2400, -80), getRandom(-2400, 800), 0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
+            create_arvore(new THREE.Vector3(getRandom(-2400, -80), getRandom(-2400, 800), 0), 3, 0, getRandom(8,10))
             break;
+
             case 1:
-            create_arvore(new THREE.Vector3(getRandom(200,2400), getRandom(-2400,800), 0), 1, 0, getRandom(2,5)) //2 - 5
-            create_arvore(new THREE.Vector3(getRandom(200,2400), getRandom(-2400,800), 0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
-            create_arvore(new THREE.Vector3(getRandom(200,2400), getRandom(-2400,800), 0), 3, 0, getRandom(8,10))
+            create_arvore(new THREE.Vector3(getRandom(80, 2400), getRandom(-2400, 800), 0), 1, 0, getRandom(2,5)) //2 - 5
+            create_arvore(new THREE.Vector3(getRandom(80, 2400), getRandom(-2400, 800), 0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
+            create_arvore(new THREE.Vector3(getRandom(80, 2400), getRandom(-2400, 800), 0), 3, 0, getRandom(8,10))
             break;
+
             case 2:
             create_arvore(new THREE.Vector3(getRandom(300,2400), getRandom(810,2400), 0), 1, 0, getRandom(2,5)) //2 - 5
             create_arvore(new THREE.Vector3(getRandom(300,2400), getRandom(810,2400), 0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
             create_arvore(new THREE.Vector3(getRandom(300,2400), getRandom(810,2400), 0), 3, 0, getRandom(8,10))
             break;
+
             case 3:
             create_arvore(new THREE.Vector3(getRandom(-2400,300), getRandom(1800,2400), 0), 1, 0, getRandom(2,5)) //2 - 5
             create_arvore(new THREE.Vector3(getRandom(-2400,300), getRandom(1800,2400), 0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
             create_arvore(new THREE.Vector3(getRandom(-2400,300), getRandom(1800,2400), 0), 3, 0, getRandom(8,10))
             break;
+
             case 4:
-            create_arvore(new THREE.Vector3(getRandom(-2400,800), getRandom(-1000,2400), 0), 1, 0, getRandom(2,5)) //2 - 5
-            create_arvore(new THREE.Vector3(getRandom(-2400,800), getRandom(-1000,2400), 0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
-            create_arvore(new THREE.Vector3(getRandom(-2400,800), getRandom(-1000,2400), 0), 3, 0, getRandom(8,10))
+            create_arvore(new THREE.Vector3(getRandom(-2400, -910), getRandom(800, 1800), 0), 1, 0, getRandom(2,5)) //2 - 5
+            create_arvore(new THREE.Vector3(getRandom(-2400, -910), getRandom(800, 1800), 0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
+            create_arvore(new THREE.Vector3(getRandom(-2400, -910), getRandom(800, 1800), 0), 3, 0, getRandom(8,10))
             break;
         }
     }
 
 }
-randomTreePosition(50)
+randomTreePosition(100)
 
 
 //-------------------- Trabalho 02 - Parte 3 - Modo cockpit --------------------
 //------------------------------------------------------------------------------
 
-// Função Auxiliar para entrar no modo cockpit
+/**
+ * Função Auxiliar para entrar no modo cockpit
+ */
 function entraCockpit(){
     camera.position.set(0, -3.5, 5.65)
     camera.rotation.x = degreesToRadians(95);
 }
 
-// Função Auxiliar para sair do modo cockpit
+/**
+ * Função Auxiliar para sair do modo cockpit
+ */
 function saiCockpit(){
     // Reposiciona a camera
     camera.position.set(0,-80,20)
@@ -1357,12 +1423,6 @@ function saiCockpit(){
 }
 
 
-
-
-
-
-
-  
 // Enable Shadows in the Renderer
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.BasicShadowMap;
@@ -1374,6 +1434,7 @@ function render() {
     stats.update(); // Update FPS
     keyboardUpdate();
     requestAnimationFrame(render);
+    renderer.setClearColor(0x0193df);
     renderer.render(scene, camera); // Render scene
     if(isSimulacao){
         trackballControls.update();
@@ -1384,7 +1445,7 @@ function render() {
         axesHelper.visible = false;
         movimento();
 
-        //Flight School
+        //Flight School - Trabalho 2
         verificaCheckpoint();
     }
 }
