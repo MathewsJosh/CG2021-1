@@ -672,9 +672,8 @@ var pressionadoLeft = false;
 var pressionadoRight = false;
 var pressionadoC = false;
 var pressionadoSpace = false;
-var pressionadoD = true;
 
-function deixaInvisivel(visivel){
+function controlaVisibilidade(visivel){
     aviao_obj.fuselagem._estacionaria.visible = true;
     for(var i=0; i<scene.children.length; i++){
         if (scene.children[i].name!="aviao" && scene.children[i].name!="hemisphereLight" && scene.children[i].name!="dirligh")
@@ -689,6 +688,7 @@ function keyboardUpdate() {
     // Muda o tipo de câmera
     if(!pressionadoC){
         if (keyboard.down("space")) {
+            controlaVisibilidade(true);
             pressionadoSpace = !pressionadoSpace;
             mudaCamera();
         }
@@ -972,31 +972,33 @@ checkpoint[10].rotateY(Math.PI/2)
 checkpoint[11].rotateY(Math.PI/3)
 
 
+var numeroDoCheck = 0;
 /**
  * Verifica se um checkpoint foi atravessado
  */
 function verificaCheckpoint(){
-    //Posições do checkpoint
-    var raio = checkpointgeometry.parameters.radius;
-    var cx, cy, cz;
+    if(numeroDoCheck<checkpoint.length){
+        var raio = checkpointgeometry.parameters.radius;
 
-    //Posições do avião
-    var ax = aviao_obj.fuselagem._estacionaria.position.x;
-    var ay = aviao_obj.fuselagem._estacionaria.position.y;
-    var az = aviao_obj.fuselagem._estacionaria.position.z;
-    
-    for (var j=0; j<checkpoint.length; j++){
-        cx=checkpoint[j].position.x;
-        cy=checkpoint[j].position.y;
-        cz=checkpoint[j].position.z;
+        //Posições dos checkpoints
+        var cx=checkpoint[numeroDoCheck].position.x;
+        var cy=checkpoint[numeroDoCheck].position.y;
+        var cz=checkpoint[numeroDoCheck].position.z;
+        
+        //Posições do avião
+        var ax = aviao_obj.fuselagem._estacionaria.position.x;
+        var ay = aviao_obj.fuselagem._estacionaria.position.y;
+        var az = aviao_obj.fuselagem._estacionaria.position.z;
 
         // Se o checkpoint foi atravessado, ele é removido da cena e outro checkpoint é adicionado
         if( ((ax>cx-raio) && (ax<cx+raio)) && ((ay>cy-raio) && (ay<cy+raio)) && ((az>cz-raio) && (az<cz+raio))){
-            checkpoint[j].visible=false;
-            scene.remove(checkpoint[j]);
-            scene.add(checkpoint[j+1]);
+            checkpoint[numeroDoCheck].visible=false;
+            scene.remove(checkpoint[numeroDoCheck]);
+            scene.add(checkpoint[numeroDoCheck+1]);
             contaCheckpoints();
+            numeroDoCheck++;
         }
+        console.log(numeroDoCheck)
     }
 }
 
@@ -1123,7 +1125,7 @@ var hemisphereLight = new THREE.HemisphereLight( "white", "white", 0.2 );
 hemisphereLight.name = "hemisphereLight"
 scene.add( hemisphereLight );
 // Luz do sol direcional posicionada no canto superior direito do plano
-var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.80 );
+var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
 directionalLight.name = "dirligh"
 directionalLight.position.set(2500, 2500, 2000);
 directionalLight.distance = 1000;
@@ -1458,9 +1460,8 @@ function render() {
         trackballControls.update();
         plano.visible = false;
         axesHelper.visible = true;
-        deixaInvisivel(false);
+        controlaVisibilidade(false);
     }else{
-        deixaInvisivel(true);
         plano.visible = true;
         axesHelper.visible = false;
         movimento();
