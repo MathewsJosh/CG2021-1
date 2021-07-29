@@ -676,7 +676,7 @@ var pressionadoSpace = false;
 function controlaVisibilidade(visivel){
     aviao_obj.fuselagem._estacionaria.visible = true;
     for(var i=0; i<scene.children.length; i++){
-        if (scene.children[i].name!="aviao" && scene.children[i].name!="hemisphereLight" && scene.children[i].name!="dirligh")
+        if (scene.children[i].name!="aviao" && scene.children[i].name!="hemisphereLight" && scene.children[i].name!="dirligh" && scene.children[i].name!="curve")
             scene.children[i].visible = visivel;
     }
 }
@@ -690,6 +690,8 @@ function keyboardUpdate() {
         if (keyboard.down("space")) {
             controlaVisibilidade(true);
             pressionadoSpace = !pressionadoSpace;
+            if(pressionadoSpace!=false)
+                curveObject.visible = true;
             mudaCamera();
         }
     }
@@ -937,7 +939,8 @@ const curvegeometry = new THREE.BufferGeometry().setFromPoints( curvepoints);
 const curvematerial = new THREE.LineBasicMaterial( { color : 0xff0000 } );
 const curveObject = new THREE.Line( curvegeometry, curvematerial );
 curveObject.rotateX(Math.PI/2)
-curveObject.visible = true;
+curveObject.visible = false;
+curveObject.name = "curve";
 scene.add(curveObject);
 
 
