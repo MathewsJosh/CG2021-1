@@ -693,6 +693,8 @@ function keyboardUpdate() {
             if(pressionadoSpace!=false)
                 curveObject.visible = true;
             mudaCamera();
+            if(isSimulacao)
+                curveObject.visible = false;
         }
     }
 
@@ -1001,7 +1003,6 @@ function verificaCheckpoint(){
             contaCheckpoints();
             numeroDoCheck++;
         }
-        console.log(numeroDoCheck)
     }
 }
 
@@ -1374,7 +1375,7 @@ function create_arvore(base, tipo, rotation, scale) {
         break;
 
       default:
-        console.error("ERRO: " + tipo + " incorespondente")
+        console.error("ERRO: " + tipo + " incorrespondente")
         break;
     }
   }
@@ -1421,7 +1422,7 @@ function randomTreePosition(num_arvores){
     }
 
 }
-randomTreePosition(100);
+randomTreePosition(25);
 //create_arvore(new THREE.Vector3(1200, -1000, 0), 2, degreesToRadians(getRandom(0,90)), 120) //rotation entre 0 e 90 e 4 até 6
 
 //-------------------- Trabalho 02 - Parte 3 - Modo cockpit --------------------
