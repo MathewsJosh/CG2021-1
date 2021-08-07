@@ -35,6 +35,21 @@ var planeMaterial = new THREE.MeshBasicMaterial({
 var plane = new THREE.Mesh(planeGeometry, planeMaterial);
 scene.add(plane);
 
+// Painel de FPS
+function createStats() {
+  stats.setMode(0);
+  
+  stats.domElement.style.position = 'absolute';
+  stats.domElement.style.left = '0';
+  stats.domElement.style.top = '0';
+
+  return stats;
+}
+// To show FPS
+stats = createStats();
+document.body.appendChild( stats.domElement );
+
+
 // Adicionando uma esfera
 const sphere_geometry = new THREE.SphereGeometry(1, 32, 32);                        // Geometria da esfera
 const sphere_material = new THREE.MeshBasicMaterial({color: "rgba(20, 150, 20)"});   // Material da esfera      cor:  {color: "#5ad5ed"} 

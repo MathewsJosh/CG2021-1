@@ -42,15 +42,6 @@ var keyboard = new KeyboardState();
 // Enable mouse rotation, pan, zoom etc.
 var trackballControls = new TrackballControls(camera, renderer.domElement);
 
-// Listen window size changes
-window.addEventListener(
-  "resize",
-  function () {
-    onWindowResize(camera, renderer);
-  },
-  false
-);
-
 // Painel de FPS
 function createStats() {
   stats.setMode(0);
@@ -65,6 +56,15 @@ function createStats() {
 stats = createStats();
 document.body.appendChild( stats.domElement );
 
+
+// Listen window size changes
+window.addEventListener(
+  "resize",
+  function () {
+    onWindowResize(camera, renderer);
+  },
+  false
+);
 
 var groundPlane = createGroundPlane(4.0, 4.0, 50, 50); // width and height
 groundPlane.rotateX(degreesToRadians(-90));
@@ -566,7 +566,7 @@ function showInformation() {
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
 function render() {
-  stats.update(); //Update Fps
+  stats.update();
   trackballControls.update();
   rotate();
   controlaLuzes();

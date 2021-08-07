@@ -9,6 +9,20 @@ import {initRenderer,
 var scene = new THREE.Scene();    // Create main scene
 var renderer = initRenderer();    // View function in util/utils
 
+// Painel de FPS
+function createStats() {
+  stats.setMode(0);
+  
+  stats.domElement.style.position = 'absolute';
+  stats.domElement.style.left = '0';
+  stats.domElement.style.top = '0';
+
+  return stats;
+}
+// To show FPS
+stats = createStats();
+document.body.appendChild( stats.domElement );
+
 // Main camera
 var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
 camera.lookAt(0, 0, 0);

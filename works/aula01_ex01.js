@@ -18,6 +18,20 @@ var trackballControls = new TrackballControls( camera, renderer.domElement );
 var axesHelper = new THREE.AxesHelper( 12 );
 scene.add( axesHelper );
 
+// Painel de FPS
+function createStats() {
+  stats.setMode(0);
+  
+  stats.domElement.style.position = 'absolute';
+  stats.domElement.style.left = '0';
+  stats.domElement.style.top = '0';
+
+  return stats;
+}
+// To show FPS
+stats = createStats();
+document.body.appendChild( stats.domElement );
+
 // create the ground plane
 var planeGeometry = new THREE.PlaneGeometry(20, 20);
 planeGeometry.translate(0.0, 0.0, -0.02); // To avoid conflict with the axeshelper

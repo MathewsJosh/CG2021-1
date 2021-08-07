@@ -28,6 +28,20 @@ var animationOn = true; // control if animation is on or of
 var axesHelper = new THREE.AxesHelper( 12 );
 scene.add( axesHelper );
 
+// Painel de FPS
+function createStats() {
+  stats.setMode(0);
+  
+  stats.domElement.style.position = 'absolute';
+  stats.domElement.style.left = '0';
+  stats.domElement.style.top = '0';
+
+  return stats;
+}
+// To show FPS
+stats = createStats();
+document.body.appendChild( stats.domElement );
+
 // Base sphere
 var sphereGeometry = new THREE.SphereGeometry(0.2, 32, 32);
 var sphereMaterial = new THREE.MeshPhongMaterial( {color:'rgb(180,180,255)'} );

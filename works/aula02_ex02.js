@@ -20,6 +20,20 @@ camera.position.set(20,20,20)
 //camera.rotation.set(Math.PI/2,0,0)
 //camera.up.set(0,1,0)
 
+// Painel de FPS
+function createStats() {
+  stats.setMode(0);
+  
+  stats.domElement.style.position = 'absolute';
+  stats.domElement.style.left = '0';
+  stats.domElement.style.top = '0';
+
+  return stats;
+}
+// To show FPS
+stats = createStats();
+document.body.appendChild( stats.domElement );
+
 // Set angles of rotation
 //var angle = [-1.57, 0, 0, 0, 0, 0, 0, 0, 0]; // In degreesToRadians
 var angulo_C1 = [0,0,degreesToRadians(270)]
