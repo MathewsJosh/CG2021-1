@@ -1000,7 +1000,7 @@ function verificaCheckpoint(){
             checkpoint[numeroDoCheck].visible=false;
             scene.remove(checkpoint[numeroDoCheck]);
             scene.add(checkpoint[numeroDoCheck+1]);
-            contaCheckpoints();
+            contaCheckpoints();                                     //Chamada para atualizar o textbox
             numeroDoCheck++;
         }
     }
@@ -1027,14 +1027,14 @@ var contabrs = 0;
 function contaCheckpoints(){
     contadorChecks = 0;
     for (var j=0; j<checkpoint.length; j++){
-        if(checkpoint[j].visible == false)
+        if(checkpoint[j].visible == false)  //Se for o primeiro começa a exibir quantos checkpoints foram atravessados
         contadorChecks++;
         //showInfoOnScreen("Checkpoints: " + contadorChecks);
         if(contabrs==0)
             information.textnode.nodeValue = "Checkpoints: " + contadorChecks;
     }
 
-    if(contadorChecks == checkpoint.length ){
+    if(contadorChecks == checkpoint.length ){   //Se for o ultimo, exibe o tempo final
         aviao_obj.velocidade_atual = 0;
         aviao_obj.velocidade_atual = 0;
 
