@@ -83,7 +83,7 @@ var floor = textureLoader.load('../assets/textures/marble.png');
 
 // Apply texture to the 'map' property of the planes
 upPlane.material.map = floor;
-upPlane.material.map.repeat.set(5, 5);
+//upPlane.material.map.repeat.set(5, 5);
 upPlane.material.map.wrapS = THREE.RepeatWrapping;
 upPlane.material.map.wrapT = THREE.RepeatWrapping;
 /*
