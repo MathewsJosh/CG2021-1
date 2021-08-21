@@ -3,6 +3,8 @@ import Stats from "../build/jsm/libs/stats.module.js";
 import {TrackballControls} from "../build/jsm/controls/TrackballControls.js";
 import KeyboardState from "../libs/util/KeyboardState.js";
 import {ConvexGeometry} from '../build/jsm/geometries/ConvexGeometry.js'; // importante
+import {MTLLoader} from '../build/jsm/loaders/MTLLoader.js';
+import {OBJLoader} from '../build/jsm/loaders/OBJLoader.js'; 
 import {initRenderer,
         InfoBox,
         createGroundPlane,
@@ -295,7 +297,7 @@ function cria_afuselagem(ponto) {
     // Motor
     var protecao_geometria = new THREE.TorusGeometry(cabine_geometria.parameters.radiusBottom, cabine_geometria.parameters.radiusBottom / 5, 30, 6);
     var protecao = new THREE.Mesh(protecao_geometria, metal_cinza);
-    protecao.castShadow = true;
+    
     cabine.add(protecao);
     protecao.rotateX(Math.PI / 2);
     protecao.position.set(0, - cabine_geometria.parameters.height / 2, 0);
@@ -325,6 +327,7 @@ function cria_afuselagem(ponto) {
     pa04.rotateY(Math.PI / 2);
     pa04.position.set(- pa_geometria.parameters.depth / 2, 0, 0);
 
+    protecao.castShadow = true;
     cone_motor.castShadow = true;
     pa01.castShadow = true;
     pa02.castShadow = true;
@@ -411,10 +414,12 @@ function cria_afuselagem(ponto) {
     var leme_esq_meio = new THREE.Mesh(leme_meio_geometria, casco);
     leme_esq.add(leme_esq_meio);
     leme_esq_meio.position.set(- leme_meio_geometria.parameters.width / 2, leme_meio_geometria.parameters.height, 0);
+    leme_esq_meio.castShadow = true;
 
     var leme_esq_frente = new THREE.Mesh(leme_frente_geometria, casco);
     leme_esq.add(leme_esq_frente);
     leme_esq_frente.position.set(0, - leme_meio_geometria.parameters.height / 2, 0);
+    leme_esq_frente.castShadow = true;
     // # fuselagem.fuselagem._movel = { conjunto_flap_esquerdo : flap_leme_esq}
 
     // Meio
@@ -544,9 +549,8 @@ var cameraHolder = new THREE.Object3D();
 cameraHolder.add(camera)
 scene.add(cameraHolder);
 
-
+var controls = new InfoBox();
 function buildInterface() { // Mostrando as informações na tela
-    var controls = new InfoBox();
     controls.add("Simulador de voo - Controles");
     controls.addParagraph(); // Setas:https://textkool.com/pt/symbols/arrows-symbols
     controls.add("# Q  /  A - Acelera/Freia");
@@ -554,8 +558,9 @@ function buildInterface() { // Mostrando as informações na tela
     controls.add("# ↤ /  ↦ - Vira para Esquerda/Direita");
     controls.add("#  SPACE  - Camera em Inspeção/Simulador");
     controls.addParagraph()
-    controls.add("# C - Camera no modo cockpit");
     controls.add("#  ENTER  - Camera em Inspeção/Simulador");
+    controls.add("# C - Camera no modo cockpit");
+    controls.add("# H - Exibe/Desabilita instruções");
 
     controls.show();
 }
@@ -602,6 +607,8 @@ var cameraHolder_auxiliar = {
 // Muda e controla o comportamento das cameras
 function mudaCamera() { //Muda a camera toda
     if (!isSimulacao) {// Mudança da simulação para a inspeção
+        ambienteS.pause();
+        airplaneS.pause();
         // Salva os valores de posição vindos da simulação
         aviao_auxiliar.position.x = aviao_obj.fuselagem._estacionaria.position.x
         aviao_auxiliar.position.y = aviao_obj.fuselagem._estacionaria.position.y
@@ -644,6 +651,8 @@ function mudaCamera() { //Muda a camera toda
         camera.rotation.set(Math.PI/2,0,0)
         camera.up.set(0,1,0)
     }else{// Mudança da inspeção para a simulação  
+        ambienteS.play();
+        airplaneS.play();
         // Pega os valores salvos no item anterior para tirar o avião da origem
         aviao_obj.fuselagem._estacionaria.position.set(
             aviao_auxiliar.position.x,
@@ -693,8 +702,6 @@ function mudaCamera() { //Muda a camera toda
 }
 
 
-
-
 //============================= Configurações de Movimentação =============================
 // Controle de botões pressionados
 var pressionadoUP = false;
@@ -703,6 +710,7 @@ var pressionadoLeft = false;
 var pressionadoRight = false;
 var pressionadoC = false;
 var pressionadoSpace = false;
+var pressionadoH = false;
 
 function controlaVisibilidade(visivel){
     aviao_obj.fuselagem._estacionaria.visible = true;
@@ -734,10 +742,24 @@ function keyboardUpdate() {
     if (keyboard.up("D")) {
     }
 
+    //Oculta as instruções
+    if (keyboard.down("H")){
+        var y = document.getElementById("InfoxBox");
+        pressionadoH = !pressionadoH;
+        if (pressionadoH){
+            y.style.display = 'none';
+        }
+        else{
+            y.style.display = 'block';
+        }
+    }
+
+    // Exibe a linha do percurso
     if (keyboard.down("enter")) { // Mostra o caminho                                           //FLIGHT SCHOOL - T2
         curveObject.visible = !curveObject.visible;
     }
 
+    // Acelera o avião e controla toda a movimentação
     if(!isSimulacao){
         if (keyboard.pressed("Q")) { // Aceleração progressiva
             if (aviao_obj.velocidade_atual < aviao_obj.velocidade_Max) {
@@ -745,12 +767,15 @@ function keyboardUpdate() {
             }
         }
 
+        // Entra no modo cockpit
         if (keyboard.down("C")) { //Modo Cockpit                                             //FLIGHT SCHOOL - T2
             pressionadoC = !pressionadoC;
             if(pressionadoC){
+                airplaneS.setVolume(1)
                 entraCockpit();
             }
             else{
+                airplaneS.setVolume(0.3)
                 saiCockpit();
             }
 
@@ -1026,7 +1051,7 @@ function verificaCheckpoint(){
         var ay = aviao_obj.fuselagem._estacionaria.position.y;
         var az = aviao_obj.fuselagem._estacionaria.position.z;
 
-        // Se o checkpoint foi atravessado, ele é removido da cena e outro checkpoint é adicionado
+        // Se o checkpoint foi atravessado, ele é removido da cena e outro checkpoint é adicionado e um som é tocado
         if( ((ax>cx-raio) && (ax<cx+raio)) && ((ay>cy-raio) && (ay<cy+raio)) && ((az>cz-raio) && (az<cz+raio))){
             checkpoint[numeroDoCheck].visible=false;
             scene.remove(checkpoint[numeroDoCheck]);
@@ -1058,11 +1083,14 @@ var contabrs = 0;
 function contaCheckpoints(){
     contadorChecks = 0;
     for (var j=0; j<checkpoint.length; j++){
-        if(checkpoint[j].visible == false)  //Se for o primeiro começa a exibir quantos checkpoints foram atravessados
+        if(checkpoint[j].visible == false){  //Se for o primeiro começa a exibir quantos checkpoints foram atravessados
+        CheckS.play();
         contadorChecks++;
-        //showInfoOnScreen("Checkpoints: " + contadorChecks);
-        if(contabrs==0)
-            information.textnode.nodeValue = "Checkpoints: " + contadorChecks;
+        }
+        if(contabrs==0){
+            information.textnode.nodeValue = "Checkpoints: " + contadorChecks + " / " + checkpoint.length + " (" + (contadorChecks/checkpoint.length*100).toFixed(2) + "%)"
+        }
+            
     }
 
     if(contadorChecks == checkpoint.length ){   //Se for o ultimo, exibe o tempo final
@@ -1083,7 +1111,7 @@ function contaCheckpoints(){
             var br = document.createElement("br");
             y.appendChild(br)
 
-            var textNode = document.createTextNode("Checkpoints: " + contadorChecks);
+            var textNode = document.createTextNode("Checkpoints: " + contadorChecks + " / " + checkpoint.length + " (" + (contadorChecks/checkpoint.length*100).toFixed(2) +"%)");
             y.appendChild(textNode)
             var br = document.createElement("br");
             y.appendChild(br)
@@ -1112,6 +1140,7 @@ var seconds = 0;
  */
 function contadorTempo(){
     if(checkpoint[0].visible==false && checkpoint[checkpoint.length-1].visible==true){
+        information.textnode.nodeValue = "Checkpoints: " + contadorChecks + " / " + checkpoint.length + " (" + (contadorChecks/checkpoint.length*100).toFixed(2) + "%)" + " Tempo atual: " + seconds;
         seconds++;
     }
     else
@@ -1320,9 +1349,11 @@ scene.add( directionalLight );
           figura_2.receiveShadow = true;
     }
 }
-create_Mountain(new THREE.Vector3(-700,1300,.1), 16, false, 8, 30)
-create_Mountain(new THREE.Vector3(-350,1300,.1), 30, true, 7, 40)
-create_Mountain(new THREE.Vector3(-100,1500,.1), 25, true, 7, 35)
+create_Mountain(new THREE.Vector3(-700,1300,1), 16, false, 8, 30)
+create_Mountain(new THREE.Vector3(-350,1300,1), 30, true, 7, 40)
+create_Mountain(new THREE.Vector3(-100,1500,1), 25, true, 7, 35)
+
+
 
 /**
  * Função de criação dos 3 tipos de arvores
@@ -1484,6 +1515,69 @@ function saiCockpit(){
 
 //----------------------- Trabalho 03 - Parte 2 - Cidade -----------------------
 //------------------------------------------------------------------------------
+
+function loadOBJFile(modelPath, modelName, desiredScale, angle, visibility)
+{
+  var currentModel = modelName;
+  var manager = new THREE.LoadingManager();
+
+  var mtlLoader = new MTLLoader( manager );
+  mtlLoader.setPath( modelPath );
+  mtlLoader.load( modelName + '.mtl', function ( materials ) {
+      materials.preload();
+
+      var objLoader = new OBJLoader( manager );
+      objLoader.setMaterials(materials);
+      objLoader.setPath(modelPath);
+      objLoader.load( modelName + ".obj", function ( obj ) {
+        obj.visible = visibility;
+        obj.name = modelName;
+        // Set 'castShadow' property for each children of the group
+        obj.traverse( function (child)
+        {
+          child.castShadow = true;
+        });
+
+        obj.traverse( function( node )
+        {
+          if( node.material ) node.material.side = THREE.DoubleSide;
+        });
+
+        var obj = normalizeAndRescale(obj, desiredScale);
+        var obj = fixPosition(obj);
+        obj.rotateY(degreesToRadians(angle));
+
+        scene.add ( obj );
+        objectArray.push( obj );
+
+        // Pick the index of the first visible object
+        if(modelName == 'plane')
+        {
+          activeObject = objectArray.length-1;
+        }
+      }, onProgress, onError );
+  });
+}
+// Normalize scale and multiple by the newScale
+function normalizeAndRescale(obj, newScale)
+{
+  var scale = getMaxSize(obj); // Available in 'utils.js'
+  obj.scale.set(newScale * (1.0/scale),
+                newScale * (1.0/scale),
+                newScale * (1.0/scale));
+  return obj;
+}
+
+loadOBJFile("objeto externo\\Statue_v1\\", "Statue", 3, 0, true)
+
+
+
+
+
+
+
+
+
 var prediosMaterial = new THREE.MeshLambertMaterial({color: 0xffffff, side: THREE.DoubleSide}); //0031e7
 var predio1Geometria = new THREE.CylinderGeometry(50, 50, 250, 8, 300, true);
 var predio1 = new THREE.Mesh(predio1Geometria, prediosMaterial);
@@ -1552,7 +1646,7 @@ skybox.rotation.x = Math.PI/2
 skybox.rotation.y = Math.PI/2
 scene.add(skybox);
 
-skybox.anisotropy = renderer.getMaxAnisotropy();
+skybox.anisotropy = renderer.capabilities.getMaxAnisotropy();
 skybox.material.map.wrapS = THREE.RepeatWrapping;
 skybox.material.map.wrapT = THREE.RepeatWrapping;
 skybox.material.map.minFilter = THREE.LinearFilter;
@@ -1561,6 +1655,251 @@ skybox.material.map.magFilter = THREE.LinearFilter;
 
 
 
+
+
+
+//------------------- Trabalho 03 - Parte 5 - Elementos Adicionais -------------------
+//------------------------------------------------------------------------------------
+
+
+//Tela de carregamento
+
+/*
+const loadingManager = new THREE.LoadingManager( () => {
+	
+    const loadingScreen = document.getElementById( 'loading-screen' );
+    loadingScreen.classList.add( 'fade-out' );
+    
+    // optional: remove loader from DOM via event listener
+    loadingScreen.addEventListener( 'transitionend', onTransitionEnd );
+    
+} );
+
+*/
+/*
+const manager = new THREE.LoadingManager();
+manager.onStart = function ( url, itemsLoaded, itemsTotal ) {
+
+	console.log( 'Started loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+
+};
+
+manager.onLoad = function ( ) {
+
+	console.log( 'Loading complete!');
+
+};
+
+
+manager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
+
+	console.log( 'Loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+
+};
+
+manager.onError = function ( url ) {
+
+	console.log( 'There was an error loading ' + url );
+
+};
+*/
+/*
+const loader = new THREE.OBJLoader( manager );
+loader.load( 'file.obj', function ( object ) {
+
+	//
+
+} );
+*/
+/*
+var sphereMaterial = new THREE.MeshBasicMaterial();
+
+var onProgress = function ( xhr ) {
+  if ( xhr.lengthComputable ) {
+    var percentComplete = xhr.loaded / xhr.total * 100;
+    console.log( Math.round(percentComplete, 2) + '% downloaded' );
+  }
+};
+
+var loader = new THREE.TextureLoader();
+var texture = loader.load("___4MB_IMAGE.JPG___", undefined, onProgress);
+sphereMaterial.map = texture;
+*/
+
+/*
+//initialize the manager to handle all loaded events (currently just works for OBJ and image files)
+var manager = new THREE.LoadingManager();
+
+manager.onProgress = function (item, loaded, total) {
+    console.log(item, loaded, total);
+};
+manager.onLoad = function () {
+    console.log('all items loaded');
+};
+manager.onError = function () {
+    console.log('there has been an error');
+};
+*/
+/*FUNCIONALFUNCIONALFUNCIONALFUNCIONALFUNCIONALFUNCIONALFUNCIONALFUNCIONALFUNCIONALFUNCIONALFUNCIONALFUNCIONALFUNCIONALFUNCIONALFUNCIONALFUNCIONALFUNCIONALFUNCIONAL
+THREE.DefaultLoadingManager.onStart = function ( url, itemsLoaded, itemsTotal ) {
+
+	console.log( 'Started loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+
+};
+
+THREE.DefaultLoadingManager.onLoad = function ( ) {
+
+	console.log( 'Loading Complete!');
+
+};
+
+
+THREE.DefaultLoadingManager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
+
+	console.log( 'Loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+
+};
+
+THREE.DefaultLoadingManager.onError = function ( url ) {
+
+	console.log( 'There was an error loading ' + url );
+
+};
+*/
+/*
+// Iniciando o loading manager
+const manager = new THREE.LoadingManager();
+
+let curLoaded;
+let totalLoaded;
+
+const loadingText = document.getElementById("loading-progress");
+const loadingBar = document.getElementById("progress-bar");
+const loadingScreen = document.getElementById("loading-screen");
+
+const updateLoading = () => {
+  loadingText.innerText = `${curLoaded}/${totalLoaded}`;
+  loadingBar.style.width = `${Math.floor((curLoaded / totalLoaded) * 100)}%`;
+};
+
+manager.onStart = (url, itemsLoaded, itemsTotal) => {
+  curLoaded = itemsLoaded;
+  totalLoaded = itemsTotal;
+  updateLoading();
+};
+
+manager.onProgress = (url, itemsLoaded, itemsTotal) => {
+  curLoaded = itemsLoaded;
+  totalLoaded = itemsTotal;
+  updateLoading();
+};
+*/
+
+
+/*
+var listener = new THREE.AudioListener();
+camera.add( listener );
+
+
+// Adiciona música ambiente
+function audioLoop(audiopath, loop, remove){
+    // Create a listener and add it to que camera
+    const sound = new THREE.Audio( listener );  
+
+    var ambientSound = new THREE.AudioLoader();
+    ambientSound.load( audiopath, function( buffer ) { //Música Ambiente - Tim Maia - Ela Partiu.mp3
+        sound.setBuffer( buffer );
+        if (loop)
+            sound.setLoop(true);
+        sound.setVolume(0.05);
+        console.log(sound)
+        
+        if(remove){
+            for(var i=0; i<camera.children.length; i++){
+                if (camera.children[i].name!=audiopath)
+                    camera.remove(camera.children[i])
+            }
+            //sound.stop()
+            sound.pause();
+            sound.currentTime = 0
+        }
+        //return sound
+        //sound.play(); // Will play when start button is pressed
+    });
+    //console.log(camera.children)
+    return sound;
+}
+var x = audioLoop('audios\\Música Ambiente - Tim Maia - Ela Partiu.mp3', true, false) //Tirar esse coment antes de enviar
+x.play()
+//audioLoop('audios\\Som do aviao.mp3', true, false)
+*/
+
+const audioListener = new THREE.AudioListener();
+camera.add(audioListener);
+
+const audioLoader = new THREE.AudioLoader();
+
+/*
+const inicializaAudioFinish = (audioListener, audioLoader) => {
+    const finishAudio = new THREE.Audio(audioListener);
+  
+    audioLoader.load("audios\\Música Ambiente - Tim Maia - Ela Partiu.mp3", function (buffer) {
+      finishAudio.setBuffer(buffer);
+      finishAudio.setVolume(1);
+    });
+  
+    return finishAudio;
+};
+
+const finishAudio = inicializaAudioFinish(audioListener, audioLoader);
+*/
+function ambientSound(audioListener, audioLoader){
+    const audio = new THREE.Audio(audioListener);
+  
+    audioLoader.load("audios\\Música Ambiente - Tim Maia - Ela Partiu.mp3", function (buffer) {
+      audio.setBuffer(buffer);
+      audio.setLoop(true)
+      audio.setVolume(0.1);
+    });
+    return audio;
+};
+
+function airplaneSound(audioListener, audioLoader){
+    const audio = new THREE.Audio(audioListener);
+  
+    audioLoader.load("audios\\Som do aviao.mp3", function (buffer) {
+      audio.setBuffer(buffer);
+      audio.setLoop(true)
+      audio.setVolume(0.3);
+    });
+    return audio;
+};
+
+function CheckSound(audioListener, audioLoader){
+    const audio = new THREE.Audio(audioListener);
+  
+    audioLoader.load("audios\\Checkpoints.mp3", function (buffer) {
+      audio.setBuffer(buffer);
+      audio.setVolume(1);
+    });
+    return audio;
+};
+
+function FinishSound(audioListener, audioLoader){
+    const audio = new THREE.Audio(audioListener);
+  
+    audioLoader.load("audios\\Finalizar Percurso.mp3", function (buffer) {
+      audio.setBuffer(buffer);
+      audio.setVolume(1);
+    });
+    return audio;
+};
+
+
+var ambienteS = ambientSound(audioListener, audioLoader);
+var airplaneS = airplaneSound(audioListener, audioLoader);
+var CheckS = CheckSound(audioListener, audioLoader);
+var FinishS = FinishSound(audioListener, audioLoader);
 
 
 // Enable Shadows in the Renderer
