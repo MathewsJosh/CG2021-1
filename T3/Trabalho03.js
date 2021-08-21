@@ -436,10 +436,10 @@ function cria_afuselagem(ponto) {
     //-------------------------------------------------------------------------------
     //-- Use TextureLoader to load texture files
     var textureLoader = new THREE.TextureLoader();
-    var lataria1 = textureLoader.load('texturas\\lataria1.jpg');
-    var lataria2 = textureLoader.load('texturas\\lataria2.jpg');
-    var lataria3 = textureLoader.load('texturas\\lataria3.jpg');
-    var lataria4 = textureLoader.load('texturas\\lataria4.jpg');
+    var lataria1 = textureLoader.load('texturas\\lataria\\lataria1.jpg');
+    var lataria2 = textureLoader.load('texturas\\lataria\\lataria2.jpg');
+    var lataria3 = textureLoader.load('texturas\\lataria\\lataria3.jpg');
+    var lataria4 = textureLoader.load('texturas\\lataria\\lataria4.jpg');
 
     //cilindro_enfeite01.material.map = lataria1;
     cilindro_apoio01.material.map = lataria1;
@@ -513,7 +513,7 @@ plano.receiveShadow = true;
 //------------------------------------------------------------------------------
 //-- Use TextureLoader to load texture files
 var textureLoader = new THREE.TextureLoader();
-var chao1 = textureLoader.load('texturas\\chao1.jpg');
+var chao1 = textureLoader.load('texturas\\chao\\chao1.jpg');
 plano.material.map = chao1;
 plano.material.map.repeat.set(20, 20);
 plano.material.map.wrapS = THREE.RepeatWrapping;
@@ -1502,7 +1502,7 @@ scene.add(predio1);
 
 //-- Use TextureLoader to load texture files
 var textureLoader = new THREE.TextureLoader();
-var building1 = textureLoader.load('texturas\\predio11.jpg');
+var building1 = textureLoader.load('texturas\\predio\\predio11.jpg');
 
 
 
@@ -1515,46 +1515,6 @@ predio1.material.map = building1;
 
 //----------------------- Trabalho 03 - Parte 4 - Skybox -----------------------
 //------------------------------------------------------------------------------
-/*
-const loader = new THREE.TextureLoader();
-//const bgTexture = loader.load('texturas\\sky2.jpg',
-const textureSky = loader.load('texturas\\sky5.jpg',
-() => {
-    //textureSky.rotation = 270;
-    textureSky.wrapS = THREE.RepeatWrapping
-    textureSky.offset.x = Math.PI/2;
-    console.log(scene)
-    const rt = new THREE.WebGLCubeRenderTarget(textureSky.image.height);
-    rt.fromEquirectangularTexture(renderer, textureSky);
-    scene.background = rt.texture;
-    //scene.rotation.x = -Math.PI/2
-    //scene.rotation.z = -Math.PI/4
-});
-*/
-
-// Cria um plano que recebe sombras
-//var plano2 = createGroundPlane(plano.geometry.parameters.width, plano.geometry.parameters.height, 40, 40); // width, height, resolutionW, resolutionH
-
-/*
-const planoGeometry2 = new THREE.PlaneGeometry( plano.geometry.parameters.width, plano.geometry.parameters.height );
-const planoMaterial2 = new THREE.MeshBasicMaterial( {color: 0xffffff, side: THREE.DoubleSide} );
-const plano2 = new THREE.Mesh( planoGeometry2, planoMaterial2 );
-//plano2.shininess = 10000;
-scene.add(plano2);
-plano2.position.y = 2500;
-plano2.position.z = plano.geometry.parameters.height/6;
-plano2.rotation.x = Math.PI/2
-
-
-const loader = new THREE.TextureLoader();
-const textureSky = loader.load('texturas\\clouds\\clouds1_north.bmp')
-plano2.material.map = textureSky;
-
-plano2.anisotropy = renderer.getMaxAnisotropy();
-plano2.material.map.minFilter = THREE.LinearFilter;
-
-*/
-
 
 //Referência: https://codinhood.com/post/create-skybox-with-threejs
 const ft = new THREE.TextureLoader().load("texturas\\clouds\\clouds_north.bmp");
@@ -1585,31 +1545,19 @@ function createMaterialArray(filename) {
     return materialArray;
 }
 
-
 const materialArray = createMaterialArray("clouds");
 var skyboxGeo = new THREE.BoxGeometry(9999, 9999, 10000);
 var skybox = new THREE.Mesh(skyboxGeo, materialArray);
 skybox.rotation.x = Math.PI/2
 skybox.rotation.y = Math.PI/2
 scene.add(skybox);
-skybox.DoubleSide = true;
-skybox.material.map.wrapS = THREE.RepeatWrapping;
-skybox.material.map.wrapT = THREE.RepeatWrapping;
 
 skybox.anisotropy = renderer.getMaxAnisotropy();
+skybox.material.map.wrapS = THREE.RepeatWrapping;
+skybox.material.map.wrapT = THREE.RepeatWrapping;
 skybox.material.map.minFilter = THREE.LinearFilter;
 skybox.material.map.magFilter = THREE.LinearFilter;
 
-
-
-
-
-
-
-//console.log(scene.background)
-//textureSky.rotation = 100
-//console.log(textureSky)
-//scene.background = bgTexture;
 
 
 
