@@ -3,6 +3,7 @@ import Stats from "../build/jsm/libs/stats.module.js";
 import {TrackballControls} from "../build/jsm/controls/TrackballControls.js";
 import KeyboardState from "../libs/util/KeyboardState.js";
 import {ConvexGeometry} from '../build/jsm/geometries/ConvexGeometry.js'; // importante
+import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js';
 import {MTLLoader} from '../build/jsm/loaders/MTLLoader.js';
 import {OBJLoader} from '../build/jsm/loaders/OBJLoader.js'; 
 import {initRenderer,
@@ -10,7 +11,8 @@ import {initRenderer,
         createGroundPlane,
         SecondaryBox,
         onWindowResize,
-        degreesToRadians,} from "../libs/util/util.js";
+        degreesToRadians,
+        getMaxSize} from "../libs/util/util.js";
 
 var stats = new Stats(); // To show FPS information
 var scene = new THREE.Scene(); // Create main scene
@@ -68,13 +70,13 @@ function cria_afuselagem(ponto) {
     fuselagem.ponto = aux;
     var fuselagem_objeto = new THREE.Mesh();
     // Material do aviao
-    var casco = new THREE.MeshPhongMaterial({color: 0xffffff, shininess:"100"});
-    var metal_cilindro = new THREE.MeshPhongMaterial({color: 0x700202, shininess:"100"}); //595959
-    var metal_cinza = new THREE.MeshPhongMaterial({color: 0xa6a2a2, shininess:"100"}); //595959
-    var metal_ouro = new THREE.MeshPhongMaterial({color: 0xe1d663, shininess:"100"});
-    var tinta_azul = new THREE.MeshPhongMaterial({color: 0x0031e7, shininess:"100"}); //0031e7
-    var tinta_cone = new THREE.MeshPhongMaterial({color: 0x585e5a, shininess:"100"}); //0031e7
-    var casco_degradado = new THREE.MeshPhongMaterial({color: 0xc0c0c0, shininess:"100"});
+    var casco = new THREE.MeshPhongMaterial({color: 0xffffff, shininess:"100", side: THREE.DoubleSide});
+    var metal_cilindro = new THREE.MeshPhongMaterial({color: 0x700202, shininess:"100", side: THREE.DoubleSide}); //595959
+    var metal_cinza = new THREE.MeshPhongMaterial({color: 0xa6a2a2, shininess:"100", side: THREE.DoubleSide}); //595959
+    var metal_ouro = new THREE.MeshPhongMaterial({color: 0xe1d663, shininess:"100", side: THREE.DoubleSide});
+    var tinta_azul = new THREE.MeshPhongMaterial({color: 0x0031e7, shininess:"100", side: THREE.DoubleSide}); //0031e7
+    var tinta_cone = new THREE.MeshPhongMaterial({color: 0x585e5a, shininess:"100", side: THREE.DoubleSide}); //0031e7
+    var casco_degradado = new THREE.MeshPhongMaterial({color: 0xc0c0c0, shininess:"100", side: THREE.DoubleSide});
 
     fuselagem.fuselagem.materiais = {
         casco: casco,
@@ -169,7 +171,7 @@ function cria_afuselagem(ponto) {
     var cilindro_enfeite01 = new THREE.Mesh(cilindro_enfeite_geometria, metal_cinza);
     asa_cima.add(cilindro_enfeite01);
     cilindro_enfeite01.rotateZ(Math.PI / 2);
-    cilindro_enfeite01.position.set(0, - asa_prancha.parameters.height / 2 + cilindro_enfeite_geometria.parameters.radiusBottom / 2, 0);
+    cilindro_enfeite01.position.set(0, - asa_prancha.parameters.height / 2 + cilindro_enfeite_geometria.parameters.radiusBottom / 2-0.01, 0);
 
     var cilindro_enfeite02 = new THREE.Mesh(cilindro_enfeite_geometria, metal_cinza);
     asa_baixo.add(cilindro_enfeite02);
@@ -448,15 +450,50 @@ function cria_afuselagem(ponto) {
 
     //cilindro_enfeite01.material.map = lataria1;
     cilindro_apoio01.material.map = lataria1;
+    cilindro_apoio01.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    cilindro_apoio01.material.map.wrapS = THREE.RepeatWrapping;
+    cilindro_apoio01.material.map.wrapT = THREE.RepeatWrapping;
+    cilindro_apoio01.material.map.minFilter = THREE.LinearFilter;
+    cilindro_apoio01.material.map.magFilter = THREE.LinearFilter;
+
     cilindro_apoio45_01.material.map = lataria2;
+    cilindro_apoio45_01.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    cilindro_apoio45_01.material.map.wrapS = THREE.RepeatWrapping;
+    cilindro_apoio45_01.material.map.wrapT = THREE.RepeatWrapping;
+    cilindro_apoio45_01.material.map.minFilter = THREE.LinearFilter;
+    cilindro_apoio45_01.material.map.magFilter = THREE.LinearFilter;
+
     cabine.material.map = lataria3;
+    cabine.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    cabine.material.map.wrapS = THREE.RepeatWrapping;
+    cabine.material.map.wrapT = THREE.RepeatWrapping;
+    cabine.material.map.minFilter = THREE.NearestFilter;
+    cabine.material.map.magFilter = THREE.NearestFilter;
+
     flap_asa_esquerda_cima.material.map = lataria3;
+    flap_asa_esquerda_cima.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    flap_asa_esquerda_cima.material.map.wrapS = THREE.RepeatWrapping;
+    flap_asa_esquerda_cima.material.map.wrapT = THREE.RepeatWrapping;
+    flap_asa_esquerda_cima.material.map.minFilter = THREE.LinearFilter;
+    flap_asa_esquerda_cima.material.map.magFilter = THREE.LinearFilter;
     //cabine.material.map.wrapS = THREE.RepeatWrapping;
     //cabine.material.map.wrapT = THREE.RepeatWrapping;
+
     pa01.material.map = lataria4;
+    pa01.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    pa01.material.map.wrapS = THREE.RepeatWrapping;
+    pa01.material.map.wrapT = THREE.RepeatWrapping;
+    pa01.material.map.minFilter = THREE.LinearFilter;
+    pa01.material.map.magFilter = THREE.LinearFilter;
     //pa01.material.map.wrapS = THREE.RepeatWrapping;
     //pa01.material.map.wrapT = THREE.RepeatWrapping;
+
     cone_motor.material.map = lataria4;
+    cone_motor.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    cone_motor.material.map.wrapS = THREE.RepeatWrapping;
+    cone_motor.material.map.wrapT = THREE.RepeatWrapping;
+    cone_motor.material.map.minFilter = THREE.LinearFilter;
+    cone_motor.material.map.magFilter = THREE.LinearFilter;
 
 
 
@@ -653,6 +690,11 @@ function mudaCamera() { //Muda a camera toda
     }else{// Mudança da inspeção para a simulação  
         ambienteS.play();
         airplaneS.play();
+
+        //loadOBJFile('../assets/objects/', 'plane', 3, 0, true);
+        //loadOBJFile("objetos\\Statue_v1\\", "Statue", 3, 0, true)
+
+
         // Pega os valores salvos no item anterior para tirar o avião da origem
         aviao_obj.fuselagem._estacionaria.position.set(
             aviao_auxiliar.position.x,
@@ -1059,6 +1101,10 @@ function verificaCheckpoint(){
             contaCheckpoints();                                     //Chamada para atualizar o textbox
             numeroDoCheck++;
         }
+        if(numeroDoCheck>=1){
+            //information.textnode.nodeValue = "Checkpoints: " + contadorChecks + " / " + checkpoint.length + " (" + (contadorChecks/checkpoint.length*100).toFixed(2) + "%)"
+            information.textnode.nodeValue = "Checkpoints: " + contadorChecks + " / " + checkpoint.length + " (" + (contadorChecks/checkpoint.length*100).toFixed(2) + "%)" + " Tempo atual: " + seconds + "s";
+        }
     }
 }
 
@@ -1087,9 +1133,11 @@ function contaCheckpoints(){
         CheckS.play();
         contadorChecks++;
         }
-        if(contabrs==0){
-            information.textnode.nodeValue = "Checkpoints: " + contadorChecks + " / " + checkpoint.length + " (" + (contadorChecks/checkpoint.length*100).toFixed(2) + "%)"
-        }
+        /*
+        if(contabrs>=0){
+            //information.textnode.nodeValue = "Checkpoints: " + contadorChecks + " / " + checkpoint.length + " (" + (contadorChecks/checkpoint.length*100).toFixed(2) + "%)"
+            information.textnode.nodeValue = "Checkpoints: " + contadorChecks + " / " + checkpoint.length + " (" + (contadorChecks/checkpoint.length*100).toFixed(2) + "%)" + " Tempo atual: " + seconds;
+        }*/
             
     }
 
@@ -1099,9 +1147,15 @@ function contaCheckpoints(){
 
         if(contabrs<1){
             contabrs++;
+            
+            // Pausa os sons de fundo e do avião e toca o som de percurso finalizado
+            airplaneS.stop()
+            ambienteS.stop()
+            FinishS.play()
 
             var y = document.getElementById('box');
-            information.textnode.nodeValue = "C ";
+            information.textnode.nodeValue = "";
+            showInfoOnScreen("")
             var textNode = document.createTextNode("");
             y.appendChild(textNode)
             
@@ -1140,7 +1194,7 @@ var seconds = 0;
  */
 function contadorTempo(){
     if(checkpoint[0].visible==false && checkpoint[checkpoint.length-1].visible==true){
-        information.textnode.nodeValue = "Checkpoints: " + contadorChecks + " / " + checkpoint.length + " (" + (contadorChecks/checkpoint.length*100).toFixed(2) + "%)" + " Tempo atual: " + seconds;
+        //information.textnode.nodeValue = "Checkpoints: " + contadorChecks + " / " + checkpoint.length + " (" + (contadorChecks/checkpoint.length*100).toFixed(2) + "%)" + " Tempo atual: " + seconds;
         seconds++;
     }
     else
@@ -1317,7 +1371,7 @@ scene.add( directionalLight );
           figura_2.scale.set(scale, scale, scale)
           figura_2.castShadow = true;
           figura_2.receiveShadow = true;
-
+          
           let n_pontos_neve = ponto_neve.length
           for (let index = 0; index < passos; index++) {
                 n_pontos_aux = Math.floor(n_pontos_neve - Math.floor(n_pontos_neve / passos) * index)
@@ -1375,6 +1429,26 @@ function create_arvore(base, tipo, rotation, scale) {
         folhas_1.position.set(0, folhas_1.geometry.parameters.radius,0)
         caule_1.castShadow = true;
         folhas_1.castShadow = true;
+
+        var textureLoader = new THREE.TextureLoader();
+        var madeira = textureLoader.load('texturas\\madeira\\madeira1.jpg');
+        caule_1.material.map = madeira;
+        caule_1.anisotropy = renderer.capabilities.getMaxAnisotropy();
+        caule_1.material.map.wrapS = THREE.RepeatWrapping;
+        caule_1.material.map.wrapT = THREE.RepeatWrapping;
+        caule_1.material.map.minFilter = THREE.LinearFilter;
+        caule_1.material.map.magFilter = THREE.LinearFilter;
+
+        var folha = textureLoader.load('texturas\\folhas\\folhas1.jpg');
+        folhas_1.material.map = folha;
+        folhas_1.anisotropy = renderer.capabilities.getMaxAnisotropy();
+        folhas_1.material.map.wrapS = THREE.RepeatWrapping;
+        folhas_1.material.map.wrapT = THREE.RepeatWrapping;
+        folhas_1.material.map.minFilter = THREE.LinearFilter;
+        folhas_1.material.map.magFilter = THREE.LinearFilter;
+
+
+
         break;
 
       case 2:   //2° Tipo de arvore
@@ -1412,6 +1486,54 @@ function create_arvore(base, tipo, rotation, scale) {
         folha_2_1.castShadow = true;
         folha_2_2.castShadow = true;
         folha_2_3.castShadow = true;
+
+        var textureLoader = new THREE.TextureLoader();
+        var madeira = textureLoader.load('texturas\\madeira\\madeira4.jpg');
+
+        caule_2_1.material.map = madeira;
+        caule_2_1.anisotropy = renderer.capabilities.getMaxAnisotropy();
+        caule_2_1.material.map.wrapS = THREE.RepeatWrapping;
+        caule_2_1.material.map.wrapT = THREE.RepeatWrapping;
+        caule_2_1.material.map.minFilter = THREE.LinearFilter;
+        caule_2_1.material.map.magFilter = THREE.LinearFilter;
+
+        caule_2_2.material.map = madeira;
+        caule_2_2.anisotropy = renderer.capabilities.getMaxAnisotropy();
+        caule_2_2.material.map.wrapS = THREE.RepeatWrapping;
+        caule_2_2.material.map.wrapT = THREE.RepeatWrapping;
+        caule_2_2.material.map.minFilter = THREE.LinearFilter;
+        caule_2_2.material.map.magFilter = THREE.LinearFilter;
+
+        caule_2_3.material.map = madeira;
+        caule_2_3.anisotropy = renderer.capabilities.getMaxAnisotropy();
+        caule_2_3.material.map.wrapS = THREE.RepeatWrapping;
+        caule_2_3.material.map.wrapT = THREE.RepeatWrapping;
+        caule_2_3.material.map.minFilter = THREE.LinearFilter;
+        caule_2_3.material.map.magFilter = THREE.LinearFilter;
+        
+        var folha = textureLoader.load('texturas\\folhas\\folhas2.jpg');
+        
+        folha_2_1.material.map = folha;
+        folha_2_1.anisotropy = renderer.capabilities.getMaxAnisotropy();
+        folha_2_1.material.map.wrapS = THREE.RepeatWrapping;
+        folha_2_1.material.map.wrapT = THREE.RepeatWrapping;
+        folha_2_1.material.map.minFilter = THREE.LinearFilter;
+        folha_2_1.material.map.magFilter = THREE.LinearFilter;
+
+        folha_2_2.material.map = folha;
+        folha_2_2.anisotropy = renderer.capabilities.getMaxAnisotropy();
+        folha_2_2.material.map.wrapS = THREE.RepeatWrapping;
+        folha_2_2.material.map.wrapT = THREE.RepeatWrapping;
+        folha_2_2.material.map.minFilter = THREE.LinearFilter;
+        folha_2_2.material.map.magFilter = THREE.LinearFilter;
+
+        folha_2_3.material.map = folha;
+        folha_2_3.anisotropy = renderer.capabilities.getMaxAnisotropy();
+        folha_2_3.material.map.wrapS = THREE.RepeatWrapping;
+        folha_2_3.material.map.wrapT = THREE.RepeatWrapping;
+        folha_2_3.material.map.minFilter = THREE.LinearFilter;
+        folha_2_3.material.map.magFilter = THREE.LinearFilter;
+
         
         caule_2_1.rotateY(rotation)
         break;
@@ -1434,6 +1556,35 @@ function create_arvore(base, tipo, rotation, scale) {
         caule_3.castShadow = true;
         folha_3_1.castShadow = true;
         folha_3_2.castShadow = true;
+
+        var textureLoader = new THREE.TextureLoader();
+        var madeira = textureLoader.load('texturas\\madeira\\madeira3.jpg');
+        
+        caule_3.material.map = madeira;
+        caule_3.anisotropy = renderer.capabilities.getMaxAnisotropy();
+        caule_3.material.map.wrapS = THREE.RepeatWrapping;
+        caule_3.material.map.wrapT = THREE.RepeatWrapping;
+        caule_3.material.map.minFilter = THREE.LinearFilter;
+        caule_3.material.map.magFilter = THREE.LinearFilter;
+
+        var folha = textureLoader.load('texturas\\folhas\\folhas4.jpg');
+        
+        folha_3_1.material.map = folha;
+        folha_3_1.anisotropy = renderer.capabilities.getMaxAnisotropy();
+        folha_3_1.material.map.wrapS = THREE.RepeatWrapping;
+        folha_3_1.material.map.wrapT = THREE.RepeatWrapping;
+        folha_3_1.material.map.minFilter = THREE.LinearFilter;
+        folha_3_1.material.map.magFilter = THREE.LinearFilter;
+
+        folha_3_2.material.map = folha;
+        folha_3_2.anisotropy = renderer.capabilities.getMaxAnisotropy();
+        folha_3_2.material.map.wrapS = THREE.RepeatWrapping;
+        folha_3_2.material.map.wrapT = THREE.RepeatWrapping;
+        folha_3_2.material.map.minFilter = THREE.LinearFilter;
+        folha_3_2.material.map.magFilter = THREE.LinearFilter;
+
+
+
         break;
 
       default:
@@ -1516,59 +1667,45 @@ function saiCockpit(){
 //----------------------- Trabalho 03 - Parte 2 - Cidade -----------------------
 //------------------------------------------------------------------------------
 
-function loadOBJFile(modelPath, modelName, desiredScale, angle, visibility)
+var objeto = new THREE.Object3D();
+function loadOBJFile(modelPath, modelName, position, desiredScale, angle, visibility)
 {
-  var currentModel = modelName;
-  var manager = new THREE.LoadingManager();
+    var currentModel = modelName;
+    var manager = new THREE.LoadingManager( );
 
-  var mtlLoader = new MTLLoader( manager );
-  mtlLoader.setPath( modelPath );
-  mtlLoader.load( modelName + '.mtl', function ( materials ) {
-      materials.preload();
+    var mtlLoader = new MTLLoader( manager );
+    mtlLoader.setPath( modelPath );
+    mtlLoader.load( modelName + '.mtl', function ( materials ) {
+        materials.preload();
+        var objLoader = new OBJLoader( manager );
+        objLoader.setMaterials(materials);
+        objLoader.setPath(modelPath);
 
-      var objLoader = new OBJLoader( manager );
-      objLoader.setMaterials(materials);
-      objLoader.setPath(modelPath);
-      objLoader.load( modelName + ".obj", function ( obj ) {
-        obj.visible = visibility;
-        obj.name = modelName;
-        // Set 'castShadow' property for each children of the group
-        obj.traverse( function (child)
-        {
-          child.castShadow = true;
+        objLoader.load( modelName + ".obj", function ( obj ) {
+            obj.visible = visibility;
+            obj.name = modelName;
+
+            // Set 'castShadow' property for each children of the group
+            obj.traverse( function (child) { child.castShadow = true;});
+            obj.traverse( function( node ){ if( node.material ) node.material.side = THREE.DoubleSide; });
+
+            obj.position.set(position.x, position.y, position.z)
+            obj.scale.set(desiredScale, desiredScale, desiredScale)
+            obj.rotateX(degreesToRadians(angle));
+
+            scene.add ( obj );
+            objeto = obj;
         });
-
-        obj.traverse( function( node )
-        {
-          if( node.material ) node.material.side = THREE.DoubleSide;
-        });
-
-        var obj = normalizeAndRescale(obj, desiredScale);
-        var obj = fixPosition(obj);
-        obj.rotateY(degreesToRadians(angle));
-
-        scene.add ( obj );
-        objectArray.push( obj );
-
-        // Pick the index of the first visible object
-        if(modelName == 'plane')
-        {
-          activeObject = objectArray.length-1;
-        }
-      }, onProgress, onError );
-  });
-}
-// Normalize scale and multiple by the newScale
-function normalizeAndRescale(obj, newScale)
-{
-  var scale = getMaxSize(obj); // Available in 'utils.js'
-  obj.scale.set(newScale * (1.0/scale),
-                newScale * (1.0/scale),
-                newScale * (1.0/scale));
-  return obj;
+    });
 }
 
-loadOBJFile("objeto externo\\Statue_v1\\", "Statue", 3, 0, true)
+
+
+
+var OBJposition = new THREE.Vector3(50, 20, 0)
+loadOBJFile("objetos\\Estatua\\", "Statue", OBJposition, 0.1, 0, false)
+OBJposition = new THREE.Vector3(-50, 5, 0)
+loadOBJFile("objetos\\Gazebo\\", "gazebo", OBJposition, 10, 90, true)
 
 
 
@@ -1578,6 +1715,21 @@ loadOBJFile("objeto externo\\Statue_v1\\", "Statue", 3, 0, true)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 var prediosMaterial = new THREE.MeshLambertMaterial({color: 0xffffff, side: THREE.DoubleSide}); //0031e7
 var predio1Geometria = new THREE.CylinderGeometry(50, 50, 250, 8, 300, true);
 var predio1 = new THREE.Mesh(predio1Geometria, prediosMaterial);
@@ -1604,7 +1756,7 @@ var building1 = textureLoader.load('texturas\\predio\\predio11.jpg');
 predio1.material.map = building1;
 //cabine.material.map.wrapS = THREE.RepeatWrapping;
 //cabine.material.map.wrapT = THREE.RepeatWrapping;
-
+*/
 
 
 //----------------------- Trabalho 03 - Parte 4 - Skybox -----------------------
@@ -1796,63 +1948,11 @@ manager.onProgress = (url, itemsLoaded, itemsTotal) => {
 */
 
 
-/*
-var listener = new THREE.AudioListener();
-camera.add( listener );
-
-
-// Adiciona música ambiente
-function audioLoop(audiopath, loop, remove){
-    // Create a listener and add it to que camera
-    const sound = new THREE.Audio( listener );  
-
-    var ambientSound = new THREE.AudioLoader();
-    ambientSound.load( audiopath, function( buffer ) { //Música Ambiente - Tim Maia - Ela Partiu.mp3
-        sound.setBuffer( buffer );
-        if (loop)
-            sound.setLoop(true);
-        sound.setVolume(0.05);
-        console.log(sound)
-        
-        if(remove){
-            for(var i=0; i<camera.children.length; i++){
-                if (camera.children[i].name!=audiopath)
-                    camera.remove(camera.children[i])
-            }
-            //sound.stop()
-            sound.pause();
-            sound.currentTime = 0
-        }
-        //return sound
-        //sound.play(); // Will play when start button is pressed
-    });
-    //console.log(camera.children)
-    return sound;
-}
-var x = audioLoop('audios\\Música Ambiente - Tim Maia - Ela Partiu.mp3', true, false) //Tirar esse coment antes de enviar
-x.play()
-//audioLoop('audios\\Som do aviao.mp3', true, false)
-*/
-
 const audioListener = new THREE.AudioListener();
 camera.add(audioListener);
 
 const audioLoader = new THREE.AudioLoader();
 
-/*
-const inicializaAudioFinish = (audioListener, audioLoader) => {
-    const finishAudio = new THREE.Audio(audioListener);
-  
-    audioLoader.load("audios\\Música Ambiente - Tim Maia - Ela Partiu.mp3", function (buffer) {
-      finishAudio.setBuffer(buffer);
-      finishAudio.setVolume(1);
-    });
-  
-    return finishAudio;
-};
-
-const finishAudio = inicializaAudioFinish(audioListener, audioLoader);
-*/
 function ambientSound(audioListener, audioLoader){
     const audio = new THREE.Audio(audioListener);
   
@@ -1902,6 +2002,13 @@ var CheckS = CheckSound(audioListener, audioLoader);
 var FinishS = FinishSound(audioListener, audioLoader);
 
 
+
+
+
+
+
+
+
 // Enable Shadows in the Renderer
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.BasicShadowMap;
@@ -1911,10 +2018,10 @@ render();
 // Função de renderização do Three.js
 function render() {
     stats.update(); // Update FPS
-    keyboardUpdate();
     requestAnimationFrame(render);
     renderer.setClearColor(0x0193df);
     renderer.render(scene, camera); // Render scene
+    keyboardUpdate();
     if(isSimulacao){
         trackballControls.update();
         plano.visible = false;
