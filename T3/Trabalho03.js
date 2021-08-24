@@ -11,14 +11,15 @@ import {initRenderer,
         createGroundPlane,
         SecondaryBox,
         onWindowResize,
-        degreesToRadians,
-        getMaxSize} from "../libs/util/util.js";
+        degreesToRadians} from "../libs/util/util.js";
 
 var stats = new Stats(); // To show FPS information
 var scene = new THREE.Scene(); // Create main scene
 var renderer = initRenderer(); // View function in util/utils
 var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100000);
 
+// Inicia o carregamento de texturas
+var textureLoader = new THREE.TextureLoader();
 
 // Painel de FPS
 function createStats() {
@@ -442,7 +443,6 @@ function cria_afuselagem(ponto) {
     //------------ Trabalho 03 - Parte 1 - Mapeamento de textura do avião -----------
     //-------------------------------------------------------------------------------
     //-- Use TextureLoader to load texture files
-    var textureLoader = new THREE.TextureLoader();
     var lataria1 = textureLoader.load('texturas\\lataria\\lataria1.jpg');
     var lataria2 = textureLoader.load('texturas\\lataria\\lataria2.jpg');
     var lataria3 = textureLoader.load('texturas\\lataria\\lataria3.jpg');
@@ -453,47 +453,45 @@ function cria_afuselagem(ponto) {
     cilindro_apoio01.anisotropy = renderer.capabilities.getMaxAnisotropy();
     cilindro_apoio01.material.map.wrapS = THREE.RepeatWrapping;
     cilindro_apoio01.material.map.wrapT = THREE.RepeatWrapping;
-    cilindro_apoio01.material.map.minFilter = THREE.LinearFilter;
-    cilindro_apoio01.material.map.magFilter = THREE.LinearFilter;
+    // cilindro_apoio01.material.map.minFilter = THREE.LinearFilter;
+    // cilindro_apoio01.material.map.magFilter = THREE.LinearFilter;
 
     cilindro_apoio45_01.material.map = lataria2;
     cilindro_apoio45_01.anisotropy = renderer.capabilities.getMaxAnisotropy();
     cilindro_apoio45_01.material.map.wrapS = THREE.RepeatWrapping;
     cilindro_apoio45_01.material.map.wrapT = THREE.RepeatWrapping;
-    cilindro_apoio45_01.material.map.minFilter = THREE.LinearFilter;
-    cilindro_apoio45_01.material.map.magFilter = THREE.LinearFilter;
+    // cilindro_apoio45_01.material.map.minFilter = THREE.LinearFilter;
+    // cilindro_apoio45_01.material.map.magFilter = THREE.LinearFilter;
 
     cabine.material.map = lataria3;
     cabine.anisotropy = renderer.capabilities.getMaxAnisotropy();
     cabine.material.map.wrapS = THREE.RepeatWrapping;
     cabine.material.map.wrapT = THREE.RepeatWrapping;
-    cabine.material.map.minFilter = THREE.NearestFilter;
-    cabine.material.map.magFilter = THREE.NearestFilter;
+    // cabine.material.map.minFilter = THREE.NearestFilter;
+    // cabine.material.map.magFilter = THREE.NearestFilter;
 
     flap_asa_esquerda_cima.material.map = lataria3;
     flap_asa_esquerda_cima.anisotropy = renderer.capabilities.getMaxAnisotropy();
     flap_asa_esquerda_cima.material.map.wrapS = THREE.RepeatWrapping;
     flap_asa_esquerda_cima.material.map.wrapT = THREE.RepeatWrapping;
-    flap_asa_esquerda_cima.material.map.minFilter = THREE.LinearFilter;
-    flap_asa_esquerda_cima.material.map.magFilter = THREE.LinearFilter;
-    //cabine.material.map.wrapS = THREE.RepeatWrapping;
-    //cabine.material.map.wrapT = THREE.RepeatWrapping;
+    // flap_asa_esquerda_cima.material.map.minFilter = THREE.LinearFilter;
+    // flap_asa_esquerda_cima.material.map.magFilter = THREE.LinearFilter;
+
 
     pa01.material.map = lataria4;
     pa01.anisotropy = renderer.capabilities.getMaxAnisotropy();
     pa01.material.map.wrapS = THREE.RepeatWrapping;
     pa01.material.map.wrapT = THREE.RepeatWrapping;
-    pa01.material.map.minFilter = THREE.LinearFilter;
-    pa01.material.map.magFilter = THREE.LinearFilter;
-    //pa01.material.map.wrapS = THREE.RepeatWrapping;
-    //pa01.material.map.wrapT = THREE.RepeatWrapping;
+    // pa01.material.map.minFilter = THREE.LinearFilter;
+    // pa01.material.map.magFilter = THREE.LinearFilter;
+
 
     cone_motor.material.map = lataria4;
     cone_motor.anisotropy = renderer.capabilities.getMaxAnisotropy();
     cone_motor.material.map.wrapS = THREE.RepeatWrapping;
     cone_motor.material.map.wrapT = THREE.RepeatWrapping;
-    cone_motor.material.map.minFilter = THREE.LinearFilter;
-    cone_motor.material.map.magFilter = THREE.LinearFilter;
+    // cone_motor.material.map.minFilter = THREE.LinearFilter;
+    // cone_motor.material.map.magFilter = THREE.LinearFilter;
 
 
 
@@ -554,7 +552,6 @@ plano.receiveShadow = true;
 //------------------- Trabalho 03 - Parte 3 - Textura do chão ------------------
 //------------------------------------------------------------------------------
 //-- Use TextureLoader to load texture files
-var textureLoader = new THREE.TextureLoader();
 var chao1 = textureLoader.load('texturas\\chao\\chao1.jpg');
 plano.material.map = chao1;
 plano.material.map.repeat.set(20, 20);
@@ -1430,7 +1427,6 @@ function create_arvore(base, tipo, rotation, scale) {
         caule_1.castShadow = true;
         folhas_1.castShadow = true;
 
-        var textureLoader = new THREE.TextureLoader();
         var madeira = textureLoader.load('texturas\\madeira\\madeira1.jpg');
         caule_1.material.map = madeira;
         caule_1.anisotropy = renderer.capabilities.getMaxAnisotropy();
@@ -1487,7 +1483,6 @@ function create_arvore(base, tipo, rotation, scale) {
         folha_2_2.castShadow = true;
         folha_2_3.castShadow = true;
 
-        var textureLoader = new THREE.TextureLoader();
         var madeira = textureLoader.load('texturas\\madeira\\madeira4.jpg');
 
         caule_2_1.material.map = madeira;
@@ -1557,7 +1552,6 @@ function create_arvore(base, tipo, rotation, scale) {
         folha_3_1.castShadow = true;
         folha_3_2.castShadow = true;
 
-        var textureLoader = new THREE.TextureLoader();
         var madeira = textureLoader.load('texturas\\madeira\\madeira3.jpg');
         
         caule_3.material.map = madeira;
@@ -1668,7 +1662,7 @@ function saiCockpit(){
 //------------------------------------------------------------------------------
 
 var objeto = new THREE.Object3D();
-function loadOBJFile(modelPath, modelName, position, desiredScale, angle, visibility)
+function loadOBJFile(modelPath, modelName, position, desiredScale, angle1, angle2=0, angle3=0, visibility, texture=false, materialPath="")
 {
     var currentModel = modelName;
     var manager = new THREE.LoadingManager( );
@@ -1689,9 +1683,14 @@ function loadOBJFile(modelPath, modelName, position, desiredScale, angle, visibi
             obj.traverse( function (child) { child.castShadow = true;});
             obj.traverse( function( node ){ if( node.material ) node.material.side = THREE.DoubleSide; });
 
+            if(texture)
+                obj.traverse( function( node ){ if( node.material ) node.material.map = materialPath ;});
+
             obj.position.set(position.x, position.y, position.z)
             obj.scale.set(desiredScale, desiredScale, desiredScale)
-            obj.rotateX(degreesToRadians(angle));
+            obj.rotateX(degreesToRadians(angle1));
+            obj.rotateY(degreesToRadians(angle2));
+            obj.rotateZ(degreesToRadians(angle3));
 
             scene.add ( obj );
             objeto = obj;
@@ -1703,60 +1702,159 @@ function loadOBJFile(modelPath, modelName, position, desiredScale, angle, visibi
 
 
 var OBJposition = new THREE.Vector3(50, 20, 0)
-loadOBJFile("objetos\\Estatua\\", "Statue", OBJposition, 0.1, 0, false)
-OBJposition = new THREE.Vector3(-50, 5, 0)
-loadOBJFile("objetos\\Gazebo\\", "gazebo", OBJposition, 10, 90, true)
+//loadOBJFile("objetos\\Estatua\\", "Statue", OBJposition, 0.1, 0, 0, 0, false)
+
+var houseTexture = textureLoader.load('objetos\\casas\\20960_Front_Gable_House_texture.jpg');
+loadOBJFile("objetos\\Casas\\", "20960_Front_Gable_House_v1_NEW", OBJposition, 10, 0, 0, 0, false, true, houseTexture)
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-var prediosMaterial = new THREE.MeshLambertMaterial({color: 0xffffff, side: THREE.DoubleSide}); //0031e7
-var predio1Geometria = new THREE.CylinderGeometry(50, 50, 250, 8, 300, true);
-var predio1 = new THREE.Mesh(predio1Geometria, prediosMaterial);
-predio1.position.x = 100;
-predio1.position.y = 1000;
-predio1.position.z = predio1.geometry.parameters.height/2;
-predio1.rotation.x = Math.PI/2;
-scene.add(predio1);
-
-
-
-
-
-
-
+var asfaltoGeometria = new THREE.PlaneGeometry( 50, 500 );
+var asfaltoMaterial = new THREE.MeshBasicMaterial( {color: 0xffffff, side: THREE.DoubleSide} ); //0031e7
+var rua1 = new THREE.Mesh(asfaltoGeometria, asfaltoMaterial);
+rua1.position.z = 0.1;
+scene.add(rua1);
 
 //-- Use TextureLoader to load texture files
-var textureLoader = new THREE.TextureLoader();
-var building1 = textureLoader.load('texturas\\predio\\predio11.jpg');
+var ruaTexture = textureLoader.load('texturas\\estrada\\estrada2.jpg');
+
+rua1.material.map = ruaTexture;
+rua1.material.map.repeat.set(1, 5);
+rua1.anisotropy = renderer.capabilities.getMaxAnisotropy();
+rua1.material.map.wrapS = THREE.RepeatWrapping;
+rua1.material.map.wrapT = THREE.RepeatWrapping;
+
+
+var rua2 = rua1.clone();
+rua2.position.x = 100;
+scene.add(rua2)
+
+
+var cruzamentoGeometria = new THREE.PlaneGeometry( 50, 50 );
+var cruzamentoMaterial = new THREE.MeshBasicMaterial( {color: 0xffffff, side: THREE.DoubleSide} ); //0031e7
+var cruzamento1 = new THREE.Mesh(cruzamentoGeometria, cruzamentoMaterial);
+cruzamento1.position.z = 0.5;
+scene.add(cruzamento1);
+
+//-- Use TextureLoader to load texture files
+var escruzilhada1Texture = textureLoader.load('texturas\\estrada\\encruzilhada1.jpg');
+cruzamento1.material.map = escruzilhada1Texture ;
+cruzamento1.material.map.wrapS = THREE.RepeatWrapping;
+cruzamento1.material.map.wrapT = THREE.RepeatWrapping;
+cruzamento1.material.map.minFilter = THREE.LinearFilter;
+cruzamento1.material.map.magFilter = THREE.LinearFilter;
+
+
+//------------------------ Trabalho 03 - Parte 3 - Periferia ------------------------
+//-----------------------------------------------------------------------------------
 
 
 
-//cilindro_enfeite01.material.map = lataria1;
-predio1.material.map = building1;
-//cabine.material.map.wrapS = THREE.RepeatWrapping;
-//cabine.material.map.wrapT = THREE.RepeatWrapping;
-*/
+var pracaGeometria1 = new THREE.CircleGeometry( 200, 50 );
+var pracaGeometria2 = new THREE.CircleGeometry( 190, 50 );
+var pracaMaterial1 = new THREE.MeshBasicMaterial( {color: 0xffffff} );
+var pracaMaterial2 = new THREE.MeshBasicMaterial( {color: 0xffffff} );
+var praca1 = new THREE.Mesh(pracaGeometria1, pracaMaterial1);
+var praca2 = new THREE.Mesh(pracaGeometria2, pracaMaterial2);
+
+praca1.position.x = -250;
+praca2.position.x = praca1.position.x;
+praca1.position.z = 0.1;
+praca2.position.z = praca1.position.z+0.2;
+scene.add(praca1);
+scene.add(praca2);
+
+// Carrega o gazebo no centro da praça
+var OBJposition = new THREE.Vector3(praca1.position.x, praca1.position.y, praca1.position.z+0.4)
+loadOBJFile("objetos\\Gazebo\\", "gazebo", OBJposition, 15, 90, -24, 0, true)
+
+//-- Use TextureLoader to load texture files
+var pracaTexture1 = textureLoader.load('texturas\\chao\\chao7.jpg');
+var pracaTexture2 = textureLoader.load('texturas\\chao\\chao4.jpg');
+
+praca1.material.map = pracaTexture1;
+praca1.material.map.repeat.set(10, 10);
+praca1.anisotropy = renderer.capabilities.getMaxAnisotropy();
+praca1.material.map.wrapS = THREE.RepeatWrapping;
+praca1.material.map.wrapT = THREE.RepeatWrapping;
+
+
+praca2.material.map = pracaTexture2;
+praca2.material.map.repeat.set(10, 10);
+praca2.anisotropy = renderer.capabilities.getMaxAnisotropy();
+praca2.material.map.wrapS = THREE.RepeatWrapping;
+praca2.material.map.wrapT = THREE.RepeatWrapping;
+
+var caminhogeometria1 = new THREE.BoxGeometry( 10, praca2.geometry.parameters.radius*2,1 );
+var caminhoMaterial1 = new THREE.MeshBasicMaterial( {color: 0xffffff} );
+var caminho1 = new THREE.Mesh(caminhogeometria1, caminhoMaterial1);
+caminho1.position.copy(praca2.position);
+caminho1.position.z = caminho1.position.z+0.1
+caminho1.rotation.z=Math.PI/2
+scene.add(caminho1);
+
+var caminhoTexture = textureLoader.load('texturas\\chao\\chao7.jpg');
+
+caminho1.material.map = caminhoTexture;
+caminho1.material.map.repeat.set(0.8, 8);
+caminho1.anisotropy = renderer.capabilities.getMaxAnisotropy();
+caminho1.material.map.wrapS = THREE.RepeatWrapping;
+caminho1.material.map.wrapT = THREE.RepeatWrapping;
+
+
+create_arvore(new THREE.Vector3(praca1.position.x + getRandom(30, praca2.geometry.parameters.radius-35), praca1.position.y + getRandom(30, praca2.geometry.parameters.radius-35), 0), 1, 0, 3) //2 - 5
+create_arvore(new THREE.Vector3(praca1.position.x + getRandom(30, praca2.geometry.parameters.radius-35), praca1.position.y + getRandom(30, praca2.geometry.parameters.radius-35), 0), 2, 0, 2) //rotation entre 0 e 90 e 4 até 6
+create_arvore(new THREE.Vector3(praca1.position.x + getRandom(30, praca2.geometry.parameters.radius-35), praca1.position.y + getRandom(30, praca2.geometry.parameters.radius-35), 0), 3, 0, 3)
+
+create_arvore(new THREE.Vector3(praca1.position.x + getRandom(30, praca2.geometry.parameters.radius-35), praca1.position.y + getRandom(30, praca2.geometry.parameters.radius-35), 0), 1, 0, 4) //2 - 5
+create_arvore(new THREE.Vector3(praca1.position.x + getRandom(30, praca2.geometry.parameters.radius-35), praca1.position.y + getRandom(30, praca2.geometry.parameters.radius-35), 0), 2, 0, 5) //rotation entre 0 e 90 e 4 até 6
+create_arvore(new THREE.Vector3(praca1.position.x + getRandom(30, praca2.geometry.parameters.radius-35), praca1.position.y + getRandom(30, praca2.geometry.parameters.radius-35), 0), 3, 0, 4)
+
+create_arvore(new THREE.Vector3(praca1.position.x + getRandom(30, praca2.geometry.parameters.radius-35), praca1.position.y - getRandom(30, praca2.geometry.parameters.radius-35), 0), 1, 0, 3) //2 - 5
+create_arvore(new THREE.Vector3(praca1.position.x + getRandom(30, praca2.geometry.parameters.radius-35), praca1.position.y - getRandom(30, praca2.geometry.parameters.radius-35), 0), 2, 0, 2) //rotation entre 0 e 90 e 4 até 6
+create_arvore(new THREE.Vector3(praca1.position.x + getRandom(30, praca2.geometry.parameters.radius-35), praca1.position.y - getRandom(30, praca2.geometry.parameters.radius-35), 0), 3, 0, 3)
+
+create_arvore(new THREE.Vector3(praca1.position.x + getRandom(30, praca2.geometry.parameters.radius-35), praca1.position.y - getRandom(30, praca2.geometry.parameters.radius-35), 0), 1, 0, 4) //2 - 5
+create_arvore(new THREE.Vector3(praca1.position.x + getRandom(30, praca2.geometry.parameters.radius-35), praca1.position.y - getRandom(30, praca2.geometry.parameters.radius-35), 0), 2, 0, 5) //rotation entre 0 e 90 e 4 até 6
+create_arvore(new THREE.Vector3(praca1.position.x + getRandom(30, praca2.geometry.parameters.radius-35), praca1.position.y - getRandom(30, praca2.geometry.parameters.radius-35), 0), 3, 0, 4)
+
+create_arvore(new THREE.Vector3(praca1.position.x - getRandom(30, praca2.geometry.parameters.radius-35), praca1.position.y - getRandom(30, praca2.geometry.parameters.radius-35), 0), 1, 0, 3) //2 - 5
+create_arvore(new THREE.Vector3(praca1.position.x - getRandom(30, praca2.geometry.parameters.radius-35), praca1.position.y - getRandom(30, praca2.geometry.parameters.radius-35), 0), 2, 0, 2) //rotation entre 0 e 90 e 4 até 6
+create_arvore(new THREE.Vector3(praca1.position.x - getRandom(30, praca2.geometry.parameters.radius-35), praca1.position.y - getRandom(30, praca2.geometry.parameters.radius-35), 0), 3, 0, 3)
+
+create_arvore(new THREE.Vector3(praca1.position.x - getRandom(30, praca2.geometry.parameters.radius-35), praca1.position.y - getRandom(30, praca2.geometry.parameters.radius-35), 0), 1, 0, 4) //2 - 5
+create_arvore(new THREE.Vector3(praca1.position.x - getRandom(30, praca2.geometry.parameters.radius-35), praca1.position.y - getRandom(30, praca2.geometry.parameters.radius-35), 0), 2, 0, 5) //rotation entre 0 e 90 e 4 até 6
+create_arvore(new THREE.Vector3(praca1.position.x - getRandom(30, praca2.geometry.parameters.radius-35), praca1.position.y - getRandom(30, praca2.geometry.parameters.radius-35), 0), 3, 0, 4)
+
+create_arvore(new THREE.Vector3(praca1.position.x - getRandom(30, praca2.geometry.parameters.radius-35), praca1.position.y + getRandom(30, praca2.geometry.parameters.radius-35), 0), 1, 0, 3) //2 - 5
+create_arvore(new THREE.Vector3(praca1.position.x - getRandom(30, praca2.geometry.parameters.radius-35), praca1.position.y + getRandom(30, praca2.geometry.parameters.radius-35), 0), 2, 0, 2) //rotation entre 0 e 90 e 4 até 6
+create_arvore(new THREE.Vector3(praca1.position.x - getRandom(30, praca2.geometry.parameters.radius-35), praca1.position.y + getRandom(30, praca2.geometry.parameters.radius-35), 0), 3, 0, 3)
+
+create_arvore(new THREE.Vector3(praca1.position.x - getRandom(30, praca2.geometry.parameters.radius-35), praca1.position.y + getRandom(30, praca2.geometry.parameters.radius-35), 0), 1, 0, 4) //2 - 5
+create_arvore(new THREE.Vector3(praca1.position.x - getRandom(30, praca2.geometry.parameters.radius-35), praca1.position.y + getRandom(30, praca2.geometry.parameters.radius-35), 0), 2, 0, 5) //rotation entre 0 e 90 e 4 até 6
+create_arvore(new THREE.Vector3(praca1.position.x - getRandom(30, praca2.geometry.parameters.radius-35), praca1.position.y + getRandom(30, praca2.geometry.parameters.radius-35), 0), 3, 0, 4)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //----------------------- Trabalho 03 - Parte 4 - Skybox -----------------------
@@ -2024,9 +2122,9 @@ function render() {
     keyboardUpdate();
     if(isSimulacao){
         trackballControls.update();
-        plano.visible = false;
+        //plano.visible = false;
         axesHelper.visible = true;
-        controlaVisibilidade(false);
+        //controlaVisibilidade(false);
     }else{
         plano.visible = true;
         axesHelper.visible = false;
