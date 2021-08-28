@@ -643,6 +643,7 @@ function mudaCamera() { //Muda a camera toda
     if (!isSimulacao) {// Mudança da simulação para a inspeção
         ambienteS.pause();
         airplaneS.pause();
+
         // Salva os valores de posição vindos da simulação
         aviao_auxiliar.position.x = aviao_obj.fuselagem._estacionaria.position.x
         aviao_auxiliar.position.y = aviao_obj.fuselagem._estacionaria.position.y
@@ -687,10 +688,6 @@ function mudaCamera() { //Muda a camera toda
     }else{// Mudança da inspeção para a simulação  
         ambienteS.play();
         airplaneS.play();
-
-        //loadOBJFile('../assets/objects/', 'plane', 3, 0, true);
-        //loadOBJFile("objetos\\Statue_v1\\", "Statue", 3, 0, true)
-
 
         // Pega os valores salvos no item anterior para tirar o avião da origem
         aviao_obj.fuselagem._estacionaria.position.set(
@@ -1539,6 +1536,7 @@ function create_arvore(base, tipo, rotation, scale) {
         folha_2_3.receiveShadow = true;
 
         var madeira = textureLoader.load('texturas\\madeira\\madeira4.jpg');
+        var folha = textureLoader.load('texturas\\folhas\\folhas2.jpg');
 
         caule_2_1.material.map = madeira;
         caule_2_1.anisotropy = renderer.capabilities.getMaxAnisotropy();
@@ -1561,8 +1559,6 @@ function create_arvore(base, tipo, rotation, scale) {
         caule_2_3.material.map.minFilter = THREE.LinearFilter;
         caule_2_3.material.map.magFilter = THREE.LinearFilter;
         
-        var folha = textureLoader.load('texturas\\folhas\\folhas2.jpg');
-        
         folha_2_1.material.map = folha;
         folha_2_1.anisotropy = renderer.capabilities.getMaxAnisotropy();
         folha_2_1.material.map.wrapS = THREE.RepeatWrapping;
@@ -1584,7 +1580,6 @@ function create_arvore(base, tipo, rotation, scale) {
         folha_2_3.material.map.minFilter = THREE.LinearFilter;
         folha_2_3.material.map.magFilter = THREE.LinearFilter;
 
-        
         caule_2_1.rotateY(rotation)
         break;
   
@@ -1612,7 +1607,8 @@ function create_arvore(base, tipo, rotation, scale) {
         folha_3_2.receiveShadow = true;
 
         var madeira = textureLoader.load('texturas\\madeira\\madeira3.jpg');
-        
+        var folha = textureLoader.load('texturas\\folhas\\folhas4.jpg');
+
         caule_3.material.map = madeira;
         caule_3.anisotropy = renderer.capabilities.getMaxAnisotropy();
         caule_3.material.map.wrapS = THREE.RepeatWrapping;
@@ -1620,24 +1616,15 @@ function create_arvore(base, tipo, rotation, scale) {
         caule_3.material.map.minFilter = THREE.LinearFilter;
         caule_3.material.map.magFilter = THREE.LinearFilter;
 
-        var folha = textureLoader.load('texturas\\folhas\\folhas4.jpg');
-        
         folha_3_1.material.map = folha;
         folha_3_1.anisotropy = renderer.capabilities.getMaxAnisotropy();
         folha_3_1.material.map.wrapS = THREE.RepeatWrapping;
         folha_3_1.material.map.wrapT = THREE.RepeatWrapping;
-        //folha_3_1.material.map.minFilter = THREE.LinearFilter;
-        //folha_3_1.material.map.magFilter = THREE.LinearFilter;
 
         folha_3_2.material.map = folha;
         folha_3_2.anisotropy = renderer.capabilities.getMaxAnisotropy();
         folha_3_2.material.map.wrapS = THREE.RepeatWrapping;
         folha_3_2.material.map.wrapT = THREE.RepeatWrapping;
-        //folha_3_2.material.map.minFilter = THREE.LinearFilter;
-        //folha_3_2.material.map.magFilter = THREE.LinearFilter;
-
-
-
         break;
 
       default:
@@ -1688,8 +1675,8 @@ function randomTreePosition(num_arvores){
     }
 
 }
-randomTreePosition(25);
-//create_arvore(new THREE.Vector3(1200, -1000, 0), 2, degreesToRadians(getRandom(0,90)), 120) //rotation entre 0 e 90 e 4 até 6
+//randomTreePosition(25);
+
 
 //-------------------- Trabalho 02 - Parte 3 - Modo cockpit --------------------
 //------------------------------------------------------------------------------
@@ -1759,34 +1746,6 @@ function loadOBJFile(modelPath, modelName, position, desiredScale, angle1, angle
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function predios_Bases(params,tipo_teto,rotation) {
     if (params.Tamanho_porta == undefined) {
       params.Tamanho_porta = 0
@@ -1824,8 +1783,6 @@ function predios_Bases(params,tipo_teto,rotation) {
       parede_e.material.map.repeat.set(param.textura_parede_E.x,param.textura_parede_E.y)
       parede_e.material.map.wrapS = THREE.RepeatWrapping
       parede_e.material.map.wrapT = THREE.RepeatWrapping
-      //parede_e.material.map.minFilter = THREE.LinearFilter
-      //parede_e.material.map.magFilter = THREE.LinearFilter
     }
     
     let parede_d = new THREE.Mesh(new THREE.PlaneGeometry(altura-porta_d,profundidade),  new THREE.MeshLambertMaterial({side: THREE.DoubleSide}))
@@ -1839,8 +1796,6 @@ function predios_Bases(params,tipo_teto,rotation) {
       parede_d.material.map.repeat.set(param.textura_parede_D.x,param.textura_parede_D.y)
       parede_d.material.map.wrapS = THREE.RepeatWrapping
       parede_d.material.map.wrapT = THREE.RepeatWrapping
-      //parede_d.material.map.minFilter = THREE.LinearFilter
-      //parede_d.material.map.magFilter = THREE.LinearFilter
     }
   
     let tras = new THREE.Mesh(new THREE.PlaneGeometry(altura-porta_d,dis_frent),  new THREE.MeshLambertMaterial({side: THREE.DoubleSide}))
@@ -1855,8 +1810,6 @@ function predios_Bases(params,tipo_teto,rotation) {
       tras.material.map.repeat.set(param.textura_parede_T.x,param.textura_parede_T.y)
       tras.material.map.wrapS = THREE.RepeatWrapping
       tras.material.map.wrapT = THREE.RepeatWrapping
-      //tras.material.map.minFilter = THREE.LinearFilter
-      //tras.material.map.magFilter = THREE.LinearFilter
     }
   
     let frente = new THREE.Mesh(new THREE.PlaneGeometry(altura-porta_d,dis_frent),  new THREE.MeshLambertMaterial({side: THREE.DoubleSide}))
@@ -1871,8 +1824,6 @@ function predios_Bases(params,tipo_teto,rotation) {
         frente.material.map.repeat.set(param.textura_parede_F.x,param.textura_parede_F.y)
         frente.material.map.wrapS = THREE.RepeatWrapping
         frente.material.map.wrapT = THREE.RepeatWrapping
-        //frente.material.map.minFilter = THREE.LinearFilter
-        //frente.material.map.magFilter = THREE.LinearFilter
     }
   
     if (porta_d!=0) {
@@ -1880,73 +1831,21 @@ function predios_Bases(params,tipo_teto,rotation) {
         predio.add(cima)
         cima.position.set(0,0,porta_d)
         cima.rotateZ(Math.PI/2)
-        /*
-        let baixo = new THREE.Mesh(new THREE.BoxGeometry(profundidade,dis_frent,0.5),  new THREE.MeshLambertMaterial({side: THREE.DoubleSide}))
-        predio.add(baixo)
-        baixo.rotateZ(Math.PI/2)
-        */
     }
 
     tras.castShadow = true;
     parede_d.castShadow = true;
     frente.castShadow = true;
-    frente.receiveShadow = true;
-    parede_e.receiveShadow = true;
-    /*
+    parede_e.castShadow = true;
+    
     parede_e.receiveShadow = true;
     parede_d.receiveShadow = true;
     frente.receiveShadow = true;
     tras.receiveShadow = true;
-    */
+    
   
     switch (tipo_teto) {
       case 'laje':
-        /* let h = 2
-        let laje_D = new THREE.Mesh(new THREE.PlaneGeometry(h,profundidade),  new THREE.MeshLambertMaterial({side: THREE.DoubleSide}))
-        predio.add(laje_D)
-        laje_D.material.map = new THREE.TextureLoader().load('texturas/concrete-wall.jpg')
-        laje_D.material.map.repeat.set(1,5)
-        laje_D.material.map.wrapS = THREE.RepeatWrapping
-        laje_D.material.map.wrapT = THREE.RepeatWrapping
-        laje_D.material.map.minFilter = THREE.LinearFilter
-        laje_D.material.map.magFilter = THREE.LinearFilter
-        laje_D.position.set(dis_frent/2,0,altura+h/2)
-        laje_D.rotateY(Math.PI/2)
-        let laje_E = new THREE.Mesh(new THREE.PlaneGeometry(h,profundidade),  new THREE.MeshLambertMaterial({side: THREE.DoubleSide}))
-        predio.add(laje_E)
-        laje_E.material.map = new THREE.TextureLoader().load('texturas/concrete-wall.jpg')
-        laje_E.material.map.repeat.set(1,5)
-        laje_E.material.map.wrapS = THREE.RepeatWrapping
-        laje_E.material.map.wrapT = THREE.RepeatWrapping
-        laje_E.material.map.minFilter = THREE.LinearFilter
-        laje_E.material.map.magFilter = THREE.LinearFilter
-        laje_E.position.set(-dis_frent/2,0,altura+h/2)
-        laje_E.rotateY(Math.PI/2)
-  
-        let laje_F = new THREE.Mesh(new THREE.PlaneGeometry(dis_frent,h),  new THREE.MeshLambertMaterial({side: THREE.DoubleSide}))
-        predio.add(laje_F)
-        laje_F.material.map = new THREE.TextureLoader().load('texturas/concrete-wall.jpg')
-        laje_F.material.map.repeat.set(5,1)
-        laje_F.material.map.wrapS = THREE.RepeatWrapping
-        laje_F.material.map.wrapT = THREE.RepeatWrapping
-        laje_F.material.map.minFilter = THREE.LinearFilter
-        laje_F.material.map.magFilter = THREE.LinearFilter
-        laje_F.position.set(0,-profundidade/2,altura+h/2)
-        laje_F.rotateX(Math.PI/2)
-        let laje_T = new THREE.Mesh(new THREE.PlaneGeometry(dis_frent,h),  new THREE.MeshLambertMaterial({side: THREE.DoubleSide}))
-        predio.add(laje_T)
-        laje_T.material.map = new THREE.TextureLoader().load('texturas/concrete-wall.jpg')
-        laje_T.material.map.repeat.set(5,1)
-        laje_T.material.map.wrapS = THREE.RepeatWrapping
-        laje_T.material.map.wrapT = THREE.RepeatWrapping
-        laje_T.material.map.minFilter = THREE.LinearFilter
-        laje_T.material.map.magFilter = THREE.LinearFilter
-        laje_T.position.set(0,profundidade/2,altura+h/2)
-        laje_T.rotateX(Math.PI/2)
-  
-        let laje_B = new THREE.Mesh(new THREE.PlaneGeometry(dis_frent,profundidade),  new THREE.MeshLambertMaterial({side: THREE.DoubleSide}))
-        predio.add(laje_B)
-        laje_B.position.set(0,0,altura) */
         let laje_Text = new THREE.Mesh(new THREE.PlaneGeometry(dis_frent,profundidade),  new THREE.MeshPhongMaterial({side: THREE.DoubleSide}))
         laje_Text.receiveShadow=true;
         laje_Text.castShadow=true;
@@ -1956,42 +1855,41 @@ function predios_Bases(params,tipo_teto,rotation) {
         laje_Text.material.map.repeat.set(5,5)
         laje_Text.material.map.wrapS = THREE.RepeatWrapping
         laje_Text.material.map.wrapT = THREE.RepeatWrapping
-        //laje_Text.material.map.minFilter = THREE.LinearFilter
-        //laje_Text.material.map.magFilter = THREE.LinearFilter
         break;
         
         case 'empire_pararaio':
           let laje_empire = new THREE.Mesh(new THREE.PlaneGeometry(dis_frent,profundidade),  new THREE.MeshLambertMaterial({side: THREE.DoubleSide}))
-          //laje_empire.receiveShadow=true;
           predio.add(laje_empire)
           laje_empire.position.set(0,0,altura)
+          laje_empire.castShadow = true;
+          laje_empire.receiveShadow = true;
           laje_empire.material.map = new THREE.TextureLoader().load('texturas/concrete-wall.jpg')
           laje_empire.material.map.repeat.set(1,1)
           laje_empire.material.map.wrapS = THREE.RepeatWrapping
           laje_empire.material.map.wrapT = THREE.RepeatWrapping
-          //laje_empire.material.map.minFilter = THREE.LinearFilter
-          //laje_empire.material.map.magFilter = THREE.LinearFilter
   
           let base_cilindro = new THREE.Mesh(new THREE.CylinderGeometry(4,4,15,30,30,true), new THREE.MeshPhongMaterial({side: THREE.DoubleSide}))
-          //base_cilindro.receiveShadow=true;
           predio.add(base_cilindro)
           base_cilindro.position.set(0,0,altura+base_cilindro.geometry.parameters.height/2)
           base_cilindro.rotateX(Math.PI/2)
+          base_cilindro.castShadow=true;
+          base_cilindro.receiveShadow=true;
           base_cilindro.material.map = new THREE.TextureLoader().load('texturas/concrete-wall.jpg')
           base_cilindro.material.map.repeat.set(5,1)
           base_cilindro.material.map.wrapS = THREE.RepeatWrapping
           base_cilindro.material.map.wrapT = THREE.RepeatWrapping
-          //base_cilindro.material.map.minFilter = THREE.LinearFilter
-          //base_cilindro.material.map.magFilter = THREE.LinearFilter
+
   
           let obs = new THREE.Mesh(new THREE.SphereGeometry(4,30,30,0,Math.PI), new THREE.MeshPhongMaterial({side: THREE.DoubleSide}))
           obs.material.map = new THREE.TextureLoader().load('texturas/concrete-wall.jpg')
+          obs.castShadow=true;
           obs.receiveShadow=true;
           predio.add(obs)
           obs.position.set(0,0, altura+base_cilindro.geometry.parameters.height)
   
           let empire_raio = new THREE.Mesh(new THREE.ConeGeometry(1,10,30,30), new THREE.MeshPhongMaterial({side: THREE.DoubleSide}))
           empire_raio.material.map = new THREE.TextureLoader().load('texturas/concrete-wall.jpg')
+          empire_raio.castShadow=true;
           empire_raio.receiveShadow=true;
           obs.add(empire_raio)
           empire_raio.position.set(0,0,obs.geometry.parameters.radius/2 + empire_raio.geometry.parameters.height/2)
@@ -2010,8 +1908,6 @@ function predios_Bases(params,tipo_teto,rotation) {
             triangulo_1.material.map.repeat.set(5,3)
             triangulo_1.material.map.wrapS = THREE.RepeatWrapping
             triangulo_1.material.map.wrapT = THREE.RepeatWrapping
-            //triangulo_1.material.map.minFilter = THREE.LinearFilter
-            //triangulo_1.material.map.magFilter = THREE.LinearFilter
     
             let triangulo_2 = new THREE.Mesh(new THREE.PlaneGeometry(profundidade, dis_frent), new THREE.MeshPhongMaterial({side: THREE.DoubleSide}))
             triangulo_2.receiveShadow = true;
@@ -2024,8 +1920,6 @@ function predios_Bases(params,tipo_teto,rotation) {
             triangulo_2.material.map.repeat.set(5,3)
             triangulo_2.material.map.wrapS = THREE.RepeatWrapping
             triangulo_2.material.map.wrapT = THREE.RepeatWrapping
-            //triangulo_2.material.map.minFilter = THREE.NearestFilter
-            //triangulo_2.material.map.magFilter = THREE.NearestFilter
     
             //Raio Errado
             let tri_F = new THREE.Mesh(new ConvexGeometry([new THREE.Vector3(-dis_frent/2,-profundidade/2,altura),
@@ -2239,10 +2133,6 @@ function new_Predio(base, tipo, rotation, desiredScale) {
         vidro_detalhe.material.map.repeat.set(1,1)
         vidro_detalhe.material.map.wrapS = THREE.RepeatWrapping
         vidro_detalhe.material.map.wrapT = THREE.RepeatWrapping
-        //vidro_detalhe.material.map.minFilter = THREE.LinearFilter
-        //vidro_detalhe.material.map.magFilter = THREE.LinearFilter
-
-        // ------- //
 
         predio.add(predios_Bases({Tamanho_porta: 0, 
             base: new THREE.Vector3(base.x+12,base.y,base.z), 
@@ -2270,6 +2160,8 @@ function new_Predio(base, tipo, rotation, desiredScale) {
             let cilindro_e = new THREE.Mesh(new THREE.CylinderGeometry(15,12,20,30), new THREE.MeshPhongMaterial({color: "#00a000",specular: "rgb(255,255,255)",shininess: 1000,side: THREE.DoubleSide}))
             predio.add(cilindro_e)
             cilindro_e.rotateX(Math.PI/2)
+            cilindro_e.castShadow = true;
+            cilindro_e.receiveShadow = true;
             cilindro_e.position.set(base.x-30,base.y,base.z+cilindro_e.geometry.parameters.height/2)
             let textura_cilindro_cc = new THREE.TextureLoader().load('texturas/metal-plate.jpg')
             cilindro_e.material.map = textura_cilindro_cc
@@ -2281,11 +2173,15 @@ function new_Predio(base, tipo, rotation, desiredScale) {
 
             let enfeite_e = new THREE.Mesh(new THREE.SphereGeometry(10,30,30,0,Math.PI), new THREE.MeshPhongMaterial({color: "#fff",specular: "rgb(255,255,255)",shininess: 1000,side: THREE.DoubleSide}))
             predio.add(enfeite_e)
+            enfeite_e.castShadow = true;
+            enfeite_e.receiveShadow = true;
             enfeite_e.position.set(base.x-30,base.y,base.z+cilindro_e.geometry.parameters.height)
 
             let cilindro_m = new THREE.Mesh(new THREE.CylinderGeometry(10,10,30,30), new THREE.MeshPhongMaterial({color: "#fff",emissive:'#3f3f3f',transparent:true,opacity:0.95,specular: "rgb(255,255,255)",shininess: 1000,side: THREE.DoubleSide}))
             predio.add(cilindro_m)
             cilindro_m.rotateX(Math.PI/2)
+            cilindro_m.castShadow = true;
+            cilindro_m.receiveShadow = true;
             cilindro_m.position.set(base.x,base.y,base.z+cilindro_m.geometry.parameters.height/2)
             cilindro_m.material.map = new THREE.TextureLoader().load('texturas/glass-window.jpg')
             cilindro_m.material.map.repeat.set(6,5)
@@ -2297,7 +2193,9 @@ function new_Predio(base, tipo, rotation, desiredScale) {
             let cilindro_d = new THREE.Mesh(new THREE.CylinderGeometry(15,12,20,30), new THREE.MeshPhongMaterial({color: "#00a000",specular: "rgb(255,255,255)",shininess: 1000,side: THREE.DoubleSide}))
             predio.add(cilindro_d)
             cilindro_d.rotateX(Math.PI/2)
-            cilindro_d.position.set(base.x+30,base.y,base.z+cilindro_d.geometry.parameters.height/2)
+            cilindro_d.castshadow = true;
+            cilindro_d.receiveShadow = true;
+            cilindro_d.position.set(base.x+30,base.y,base.z+cilindro_d.geometry.parameters.height/2);
             cilindro_d.material.map = textura_cilindro_cc
             cilindro_d.material.map.repeat.set(25,5)
             cilindro_d.material.map.wrapS = THREE.RepeatWrapping
@@ -2307,6 +2205,8 @@ function new_Predio(base, tipo, rotation, desiredScale) {
 
             let enfeite_d_esfera = new THREE.Mesh(new THREE.SphereGeometry(5,30,30,0,Math.PI), new THREE.MeshPhongMaterial({color: "#fff",specular: "rgb(255,255,255)",shininess: 1000,side: THREE.DoubleSide}))
             predio.add(enfeite_d_esfera)
+            enfeite_d_esfera.castShadow=true;
+            enfeite_d_esfera.receiveShadow=true;
             enfeite_d_esfera.position.set(base.x+30,base.y,base.z+cilindro_e.geometry.parameters.height)
         break;
 
@@ -2402,6 +2302,7 @@ function new_Predio(base, tipo, rotation, desiredScale) {
         predio.add(louvre)
         louvre.rotateX(Math.PI/2)
         louvre.rotateY(Math.PI/4)
+        louvre.receiveShadow=true;
         louvre.position.set(base.x,base.y,base.z+louvre.geometry.parameters.height/2)
         louvre.material.map = new THREE.TextureLoader().load('texturas/glass-window.jpg')
         louvre.material.map.repeat.set(3,5)
@@ -2409,42 +2310,38 @@ function new_Predio(base, tipo, rotation, desiredScale) {
         louvre.material.map.wrapT = THREE.RepeatWrapping
         louvre.material.map.minFilter = THREE.LinearFilter
         louvre.material.map.magFilter = THREE.LinearFilter
-
-        let caixa = new THREE.Mesh(new THREE.BoxGeometry(4,4,4), new THREE.MeshPhongMaterial({color: "#fff",specular: "rgb(255,255,255)",emissive:'#0f0f0f',shininess: 1000,side: THREE.DoubleSide}))
-        predio.add(caixa)
-        caixa.position.set(base.x,base.y,base.z+caixa.geometry.parameters.height/2)
         break;
 
         case -2:
-        let pizza, apoio, i
+        let piza, apoio, i
         for(i = 0; i < 6; i++){
-            pizza = new THREE.Mesh(new THREE.CylinderGeometry(10,10,10,30,30), new THREE.MeshLambertMaterial({color: "#fff",side: THREE.DoubleSide}))
+            piza = new THREE.Mesh(new THREE.CylinderGeometry(10,10,10,30,30), new THREE.MeshLambertMaterial({color: "#fff",side: THREE.DoubleSide}))
             apoio = new THREE.Mesh(new THREE.CylinderGeometry(10,10,5,30,30), new THREE.MeshLambertMaterial({color: "#fff",side: THREE.DoubleSide}))
             
-            predio.add(pizza)
-            pizza.rotateX(Math.PI/2)
-            pizza.position.set(base.x,base.y,base.z+(pizza.geometry.parameters.height/2) -2 +(apoio.geometry.parameters.height+pizza.geometry.parameters.height)*i)
-            pizza.material.map = new THREE.TextureLoader().load('texturas/stone-column.png')
-            pizza.material.map.repeat.set(5,1)
-            pizza.material.map.wrapS = THREE.RepeatWrapping
-            pizza.material.map.wrapT = THREE.RepeatWrapping
-            pizza.material.map.minFilter = THREE.LinearFilter
-            pizza.material.map.magFilter = THREE.LinearFilter
+            predio.add(piza)
+            piza.castShadow = true;
+            piza.receiveShadow = true;
+            piza.rotateX(Math.PI/2)
+            piza.position.set(base.x,base.y,base.z+(piza.geometry.parameters.height/2) -2 +(apoio.geometry.parameters.height+piza.geometry.parameters.height)*i)
+            piza.material.map = new THREE.TextureLoader().load('texturas/stone-column.png')
+            piza.material.map.repeat.set(5,1)
+            piza.material.map.wrapS = THREE.RepeatWrapping
+            piza.material.map.wrapT = THREE.RepeatWrapping
+            piza.material.map.minFilter = THREE.LinearFilter
+            piza.material.map.magFilter = THREE.LinearFilter
 
             predio.add(apoio)
             apoio.rotateX(Math.PI/2)
-            apoio.position.set(base.x,base.y,base.z+(apoio.geometry.parameters.height/2) -2 + pizza.geometry.parameters.height +(apoio.geometry.parameters.height+pizza.geometry.parameters.height)*i)
+            apoio.position.set(base.x,base.y,base.z+(apoio.geometry.parameters.height/2) -2 + piza.geometry.parameters.height +(apoio.geometry.parameters.height+piza.geometry.parameters.height)*i)
             apoio.material.map = new THREE.TextureLoader().load('texturas/wall-stone.jpg')
             apoio.material.map.repeat.set(5,0.3)
             apoio.material.map.wrapS = THREE.RepeatWrapping
             apoio.material.map.wrapT = THREE.RepeatWrapping
-            //apoio.material.map.minFilter = THREE.LinearFilter
-            //apoio.material.map.magFilter = THREE.LinearFilter
         }
         let tampa = new THREE.Mesh(new THREE.CylinderGeometry(10,10,1,30,30), new THREE.MeshLambertMaterial({color: "#f0f0f0",side: THREE.DoubleSide}))
         predio.add(tampa)
         tampa.rotateX(Math.PI/2)
-        tampa.position.set(base.x,base.y,base.z+(pizza.geometry.parameters.height/2) -2 + pizza.geometry.parameters.height +(apoio.geometry.parameters.height+pizza.geometry.parameters.height)*(i-1) + tampa.geometry.parameters.height/2)
+        tampa.position.set(base.x,base.y,base.z+(piza.geometry.parameters.height/2) -2 + piza.geometry.parameters.height +(apoio.geometry.parameters.height+piza.geometry.parameters.height)*(i-1) + tampa.geometry.parameters.height/2)
         predio.rotateY(THREE.MathUtils.degToRad(3,97))
         break; 
 
@@ -2468,7 +2365,7 @@ function new_Predio(base, tipo, rotation, desiredScale) {
 }
 
 ///////////////////PREDIOS
-var calcada1 = new THREE.Mesh(new THREE.PlaneGeometry(200,300), new THREE.MeshLambertMaterial({color: "#ffffff"}))
+var calcada1 = new THREE.Mesh(new THREE.PlaneGeometry(200,300), new THREE.MeshLambertMaterial({color: "#ffffff",side: THREE.FrontSide}))
 calcada1.receiveShadow = true;
 calcada1.position.x = calcada1.geometry.parameters.width/2 + 50;
 calcada1.position.z = 0.1
@@ -2479,7 +2376,7 @@ calcada1.material.map.wrapT = THREE.RepeatWrapping
 scene.add(calcada1)
 var pred1 = new_Predio(new THREE.Vector3(0,-50, 0), 1, 90, 3)
 
-var calcada2 = new THREE.Mesh(new THREE.PlaneGeometry(200,300), new THREE.MeshLambertMaterial({color: "#ffffff"}))
+var calcada2 = new THREE.Mesh(new THREE.PlaneGeometry(200,300), new THREE.MeshLambertMaterial({color: "#ffffff",side: THREE.FrontSide}))
 calcada2.receiveShadow = true;
 calcada2.position.x = -calcada2.geometry.parameters.width/2 - 50;
 calcada2.position.z = 0.1
@@ -2490,7 +2387,7 @@ calcada2.material.map.wrapT = THREE.RepeatWrapping
 scene.add(calcada2)
 var pred2 = new_Predio(new THREE.Vector3(0,50,0), 2, 0, 3)
 
-var calcada3 = new THREE.Mesh(new THREE.PlaneGeometry(200,300), new THREE.MeshLambertMaterial({color: "#ffffff"}))
+var calcada3 = new THREE.Mesh(new THREE.PlaneGeometry(200,300), new THREE.MeshLambertMaterial({color: "#ffffff",side: THREE.FrontSide}))
 calcada3.receiveShadow = true;
 calcada3.position.x = -calcada3.geometry.parameters.width/2 - 50;
 calcada3.position.y = calcada3.geometry.parameters.height;
@@ -2502,7 +2399,7 @@ calcada3.material.map.wrapT = THREE.RepeatWrapping
 scene.add(calcada3)
 var pred3 = new_Predio(new THREE.Vector3(100, 80, 0), 3, 180, 2)
 
-var calcada4 = new THREE.Mesh(new THREE.PlaneGeometry(200,300), new THREE.MeshLambertMaterial({color: "#ffffff"}))
+var calcada4 = new THREE.Mesh(new THREE.PlaneGeometry(200,300), new THREE.MeshLambertMaterial({color: "#ffffff",side: THREE.FrontSide}))
 calcada4.receiveShadow = true;
 calcada4.position.x = calcada4.geometry.parameters.width/2 + 50;
 calcada4.position.y = calcada4.geometry.parameters.height;
@@ -2514,7 +2411,7 @@ calcada4.material.map.wrapT = THREE.RepeatWrapping
 scene.add(calcada4)
 var pred4 = new_Predio(new THREE.Vector3(34, -16, 0), 4, 0, 3)
 
-var calcada5 = new THREE.Mesh(new THREE.PlaneGeometry(200,300), new THREE.MeshLambertMaterial({color: "#ffffff"}))
+var calcada5 = new THREE.Mesh(new THREE.PlaneGeometry(200,300), new THREE.MeshLambertMaterial({color: "#ffffff",side: THREE.FrontSide}))
 calcada5.receiveShadow = true;
 calcada5.position.x = -(calcada5.geometry.parameters.width/2 + 50);
 calcada5.position.y = -calcada5.geometry.parameters.height;
@@ -2526,7 +2423,7 @@ calcada5.material.map.wrapT = THREE.RepeatWrapping
 scene.add(calcada5)
 var pred5 = new_Predio(new THREE.Vector3(-80,-150,0), 5, 90, 2)
 
-var calcada6 = new THREE.Mesh(new THREE.PlaneGeometry(200,300), new THREE.MeshLambertMaterial({color: "#ffffff"}))
+var calcada6 = new THREE.Mesh(new THREE.PlaneGeometry(200,300), new THREE.MeshLambertMaterial({color: "#ffffff",side: THREE.FrontSide}))
 calcada6.receiveShadow = true;
 calcada6.position.x = (calcada6.geometry.parameters.width/2 + 50);
 calcada6.position.y = -calcada6.geometry.parameters.height;
@@ -2538,37 +2435,33 @@ calcada6.material.map.wrapT = THREE.RepeatWrapping
 scene.add(calcada6)
 var pred6 = new_Predio(new THREE.Vector3(-40,-22,0), 6, 90, 7)
 
+var calcada7 = new THREE.Mesh(new THREE.PlaneGeometry(265,300), new THREE.MeshLambertMaterial({color: "#ffffff"}))
+calcada7.receiveShadow = true;
+calcada7.position.y = -440;
+calcada7.position.z = 0.1;
+calcada7.material.map = new THREE.TextureLoader().load('texturas/chao/chao8.jpg')
+calcada7.material.map.repeat.set(3,3);
+calcada7.material.map.wrapS = THREE.RepeatWrapping;
+calcada7.material.map.wrapT = THREE.RepeatWrapping;
+calcada7.scale.set(1.5, 1.5, 1);
+scene.add(calcada7)
+var pred7 = new_Predio(new THREE.Vector3(-45,0,0), -1, 90, 7)
+pred7.scale.set(10, 10, 3);
 
-///////////////////RUA
-var asfaltoGeometria = new THREE.PlaneGeometry( 100, 900 );
-var asfaltoMaterial = new THREE.MeshPhongMaterial( {color: 0xffffff, side: THREE.DoubleSide} ); //0031e7
-var rua1 = new THREE.Mesh(asfaltoGeometria, asfaltoMaterial);
-rua1.position.z = 0.1;
-scene.add(rua1);
 
-var cruzamentoGeometria = new THREE.PlaneGeometry( 50, 50 );
-var cruzamentoMaterial = new THREE.MeshPhongMaterial( {color: 0xffffff, side: THREE.DoubleSide} ); //0031e7
-var cruzamento1 = new THREE.Mesh(cruzamentoGeometria, cruzamentoMaterial);
-cruzamento1.position.x = -1050;
-cruzamento1.position.z = 0.5;
-scene.add(cruzamento1);
 
-//-- Use TextureLoader to load texture files
-var ruaTexture = textureLoader.load('texturas\\estrada\\estrada2.jpg');
-var cruzamento1Texture = textureLoader.load('texturas\\estrada\\encruzilhada1.jpg');
+var calcada8 = new THREE.Mesh(new THREE.PlaneGeometry(265,300), new THREE.MeshLambertMaterial({color: "#ffffff"}))
+calcada8.receiveShadow = true;
+calcada8.position.y = 440;
+calcada8.position.z = 0.1;
+calcada8.material.map = new THREE.TextureLoader().load('texturas/chao/chao21.jpg')
+calcada8.material.map.repeat.set(3,3);
+calcada8.material.map.wrapS = THREE.RepeatWrapping;
+calcada8.material.map.wrapT = THREE.RepeatWrapping;
+calcada8.scale.set(1.5, 1.5, 1);
+scene.add(calcada8)
+var pred8 = new_Predio(new THREE.Vector3(65,0,0), -2, 90, 7)
 
-rua1.material.map = ruaTexture;
-rua1.material.map.repeat.set(1, 5);
-rua1.anisotropy = renderer.capabilities.getMaxAnisotropy();
-rua1.material.map.wrapS = THREE.RepeatWrapping;
-rua1.material.map.wrapT = THREE.RepeatWrapping;
-
-cruzamento1.material.map = cruzamento1Texture ;
-cruzamento1.material.map.wrapS = THREE.RepeatWrapping;
-cruzamento1.material.map.wrapT = THREE.RepeatWrapping;
-
-rua1.receiveShadow = true;
-cruzamento1.receiveShadow = true;
 
 
 
@@ -2595,9 +2488,7 @@ scene.add(praca1);
 scene.add(praca2);
 scene.add(praca3);
 
-// Carrega o gazebo no centro da praça
-var OBJposition = new THREE.Vector3(praca1.position.x, praca1.position.y, praca1.position.z+0.4)
-loadOBJFile("objetos\\Gazebo\\", "gazebo", OBJposition, 15, 90, -24, 0, true)
+
 
 var caminhogeometria1 = new THREE.BoxGeometry( 10, praca2.geometry.parameters.radius*2, 1 );
 var caminhoMaterial1 = new THREE.MeshPhongMaterial( {color: 0xffffff} );
@@ -2668,36 +2559,31 @@ create_arvore(new THREE.Vector3(praca1.position.x - getRandom(30, praca2.geometr
 create_arvore(new THREE.Vector3(praca1.position.x - getRandom(30, praca2.geometry.parameters.radius-35), praca1.position.y + getRandom(30, praca2.geometry.parameters.radius-35), 0), 2, 0, 5)
 create_arvore(new THREE.Vector3(praca1.position.x - getRandom(30, praca2.geometry.parameters.radius-35), praca1.position.y + getRandom(30, praca2.geometry.parameters.radius-35), 0), 3, 0, 4)
 
-var calcada7 = new THREE.Mesh(new THREE.PlaneGeometry(265,300), new THREE.MeshLambertMaterial({color: "#ffffff"}))
-calcada7.receiveShadow = true;
-calcada7.position.y = -440;
-calcada7.position.z = 0.1;
-calcada7.material.map = new THREE.TextureLoader().load('texturas/chao/chao21.jpg')
-calcada7.material.map.repeat.set(3,3);
-calcada7.material.map.wrapS = THREE.RepeatWrapping;
-calcada7.material.map.wrapT = THREE.RepeatWrapping;
-calcada7.scale.set(1.5, 1.5, 1);
-scene.add(calcada7)
-var pred7 = new_Predio(new THREE.Vector3(-45,0,0), -1, 90, 7)
-pred7.scale.set(10, 10, 3);
-
-var OBJposition = new THREE.Vector3(0, 0, 0.1)
-var statueTexture = textureLoader.load('objetos\\Estatua\\Statue.jpg');
-loadOBJFile("objetos\\Estatua\\", "Statue", OBJposition, 100, 0, 0, 0, false, false, statueTexture)
 
 
+///////////////////RUA
+var asfaltoGeometria = new THREE.PlaneGeometry( 100, 900 );
+var asfaltoMaterial = new THREE.MeshPhongMaterial( {color: 0xffffff, side: THREE.DoubleSide} ); //0031e7
+var rua1 = new THREE.Mesh(asfaltoGeometria, asfaltoMaterial);
+rua1.position.z = 0.1;
+rua1.receiveShadow = true;
+scene.add(rua1);
 
-
+//-- Use TextureLoader to load texture files
+var ruaTexture = textureLoader.load('texturas\\estrada\\estrada2.jpg');
+rua1.material.map = ruaTexture;
+rua1.material.map.repeat.set(1, 5);
+rua1.anisotropy = renderer.capabilities.getMaxAnisotropy();
+rua1.material.map.wrapS = THREE.RepeatWrapping;
+rua1.material.map.wrapT = THREE.RepeatWrapping;
 
 var rua2 = rua1.clone();
-console.log(rua2.geometry.parameters.width)
 rua2.position.x = praca1.geometry.parameters.radius + rua2.geometry.parameters.width/2 + 25;
 rua2.receiveShadow = true;
 rua2.scale.set(1.5, 1.5, 1);
 scene.add(rua2);
 
 var rua3 = rua1.clone();
-console.log(rua3.geometry.parameters.width)
 rua3.position.x = -(praca1.geometry.parameters.radius + rua3.geometry.parameters.width/2 + 25);
 rua3.receiveShadow = true;
 rua3.scale.set(1.5, 1.5, 1);
@@ -2708,16 +2594,145 @@ scene.add(rua3);
 
 
 
+var cruzamentoGeometria = new THREE.PlaneGeometry( 100, 100 );
+var cruzamentoMaterial = new THREE.MeshPhongMaterial( {color: 0xffffff, side: THREE.DoubleSide} );
+var cruzamento1 = new THREE.Mesh(cruzamentoGeometria, cruzamentoMaterial);
+cruzamento1.position.x = rua2.position.x;
+cruzamento1.position.y = -(rua2.geometry.parameters.height - 150);
+cruzamento1.position.z = 0.5;
+cruzamento1.scale.set(1.5, 1.5, 1);
+scene.add(cruzamento1);
+
+cruzamento1.receiveShadow = true;
+
+var cruzamento1Texture = textureLoader.load('texturas\\estrada\\encruzilhada2.jpg');
+cruzamento1Texture.rotation = -Math.PI/2;
+cruzamento1.material.map = cruzamento1Texture;
+cruzamento1.material.map.wrapS = THREE.RepeatWrapping;
+cruzamento1.material.map.wrapT = THREE.RepeatWrapping;
+
+var asfaltoGeometria2 = new THREE.PlaneGeometry( 100, 1280 ); //267
+var rua4 = new THREE.Mesh(asfaltoGeometria2, asfaltoMaterial);
+rua4.position.x = 0;
+rua4.position.y = cruzamento1.position.y;
+rua4.position.z = 0.1;
+rua4.rotation.z = Math.PI/2;
+rua4.receiveShadow = true;
+rua4.scale.set(1.5, 1.5, 1);
+scene.add(rua4);
+
+
+var rua5 = rua4.clone();
+rua5.position.y = -cruzamento1.position.y;
+scene.add(rua5)
 
 
 
+var cruzamento2 = cruzamento1.clone();
+cruzamento2.position.x = rua3.position.x;
+cruzamento2.position.y = -(rua3.geometry.parameters.height - 150);
+scene.add(cruzamento2)
 
+var cruzamento3Material = new THREE.MeshPhongMaterial( {color: 0xffffff, side: THREE.DoubleSide} );
+var cruzamento3 = new THREE.Mesh(cruzamentoGeometria, cruzamento3Material);
+cruzamento3.position.x = rua2.position.x;
+cruzamento3.position.y = (rua2.geometry.parameters.height - 150);
+cruzamento3.position.z = 0.5;
+cruzamento3.scale.set(1.5, 1.5, 1);
 
+var cruzamento3Texture = textureLoader.load('texturas\\estrada\\encruzilhada2.jpg');
+cruzamento3Texture.rotation = Math.PI/2;
+cruzamento3.material.map = cruzamento3Texture;
+cruzamento3.receiveShadow = true;
+cruzamento3.material.map.wrapS = THREE.RepeatWrapping;
+cruzamento3.material.map.wrapT = THREE.RepeatWrapping;
+scene.add(cruzamento3)
 
+var cruzamento4 = cruzamento3.clone();
+cruzamento4.position.x = rua3.position.x;
+cruzamento4.position.y = (rua3.geometry.parameters.height - 150);
+scene.add(cruzamento4)
 
+var cruzamento5Material = new THREE.MeshPhongMaterial( {color: 0xffffff, side: THREE.DoubleSide} );
+var cruzamento5 = new THREE.Mesh(cruzamentoGeometria, cruzamento5Material);
+cruzamento5.position.x = -rua4.geometry.parameters.height + 250;
+cruzamento5.position.y = (rua2.geometry.parameters.height - 150);
+cruzamento5.position.z = 0.5;
+cruzamento5.scale.set(1.5, 1.5, 1);
 
+var cruzamento5Texture = textureLoader.load('texturas\\estrada\\curva1.jpg');
+cruzamento5Texture.rotation = Math.PI/2;
+cruzamento5.material.map = cruzamento5Texture;
+cruzamento5.receiveShadow = true;
+cruzamento5.material.map.wrapS = THREE.RepeatWrapping;
+cruzamento5.material.map.wrapT = THREE.RepeatWrapping;
+scene.add(cruzamento5)
 
+var cruzamento6Material = new THREE.MeshPhongMaterial( {color: 0xffffff, side: THREE.DoubleSide} );
+var cruzamento6 = new THREE.Mesh(cruzamentoGeometria, cruzamento6Material);
+cruzamento6.position.x = rua4.geometry.parameters.height - 250;
+cruzamento6.position.y = (rua2.geometry.parameters.height - 150);
+cruzamento6.position.z = 0.5;
+cruzamento6.scale.set(1.5, 1.5, 1);
 
+var cruzamento6Texture = textureLoader.load('texturas\\estrada\\curva1.jpg');
+//cruzamento6Texture.rotation = -Math.PI/2;
+cruzamento6.material.map = cruzamento6Texture;
+cruzamento6.receiveShadow = true;
+cruzamento6.material.map.wrapS = THREE.RepeatWrapping;
+cruzamento6.material.map.wrapT = THREE.RepeatWrapping;
+scene.add(cruzamento6)
+
+var cruzamento7Material = new THREE.MeshPhongMaterial( {color: 0xffffff, side: THREE.DoubleSide} );
+var cruzamento7 = new THREE.Mesh(cruzamentoGeometria, cruzamento7Material);
+cruzamento7.position.x = -rua4.geometry.parameters.height + 250;
+cruzamento7.position.y = -rua2.geometry.parameters.height + 150;
+cruzamento7.position.z = 0.5;
+cruzamento7.scale.set(1.5, 1.5, 1);
+
+var cruzamento7Texture = textureLoader.load('texturas\\estrada\\curva1.jpg');
+cruzamento7Texture.rotation = Math.PI;
+cruzamento7.material.map = cruzamento7Texture;
+cruzamento7.receiveShadow = true;
+cruzamento7.material.map.wrapS = THREE.RepeatWrapping;
+cruzamento7.material.map.wrapT = THREE.RepeatWrapping;
+scene.add(cruzamento7)
+
+var cruzamento8Material = new THREE.MeshPhongMaterial( {color: 0xffffff, side: THREE.DoubleSide} );
+var cruzamento8 = new THREE.Mesh(cruzamentoGeometria, cruzamento8Material);
+cruzamento8.position.x = rua4.geometry.parameters.height - 250;
+cruzamento8.position.y = -(rua2.geometry.parameters.height - 150);
+cruzamento8.position.z = 0.5;
+cruzamento8.scale.set(1.5, 1.5, 1);
+
+var cruzamento8Texture = textureLoader.load('texturas\\estrada\\curva1.jpg');
+cruzamento8Texture.rotation = -Math.PI/2;
+cruzamento8.material.map = cruzamento8Texture;
+cruzamento8.receiveShadow = true;
+cruzamento8.material.map.wrapS = THREE.RepeatWrapping;
+cruzamento8.material.map.wrapT = THREE.RepeatWrapping;
+scene.add(cruzamento8)
+
+const cruzamentos = new THREE.Group();
+cruzamentos.add( cruzamento1 );
+cruzamentos.add( cruzamento2 );
+cruzamentos.add( cruzamento3 );
+cruzamentos.add( cruzamento4 );
+cruzamentos.add( cruzamento5 );
+cruzamentos.add( cruzamento6 );
+cruzamentos.add( cruzamento7 );
+cruzamentos.add( cruzamento8 );
+scene.add(cruzamentos)
+
+const ruas = new THREE.Group();
+ruas.add( rua1 );
+ruas.add( rua2 );
+ruas.add( rua3 );
+ruas.add( rua4 );
+ruas.add( rua5 );
+scene.add( ruas )
+
+//Grupo de 6 prédios - direita da praça
 const group1 = new THREE.Group();
 group1.add( calcada1 );
 group1.add( calcada2 );
@@ -2733,24 +2748,19 @@ group1.add( pred5 );
 group1.add( pred6 );
 group1.add( rua1 );
 group1.scale.set(1.5, 1.5, 1)
-group1.position.x=2000;
+group1.position.x=1030;
 scene.add( group1 );
 
-
+//Grupo de 6 prédios - esquerda da praça
 const group2 = group1.clone();
-
-group2.position.x=3000;
+group2.position.x=-1030;
 group2.scale.set(1.5, 1.5, 2)
 group2.rotation.z=Math.PI
-//scene.add(group2)
+scene.add(group2)
 
-
+//Grupo de 3 prédios - Direita da praça
 const group3 = new THREE.Group();
 var calaux1 = calcada1.clone();
-calaux1.material.map = textureLoader.load('texturas\\chao\\chao19.jpg');
-calaux1.material.map.repeat.set(8, 8);
-calaux1.material.map.wrapS = THREE.RepeatWrapping;
-calaux1.material.map.wrapT = THREE.RepeatWrapping;
 group3.add( calaux1 );
 group3.add( calcada4.clone() );
 group3.add( calcada6.clone() );
@@ -2761,32 +2771,98 @@ group3.add( pred4.clone() );
 var paux2 = pred5.clone();
 paux2.position.set(450,-180,0)
 paux2.rotation.z = -Math.PI/2
-//group3.add( paux2 );
-
-group3.position.x=1000;
+group3.add( paux2 );
+group3.position.x = rua2.position.x;
 group3.scale.set(1.5, 1.5, 0.8)
-//scene.add(group3)
+scene.add(group3)
 
 
+//Grupo de 3 prédios - esquerda da praça
+const group4 = new THREE.Group();
+group4.add( calcada2.clone() );
+group4.add( calcada3.clone() );
+group4.add( calcada5.clone() );
+var paux3 = pred1.clone();
+paux3.position.set(-300,-300,0)
+var paux4 = pred6.clone();
+paux4.position.set(0,-300,0)
+paux4.rotation.z = -Math.PI/2
+group4.add( paux3 );
+group4.add( pred3.clone() );
+group4.add( paux4 );
+group4.position.x = rua3.position.x;
+group4.scale.set(1.5, 1.5, 0.5)
+scene.add(group4)
+
+//Cima Esquerda
+const group5 = group3.clone();
+group5.position.x= -540;
+group5.position.y = 750
+group5.scale.set(1.5, 1.2, 2.5)
+group5.rotation.z=Math.PI/2
+scene.add(group5)
+
+//Cima Direita
+const group6 = group4.clone();
+group6.position.x = 540;
+group6.position.y = 1200;
+group6.scale.set(1.5, 1.2, 1.3)
+group6.rotation.z=Math.PI/2
+scene.add(group6)
+
+//Baixo Direita
+const group7 = group3.clone();
+group7.position.x = 540;
+group7.position.y = -750;
+group7.scale.set(1.5, 1.2, 0.7);
+group7.rotation.z=-Math.PI/2;
+scene.add(group7);
+
+//Baixo Direita
+const group8 = group4.clone();
+group8.position.x = -540;
+group8.position.y = -1200;
+group8.scale.set(1.5, 1.2, 1.3);
+group8.rotation.z=-Math.PI/2;
+scene.add(group8)
+
+//Louvre e piza
+const group9 = new THREE.Group();
+group9.add(pred7)
+group9.add(pred8)
+group9.add(calcada7)
+group9.add(calcada8)
+scene.add(group9)
+
+//Groupo que contém a cidade completa (sem a praça)
+const cidade = new THREE.Group();
+cidade.add(group1)
+cidade.add(group2)
+cidade.add(group3)
+cidade.add(group4)
+cidade.add(group5)
+cidade.add(group6)
+cidade.add(group7)
+cidade.add(group8)
+cidade.add(group9)
+cidade.add(cruzamentos)
+cidade.add(ruas)
+scene.add(cidade)
 
 
+// Carrega o gazebo no centro da praça
+var OBJposition = new THREE.Vector3(praca1.position.x, praca1.position.y, praca1.position.z+0.4)
+loadOBJFile("objetos\\Gazebo\\", "gazebo", OBJposition, 15, 90, -24, 0, true)
 
+// Carrega a estatua no centro do louvre
+var OBJposition = new THREE.Vector3(0, -450, 0.1)
+var statueTexture = textureLoader.load('objetos\\Estatua\\Statue.jpg');
+loadOBJFile("objetos\\Estatua\\", "Statue", OBJposition, 0.35, 0, 0, 0, true, true, statueTexture)
 
-
-
-
-
-
-
-
-
-
-/*
-var OBJposition = new THREE.Vector3(50, 520, 0.1)
+// Carrega a casa dentro do lote da igreja
+var OBJposition = new THREE.Vector3(-50, -1000, 0.1)
 var houseTexture = textureLoader.load('objetos\\casas\\20960_Front_Gable_House_texture.jpg');
-loadOBJFile("objetos\\Casas\\", "20960_Front_Gable_House_v1_NEW", OBJposition, 10, 0, 0, 0, false, true, houseTexture)
-*/
-
+loadOBJFile("objetos\\Casas\\", "20960_Front_Gable_House_v1_NEW", OBJposition, 10, 0, 0, 0, true, true, houseTexture)
 
 
 
@@ -2897,140 +2973,24 @@ function moveLightAndTarget()
 //------------------------------------------------------------------------------------
 
 
-//Tela de carregamento
-
-/*
-const loadingManager = new THREE.LoadingManager( () => {
-	
-    const loadingScreen = document.getElementById( 'loading-screen' );
-    loadingScreen.classList.add( 'fade-out' );
-    
-    // optional: remove loader from DOM via event listener
-    loadingScreen.addEventListener( 'transitionend', onTransitionEnd );
-    
-} );
-
-*/
-/*
-const manager = new THREE.LoadingManager();
-manager.onStart = function ( url, itemsLoaded, itemsTotal ) {
-
-	console.log( 'Started loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
-
-};
-
-manager.onLoad = function ( ) {
-
-	console.log( 'Loading complete!');
-
-};
+//Carregamento
 
 
-manager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
-
-	console.log( 'Loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
-
-};
-
-manager.onError = function ( url ) {
-
-	console.log( 'There was an error loading ' + url );
-
-};
-*/
-/*
-const loader = new THREE.OBJLoader( manager );
-loader.load( 'file.obj', function ( object ) {
-
-	//
-
-} );
-*/
-/*
-var sphereMaterial = new THREE.MeshPhongMaterial();
-
-var onProgress = function ( xhr ) {
-  if ( xhr.lengthComputable ) {
-    var percentComplete = xhr.loaded / xhr.total * 100;
-    console.log( Math.round(percentComplete, 2) + '% downloaded' );
-  }
-};
-
-var loader = new THREE.TextureLoader();
-var texture = loader.load("___4MB_IMAGE.JPG___", undefined, onProgress);
-sphereMaterial.map = texture;
-*/
-
-/*
-//initialize the manager to handle all loaded events (currently just works for OBJ and image files)
-var manager = new THREE.LoadingManager();
-
-manager.onProgress = function (item, loaded, total) {
-    console.log(item, loaded, total);
-};
-manager.onLoad = function () {
-    console.log('all items loaded');
-};
-manager.onError = function () {
-    console.log('there has been an error');
-};
-*/
-/*FUNCIONALFUNCIONALFUNCIONALFUNCIONALFUNCIONALFUNCIONALFUNCIONALFUNCIONALFUNCIONALFUNCIONALFUNCIONALFUNCIONALFUNCIONALFUNCIONALFUNCIONALFUNCIONALFUNCIONALFUNCIONAL
-THREE.DefaultLoadingManager.onStart = function ( url, itemsLoaded, itemsTotal ) {
-
-	console.log( 'Started loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
-
-};
-
-THREE.DefaultLoadingManager.onLoad = function ( ) {
-
-	console.log( 'Loading Complete!');
-
-};
 
 
-THREE.DefaultLoadingManager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
-
-	console.log( 'Loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
-
-};
-
-THREE.DefaultLoadingManager.onError = function ( url ) {
-
-	console.log( 'There was an error loading ' + url );
-
-};
-*/
-/*
-// Iniciando o loading manager
-const manager = new THREE.LoadingManager();
-
-let curLoaded;
-let totalLoaded;
-
-const loadingText = document.getElementById("loading-progress");
-const loadingBar = document.getElementById("progress-bar");
-const loadingScreen = document.getElementById("loading-screen");
-
-const updateLoading = () => {
-  loadingText.innerText = `${curLoaded}/${totalLoaded}`;
-  loadingBar.style.width = `${Math.floor((curLoaded / totalLoaded) * 100)}%`;
-};
-
-manager.onStart = (url, itemsLoaded, itemsTotal) => {
-  curLoaded = itemsLoaded;
-  totalLoaded = itemsTotal;
-  updateLoading();
-};
-
-manager.onProgress = (url, itemsLoaded, itemsTotal) => {
-  curLoaded = itemsLoaded;
-  totalLoaded = itemsTotal;
-  updateLoading();
-};
-*/
 
 
+
+
+
+
+
+
+
+
+
+
+// Sons de finalização, checkpoint, avião e de fundo
 const audioListener = new THREE.AudioListener();
 camera.add(audioListener);
 
