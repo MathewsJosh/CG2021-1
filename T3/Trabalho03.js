@@ -463,10 +463,10 @@ function cria_afuselagem(ponto) {
 
     //------------ Trabalho 03 - Parte 1.1 - Mapeamento de textura do avião -----------
     //---------------------------------------------------------------------------------
-    var lataria1 = textureLoader.load('texturas\\lataria\\lataria1.jpg');
-    var lataria2 = textureLoader.load('texturas\\lataria\\lataria2.jpg');
-    var lataria3 = textureLoader.load('texturas\\lataria\\lataria3.jpg');
-    var lataria4 = textureLoader.load('texturas\\lataria\\lataria4.jpg');
+    var lataria1 = textureLoader.load('texturas\\lataria\\lataria1.jpg', loading);
+    var lataria2 = textureLoader.load('texturas\\lataria\\lataria2.jpg', loading);
+    var lataria3 = textureLoader.load('texturas\\lataria\\lataria3.jpg', loading);
+    var lataria4 = textureLoader.load('texturas\\lataria\\lataria4.jpg', loading);
 
     cilindro_apoio01.material.map = lataria1;
     cilindro_apoio01.anisotropy = renderer.capabilities.getMaxAnisotropy();
@@ -1246,7 +1246,7 @@ scene.add( hemisphereLight );
 // Luz do sol direcional posicionada no canto superior direito do plano
 var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.89 );
 directionalLight.name = "dirligh"
-directionalLight.position.set(5000, 4500, 3000);
+directionalLight.position.set(5000+3500, 4500+3500, 3000);
 directionalLight.distance = 1000;
 directionalLight.penumbra = 0.2;
 // Sombras
@@ -1264,8 +1264,8 @@ directionalLight.shadow.camera.far = 15000;
 directionalLight.castShadow = true;
 scene.add( directionalLight );
 //Tire este comentário para entender como ocorre o posicionamento da luz direcional
-//var directionalLightHelper = new THREE.CameraHelper( directionalLight.shadow.camera ); // creates a helper to better visualize the light
-//scene.add( directionalLightHelper );
+var directionalLightHelper = new THREE.CameraHelper( directionalLight.shadow.camera ); // creates a helper to better visualize the light
+scene.add( directionalLightHelper );
 
 
 /**
@@ -1486,7 +1486,7 @@ function create_arvore(base, tipo, rotation, scale) {
         caule_1.receiveShadow = true;
         folhas_1.receiveShadow = true;
 
-        var madeira = textureLoader.load('texturas\\madeira\\madeira1.jpg');
+        var madeira = textureLoader.load('texturas\\madeira\\madeira1.jpg', loading);
         caule_1.material.map = madeira;
         caule_1.anisotropy = renderer.capabilities.getMaxAnisotropy();
         caule_1.material.map.wrapS = THREE.RepeatWrapping;
@@ -1494,7 +1494,7 @@ function create_arvore(base, tipo, rotation, scale) {
         caule_1.material.map.minFilter = THREE.LinearFilter;
         caule_1.material.map.magFilter = THREE.LinearFilter;
 
-        var folha = textureLoader.load('texturas\\folhas\\folhas1.jpg');
+        var folha = textureLoader.load('texturas\\folhas\\folhas1.jpg', loading);
         folhas_1.material.map = folha;
         folhas_1.anisotropy = renderer.capabilities.getMaxAnisotropy();
         folhas_1.material.map.wrapS = THREE.RepeatWrapping;
@@ -1547,8 +1547,8 @@ function create_arvore(base, tipo, rotation, scale) {
         folha_2_2.receiveShadow = true;
         folha_2_3.receiveShadow = true;
 
-        var madeira = textureLoader.load('texturas\\madeira\\madeira4.jpg');
-        var folha = textureLoader.load('texturas\\folhas\\folhas2.jpg');
+        var madeira = textureLoader.load('texturas\\madeira\\madeira4.jpg', loading);
+        var folha = textureLoader.load('texturas\\folhas\\folhas2.jpg', loading);
 
         caule_2_1.material.map = madeira;
         caule_2_1.anisotropy = renderer.capabilities.getMaxAnisotropy();
@@ -1619,8 +1619,8 @@ function create_arvore(base, tipo, rotation, scale) {
         folha_3_1.receiveShadow = true;
         folha_3_2.receiveShadow = true;
 
-        var madeira = textureLoader.load('texturas\\madeira\\madeira3.jpg');
-        var folha = textureLoader.load('texturas\\folhas\\folhas4.jpg');
+        var madeira = textureLoader.load('texturas\\madeira\\madeira3.jpg', loading);
+        var folha = textureLoader.load('texturas\\folhas\\folhas4.jpg', loading);
 
         caule_3.material.map = madeira;
         caule_3.anisotropy = renderer.capabilities.getMaxAnisotropy();
@@ -1787,7 +1787,7 @@ function predios_Bases(params,tipo_teto,rotation) {
     parede_e.rotateY(Math.PI/2)
     if (param.textura_parede_E!=undefined) {
       var textura_parede_E = new THREE.TextureLoader()
-      parede_e.material.map = textura_parede_E.load(param.textura_parede_E.caminho)
+      parede_e.material.map = textura_parede_E.load(param.textura_parede_E.caminho, loading)
       parede_e.material.map.repeat.set(param.textura_parede_E.x,param.textura_parede_E.y)
       parede_e.material.map.wrapS = THREE.RepeatWrapping
       parede_e.material.map.wrapT = THREE.RepeatWrapping
@@ -1800,7 +1800,7 @@ function predios_Bases(params,tipo_teto,rotation) {
     parede_d.rotateY(Math.PI/2)
     if (param.textura_parede_D!=undefined) {
       var textura_parede_D = new THREE.TextureLoader()
-      parede_d.material.map =  textura_parede_D.load(param.textura_parede_D.caminho)
+      parede_d.material.map =  textura_parede_D.load(param.textura_parede_D.caminho, loading)
       parede_d.material.map.repeat.set(param.textura_parede_D.x,param.textura_parede_D.y)
       parede_d.material.map.wrapS = THREE.RepeatWrapping
       parede_d.material.map.wrapT = THREE.RepeatWrapping
@@ -1814,7 +1814,7 @@ function predios_Bases(params,tipo_teto,rotation) {
     tras.rotateX(Math.PI/2)
     if (param.textura_parede_T!=undefined) {
       var textura_parede_T = new THREE.TextureLoader()
-      tras.material.map = textura_parede_T.load(param.textura_parede_T.caminho)
+      tras.material.map = textura_parede_T.load(param.textura_parede_T.caminho, loading)
       tras.material.map.repeat.set(param.textura_parede_T.x,param.textura_parede_T.y)
       tras.material.map.wrapS = THREE.RepeatWrapping
       tras.material.map.wrapT = THREE.RepeatWrapping
@@ -1828,7 +1828,7 @@ function predios_Bases(params,tipo_teto,rotation) {
     frente.rotateX(Math.PI/2)
     if (param.textura_parede_F!=undefined) {
         var textura_parede_F = new THREE.TextureLoader()
-        frente.material.map = textura_parede_F.load(param.textura_parede_F.caminho)
+        frente.material.map = textura_parede_F.load(param.textura_parede_F.caminho, loading)
         frente.material.map.repeat.set(param.textura_parede_F.x,param.textura_parede_F.y)
         frente.material.map.wrapS = THREE.RepeatWrapping
         frente.material.map.wrapT = THREE.RepeatWrapping
