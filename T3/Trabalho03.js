@@ -542,9 +542,7 @@ var axesHelper = new THREE.AxesHelper(12);
 scene.add(axesHelper);
 
 // Listen window size changes
-window.addEventListener("resize", function () {
-    onWindowResize(camera, renderer);
-}, false);
+window.addEventListener("resize", function () {onWindowResize(camera, renderer);}, false);
 
 // Cria um plano que recebe sombras
 var plano = createGroundPlane(10000, 10000, 40, 40); // width, height, resolutionW, resolutionH
@@ -1015,21 +1013,27 @@ function getRandom(min, max) {
 //----------------------------------------------------------------------------------
 // Pontos do circuito que será criada
 var pontosDaLinha = 
-[new THREE.Vector3( 0, 0, 0 ),                              //Origin
-new THREE.Vector3( 0, getRandom(80,150), -800 ),            //1
-new THREE.Vector3( 600, getRandom(150,350), -1200 ),         //2
-new THREE.Vector3( -400, getRandom(100,200), -2000 ),        //3
-new THREE.Vector3( -800, getRandom(200,450), -1600 ),        //4
-new THREE.Vector3( -1000, getRandom(120,300), -1000 ),       //5
-new THREE.Vector3( -800, getRandom(130,300), -800 ),        //6
-new THREE.Vector3( 0, getRandom(140,300), 400),             //7
-new THREE.Vector3( 800, getRandom(120,420), 200),              //8
-new THREE.Vector3( 1600, getRandom(50,320), 800),           //9
-new THREE.Vector3( 2400, getRandom(240,520), 1600),          //10
-new THREE.Vector3( 800, getRandom(50,220), 1600),           //11
-new THREE.Vector3( 0, getRandom(250,520), 1600),             //12
-new THREE.Vector3( 0, getRandom(40,150), 500),              //13
-new THREE.Vector3( 0, 0, 0 )]                               //end
+[new THREE.Vector3( 0, 0, 0 ),                                  //Origin
+new THREE.Vector3( 0, getRandom(100,200), -1000 ),              //1
+new THREE.Vector3( 1000, getRandom(150,250), -2000 ),           //2
+new THREE.Vector3( 2000, getRandom(250,350), -1500 ),           //3
+new THREE.Vector3( 2600, 420, -2400 ),                          //4
+new THREE.Vector3( 2500, getRandom(250,350), -4000 ),           //5
+new THREE.Vector3( 3000, getRandom(150,250), -4000 ),           //6
+new THREE.Vector3( 3400, getRandom(50,150), -3600 ),            //7
+new THREE.Vector3( 3800, getRandom(150,250), -4100),            //8
+new THREE.Vector3( 3400, getRandom(250,350), -4200),            //9
+new THREE.Vector3( 3600, getRandom(80,120), -3000),             //10
+new THREE.Vector3( 4000, getRandom(150,250), -2500),            //11
+new THREE.Vector3( 4500, getRandom(150,250), -3000),            //12
+new THREE.Vector3( 4500, getRandom(50,100), -4000),             //13
+new THREE.Vector3( 5500, getRandom(100,200), -3500),            //14
+new THREE.Vector3( 6000, getRandom(150,350), -2500),            //15
+new THREE.Vector3( 5000, getRandom(150,450), -1500),            //16
+new THREE.Vector3( 2000, getRandom(150,350), -500),             //17
+new THREE.Vector3( 500, getRandom(40,150), 500),                //18
+new THREE.Vector3( 0, 25, 200),                                 //19
+new THREE.Vector3( 0, 0, 0 )]                                   //end
 
 
 //Cria uma curva a partir dos pontos definidos anteriormente
@@ -1058,6 +1062,20 @@ function defineCheckpoints(){
         checkpoint[j].position.z = pontosDaLinha[i].y;
         checkpoint[j].lookAt(checkpoint[j].position);   //Eles "olham" para o centro, ou seja, eles vão estar melhor posicionados em relação a curva
         checkpoint[j].rotateX(Math.PI/2);
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        scene.add(checkpoint[j])
     }
 }
 defineCheckpoints()
@@ -1066,14 +1084,20 @@ defineCheckpoints()
 scene.add(checkpoint[0])
 
 //Conserta os checkpoints restantes que ainda não estão perpendiculares à curva
-checkpoint[0].rotateY(-Math.PI/4)
+checkpoint[1].rotateY(Math.PI/2)
 checkpoint[2].rotateY(Math.PI/2)
+checkpoint[4].rotateY(-Math.PI/4)
+checkpoint[5].rotateY(Math.PI/2)
 checkpoint[6].rotateY(Math.PI/2)
-checkpoint[7].rotateY(Math.PI/2)
-checkpoint[8].rotateY(Math.PI/3)
+checkpoint[7].rotateY(Math.PI/4)
+checkpoint[8].rotateY(-Math.PI/4)
 checkpoint[10].rotateY(Math.PI/2)
-checkpoint[11].rotateY(Math.PI/3)
-
+checkpoint[12].rotateY(-Math.PI/4)
+checkpoint[13].rotateY(Math.PI/4)
+checkpoint[14].rotateY(-Math.PI/4)
+checkpoint[15].rotateY(-Math.PI/4)
+checkpoint[16].rotateY(-Math.PI/4)
+checkpoint[17].rotateY(Math.PI/2)
 
 var numeroDoCheck = 0;
 /**
@@ -1264,8 +1288,8 @@ directionalLight.shadow.camera.far = 15000;
 directionalLight.castShadow = true;
 scene.add( directionalLight );
 //Tire este comentário para entender como ocorre o posicionamento da luz direcional
-var directionalLightHelper = new THREE.CameraHelper( directionalLight.shadow.camera ); // creates a helper to better visualize the light
-scene.add( directionalLightHelper );
+//var directionalLightHelper = new THREE.CameraHelper( directionalLight.shadow.camera ); // creates a helper to better visualize the light
+//scene.add( directionalLightHelper );
 
 
 /**
@@ -1748,7 +1772,6 @@ function loadOBJFile(modelPath, modelName, position, desiredScale, angle1, angle
             obj.rotateZ(degreesToRadians(angle3));
 
             scene.add ( obj );
-            objeto = obj;
         });
     });
 }
@@ -2720,7 +2743,7 @@ scene.add(cruzamento8)
 var pistaGeometria = new THREE.PlaneGeometry( 100, 500 );
 var pistaMaterial = new THREE.MeshPhongMaterial( {color: 0xffffff, side: THREE.DoubleSide} ); //0031e7
 var pistaDecolagem = new THREE.Mesh(pistaGeometria, pistaMaterial);
-pistaDecolagem.position.y = pistaDecolagem.geometry.parameters.height/2 - 40;
+pistaDecolagem.position.y = pistaDecolagem.geometry.parameters.height/2 - 100;
 pistaDecolagem.position.z = 0.1;
 pistaDecolagem.receiveShadow = true;
 scene.add(pistaDecolagem);
@@ -2845,7 +2868,7 @@ scene.add(group7);
 const group8 = group4.clone();
 group8.position.x = -540;
 group8.position.y = -1200;
-group8.scale.set(1.5, 1.2, 1.3);
+group8.scale.set(1.5, 1.2, 3);
 group8.rotation.z=-Math.PI/2;
 scene.add(group8)
 
@@ -2892,8 +2915,7 @@ loadOBJFile("objetos\\Casas\\", "20960_Front_Gable_House_v1_NEW", OBJposition, 1
 //----------------------- Trabalho 03 - Parte 1.3 - Periferia -----------------------
 //-----------------------------------------------------------------------------------
 
-//------------------- Textura do chão ------------------
-//-- Use TextureLoader to load texture files
+//------------------- Texturas do chão da periferia ------------------
 var chao1 = textureLoader.load('texturas\\chao\\chao1.jpg');
 plano.material.map = chao1;
 plano.material.map.repeat.set(20, 20);
@@ -2901,22 +2923,54 @@ plano.material.map.wrapS = THREE.RepeatWrapping;
 plano.material.map.wrapT = THREE.RepeatWrapping;
 
 
-// Cria um plano que recebe sombras
 var plano2 = createGroundPlane(1000, 1000, 40, 40); // width, height, resolutionW, resolutionH
 plano2.position.x = 3500
-plano2.position.z = 1
-plano2.material.color.r = 255
-plano2.material.color.g = 255
-plano2.material.color.b = 255
+plano2.position.y = 1500
+plano2.position.z = 0.2
+plano2.material.color.r = 1
+plano2.material.color.g = 1
+plano2.material.color.b = 1
 plano2.receiveShadow = true;
 scene.add(plano2);
 
+var chao2 = textureLoader.load('texturas\\chao\\chao3.jpg');
+plano2.material.map = chao2;
+plano2.material.map.repeat.set(20, 20);
+plano2.material.map.wrapS = THREE.RepeatWrapping;
+plano2.material.map.wrapT = THREE.RepeatWrapping;
 
 
+var plano3 = createGroundPlane(1000, 1000, 40, 40); // width, height, resolutionW, resolutionH
+plano3.position.x = 6500
+plano3.position.y = 2500
+plano3.position.z = 0.2
+plano3.material.color.r = 1
+plano3.material.color.g = 1
+plano3.material.color.b = 1
+plano3.receiveShadow = true;
+scene.add(plano3);
 
+var chao3 = textureLoader.load('texturas\\chao\\chao2.jpg');
+plano3.material.map = chao3;
+plano3.material.map.repeat.set(10, 10);
+plano3.material.map.wrapS = THREE.RepeatWrapping;
+plano3.material.map.wrapT = THREE.RepeatWrapping;
 
+var plano4 = createGroundPlane(1000, 1000, 40, 40); // width, height, resolutionW, resolutionH
+plano4.position.x = 1000
+plano4.position.y = 2500
+plano4.position.z = 0.2
+plano4.material.color.r = 1
+plano4.material.color.g = 1
+plano4.material.color.b = 1
+plano4.receiveShadow = true;
+scene.add(plano4);
 
-
+var chao4 = textureLoader.load('texturas\\chao\\chao5.jpg');
+plano4.material.map = chao4;
+plano4.material.map.repeat.set(10, 10);
+plano4.material.map.wrapS = THREE.RepeatWrapping;
+plano4.material.map.wrapT = THREE.RepeatWrapping;
 
 
 
@@ -2975,16 +3029,22 @@ skybox.material.map.magFilter = THREE.LinearFilter;
 //-------------------------------------------------------------------------------------------------
 
 var dynamicLight = new THREE.DirectionalLight(0xffffff);
-    dynamicLight.intensity = 0.5; // No need to iluminate, just used to drop shadow.
-    dynamicLight.position.set(aviao_obj.fuselagem._estacionaria.position.x, aviao_obj.fuselagem._estacionaria.position.y-8, aviao_obj.fuselagem._estacionaria.position.z);
-    dynamicLight.shadow.mapSize.width = 256;
-    dynamicLight.shadow.mapSize.height = 256;
-    dynamicLight.castShadow = true;
-    dynamicLight.shadow.camera.left = -7;
-    dynamicLight.shadow.camera.right = 7;
-    dynamicLight.shadow.camera.top = 7;
-    dynamicLight.shadow.camera.bottom = -7;
+dynamicLight.intensity = 0.5; // No need to iluminate, just used to drop shadow.
+dynamicLight.position.set(aviao_obj.fuselagem._estacionaria.position.x, aviao_obj.fuselagem._estacionaria.position.y-8, aviao_obj.fuselagem._estacionaria.position.z);
+dynamicLight.shadow.mapSize.width = 256;
+dynamicLight.shadow.mapSize.height = 256;
+dynamicLight.castShadow = true;
+dynamicLight.shadow.camera.left = -7;
+dynamicLight.shadow.camera.right = 7;
+dynamicLight.shadow.camera.top = 7;
+dynamicLight.shadow.camera.bottom = -7;
 
+// Create helper for the spotlight
+/*
+const spotHelper = new THREE.CameraHelper(dynamicLight.shadow.camera, 0xFF8C00);
+scene.add(spotHelper);*/
+const shadowHelper = new THREE.CameraHelper(dynamicLight.shadow.camera);
+scene.add(shadowHelper);
 
 function moveLightAndTarget() 
 {
@@ -2994,7 +3054,8 @@ function moveLightAndTarget()
                                     aviao_obj.fuselagem._estacionaria.position.z);   
   dynamicLight.target.updateMatrixWorld();
 
-  spotHelper.update();  
+  spotHelper.update();
+  shadowHelper.update();
 }
 
 
@@ -3006,11 +3067,6 @@ function moveLightAndTarget()
 
 
 
-
-
-
-
-//Carregamento
 
 
 
@@ -3116,9 +3172,9 @@ function render() {
     keyboardUpdate();
     if(isSimulacao){
         trackballControls.update();
-        //plano.visible = false;
+        plano.visible = false;
         axesHelper.visible = true;
-        //controlaVisibilidade(false);
+        controlaVisibilidade(false);
     }else{
         plano.visible = true;
         axesHelper.visible = false;
