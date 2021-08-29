@@ -15,7 +15,8 @@ import {initRenderer,
 var stats = new Stats(); // To show FPS information
 var scene = new THREE.Scene(loading); // Create main scene
 var renderer = initRenderer(loading); // View function in util/utils
-var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100000);
+var camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 2, 900000);
+console.log(camera)
 
 // Painel de FPS
 function createStats() {
@@ -543,8 +544,9 @@ scene.add(axesHelper);
 // Listen window size changes
 window.addEventListener("resize", function () {onWindowResize(camera, renderer);}, false);
 
+var tamanhoplano = 10000;
 // Cria um plano que recebe sombras
-var plano = createGroundPlane(10000, 10000, 40, 40); // width, height, resolutionW, resolutionH
+var plano = createGroundPlane(tamanhoplano, tamanhoplano, 40, 40); // width, height, resolutionW, resolutionH
 plano.material.color.r = 0
 plano.material.color.g = 199/255
 plano.material.color.b = 27/255
@@ -1037,7 +1039,7 @@ new THREE.Vector3( 0, 0, 0 )]                                   //end
 
 //Cria uma curva a partir dos pontos definidos anteriormente
 const curve = new THREE.CatmullRomCurve3(pontosDaLinha);
-const curvepoints = curve.getPoints( 300 );
+const curvepoints = curve.getPoints( 600 );
 const curvegeometry = new THREE.BufferGeometry().setFromPoints( curvepoints);
 const curvematerial = new THREE.LineBasicMaterial( { color : 0xff0000 } );
 const curveObject = new THREE.Line( curvegeometry, curvematerial );
@@ -1255,7 +1257,7 @@ scene.add( hemisphereLight );
 // Luz do sol direcional posicionada no canto superior direito do plano
 var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.89 );
 directionalLight.name = "dirligh"
-directionalLight.position.set(5000+3500, 4500+3500, 3000);
+directionalLight.position.set(5000+3500, 4500+3500, 5000);
 directionalLight.distance = 1000;
 directionalLight.penumbra = 0.2;
 // Sombras
@@ -1665,9 +1667,9 @@ function randomTreePosition(num_arvores){
         var regiao = Math.round(getRandom(0,3.4));
         switch (regiao){
             case 0:
-            create_arvore(new THREE.Vector3(getRandom(-3300, 4000), getRandom(-4000, -1200), 0), 1, 0, getRandom(5,10)) //2 - 5
-            create_arvore(new THREE.Vector3(getRandom(-3300, 4000), getRandom(-4000, -1200), 0), 2, degreesToRadians(getRandom(0,90)), getRandom(10,15)) //rotation entre 0 e 90 e 4 até 6
-            create_arvore(new THREE.Vector3(getRandom(-3300, 4000), getRandom(-4000, -1200), 0), 3, 0, getRandom(15,20))
+            create_arvore(new THREE.Vector3(getRandom(-3400, 4000), getRandom(-4000, -1200), 0), 1, 0, getRandom(5,10)) //2 - 5
+            create_arvore(new THREE.Vector3(getRandom(-3400, 4000), getRandom(-4000, -1200), 0), 2, degreesToRadians(getRandom(0,90)), getRandom(10,15)) //rotation entre 0 e 90 e 4 até 6
+            create_arvore(new THREE.Vector3(getRandom(-3400, 4000), getRandom(-4000, -1200), 0), 3, 0, getRandom(15,20))
             break;
 
             case 1:
@@ -1677,22 +1679,22 @@ function randomTreePosition(num_arvores){
             break;
 
             case 2:
-            create_arvore(new THREE.Vector3(getRandom(-4000, 4000), getRandom(1200,4000), 0), 1, 0, getRandom(15,20)) //2 - 5
-            create_arvore(new THREE.Vector3(getRandom(-4000, 4000), getRandom(1200,4000), 0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
-            create_arvore(new THREE.Vector3(getRandom(-4000, 4000), getRandom(1200,4000), 0), 3, 0, getRandom(10,15))
+            create_arvore(new THREE.Vector3(getRandom(-4000, 4000), getRandom(1200, 4000), 0), 1, 0, getRandom(15,20)) //2 - 5
+            create_arvore(new THREE.Vector3(getRandom(-4000, 4000), getRandom(1200, 4000), 0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
+            create_arvore(new THREE.Vector3(getRandom(-4000, 4000), getRandom(1200, 4000), 0), 3, 0, getRandom(10,15))
             break;
 
             case 3:
-            create_arvore(new THREE.Vector3(getRandom(-4000,-1500), getRandom(-1500,1200), 0), 1, 0, getRandom(15,20)) //2 - 5
-            create_arvore(new THREE.Vector3(getRandom(-4000,-1500), getRandom(-1500,1200), 0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
-            create_arvore(new THREE.Vector3(getRandom(-4000,-1500), getRandom(-1500,1200), 0), 3, 0, getRandom(10,15))
+            create_arvore(new THREE.Vector3(getRandom(-4000,-1500), getRandom(-2500, 1200), 0), 1, 0, getRandom(15,20)) //2 - 5
+            create_arvore(new THREE.Vector3(getRandom(-4000,-1500), getRandom(-2500, 1200), 0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
+            create_arvore(new THREE.Vector3(getRandom(-4000,-1500), getRandom(-2500, 1200), 0), 3, 0, getRandom(10,15))
             break;
 
         }
     }
 
 }
-randomTreePosition(80);
+randomTreePosition(100);
 
 
 //-------------------- Trabalho 02 - Parte 3 - Modo cockpit --------------------
@@ -2918,7 +2920,10 @@ plano2.material.map = chao2;
 plano2.material.map.repeat.set(20, 20);
 plano2.material.map.wrapS = THREE.RepeatWrapping;
 plano2.material.map.wrapT = THREE.RepeatWrapping;
-
+plano2.material.specular = "rgb(255,255,255)"
+plano2.material.shininess = 1000;
+plano2.material.opacity = 0.8;
+plano2.material.transparent = true;
 
 var plano3 = createGroundPlane(1000, 1000, 40, 40); // width, height, resolutionW, resolutionH
 plano3.position.x = 6500
@@ -2935,9 +2940,13 @@ plano3.material.map = chao3;
 plano3.material.map.repeat.set(10, 10);
 plano3.material.map.wrapS = THREE.RepeatWrapping;
 plano3.material.map.wrapT = THREE.RepeatWrapping;
+plano3.material.specular = "rgb(255,255,255)"
+plano3.material.shininess = 1000;
+plano3.material.opacity = 0.8;
+plano3.material.transparent = true;
 
-var plano4 = createGroundPlane(1000, 1000, 40, 40); // width, height, resolutionW, resolutionH
-plano4.position.x = 1000
+var plano4 = createGroundPlane(1000, 2000, 40, 40); // width, height, resolutionW, resolutionH
+plano4.position.x = 500
 plano4.position.y = 2500
 plano4.position.z = 0.2
 plano4.material.color.r = 1
@@ -2948,10 +2957,46 @@ scene.add(plano4);
 
 var chao4 = textureLoader.load('texturas\\chao\\chao5.jpg');
 plano4.material.map = chao4;
-plano4.material.map.repeat.set(10, 10);
+plano4.material.map.repeat.set(15, 15);
 plano4.material.map.wrapS = THREE.RepeatWrapping;
 plano4.material.map.wrapT = THREE.RepeatWrapping;
+plano4.material.specular = "rgb(150,75,0)"
+plano4.material.shininess = 1000;
+plano4.material.opacity = 0.8;
+plano4.material.transparent = true;
 
+var plano5 = createGroundPlane(2000, 1000, 40, 40); // width, height, resolutionW, resolutionH
+plano5.position.x = 1400
+plano5.position.y = 700
+plano5.position.z = 0.2
+plano5.material.color.r = 1
+plano5.material.color.g = 1
+plano5.material.color.b = 1
+plano5.receiveShadow = true;
+scene.add(plano5);
+
+var chao5 = textureLoader.load('texturas\\chao\\chao6.jpg');
+plano5.material.map = chao5;
+plano5.material.map.repeat.set(10, 10);
+plano5.material.map.wrapS = THREE.RepeatWrapping;
+plano5.material.map.wrapT = THREE.RepeatWrapping;
+plano5.material.specular = "rgb(255,255,255)"
+plano5.material.shininess = 1000;
+plano5.material.opacity = 0.6;
+plano5.material.transparent = true;
+
+
+//Extensão do plano base
+var plano6 = createGroundPlane(tamanhoplano*9, tamanhoplano*9, 40, 40); // width, height, resolutionW, resolutionH
+// plano6.position.x = 700
+// plano6.position.y = 500
+plano6.position.z = -2;
+plano6.material.color.r = 0;
+plano6.material.color.g = 43/255;
+plano6.material.color.b = 2/255;
+plano6.receiveShadow = true;
+plano.add(plano6)
+scene.add(plano6);
 
 
 
@@ -2990,17 +3035,20 @@ function createMaterialArray(filename) {
 }
 
 const materialArray = createMaterialArray("clouds");
-var skyboxGeo = new THREE.BoxGeometry(9999, 9999, 10000);
+var skyboxGeo = new THREE.BoxGeometry(tamanhoplano*9, tamanhoplano*9, tamanhoplano*9);
 var skybox = new THREE.Mesh(skyboxGeo, materialArray);
 skybox.rotation.x = Math.PI/2
 skybox.rotation.y = Math.PI/2
+skybox.position.x= skybox.position.x-3500
+skybox.position.y= skybox.position.y-3500
 scene.add(skybox);
+plano.add(skybox);
 
 skybox.anisotropy = renderer.capabilities.getMaxAnisotropy();
 skybox.material.map.wrapS = THREE.RepeatWrapping;
 skybox.material.map.wrapT = THREE.RepeatWrapping;
-skybox.material.map.minFilter = THREE.LinearFilter;
-skybox.material.map.magFilter = THREE.LinearFilter;
+// skybox.material.map.minFilter = THREE.LinearFilter;
+// skybox.material.map.magFilter = THREE.LinearFilter;
 
 
 
