@@ -2,8 +2,7 @@ import * as THREE from "../build/three.module.js";
 import Stats from "../build/jsm/libs/stats.module.js";
 import {TrackballControls} from "../build/jsm/controls/TrackballControls.js";
 import KeyboardState from "../libs/util/KeyboardState.js";
-import {ConvexGeometry} from '../build/jsm/geometries/ConvexGeometry.js'; // importante
-import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js';
+import {ConvexGeometry} from '../build/jsm/geometries/ConvexGeometry.js';
 import {MTLLoader} from '../build/jsm/loaders/MTLLoader.js';
 import {OBJLoader} from '../build/jsm/loaders/OBJLoader.js'; 
 import {initRenderer,
@@ -14,8 +13,8 @@ import {initRenderer,
         degreesToRadians} from "../libs/util/util.js";
 
 var stats = new Stats(); // To show FPS information
-var scene = new THREE.Scene(); // Create main scene
-var renderer = initRenderer(); // View function in util/utils
+var scene = new THREE.Scene(loading); // Create main scene
+var renderer = initRenderer(loading); // View function in util/utils
 var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100000);
 
 // Painel de FPS
@@ -570,7 +569,7 @@ camera.lookAt(aviao_obj.fuselagem._estacionaria.position.x,
     aviao_obj.fuselagem._estacionaria.position.y,
     aviao_obj.fuselagem._estacionaria.position.z);
     
-var isSimulacao = true;  // true => Modo de Inspeção || false => Simulação
+var isSimulacao = false;  // true => Modo de Inspeção || false => Simulação
 
 // CameraHolder
 var cameraHolder = new THREE.Object3D();
@@ -1062,20 +1061,6 @@ function defineCheckpoints(){
         checkpoint[j].position.z = pontosDaLinha[i].y;
         checkpoint[j].lookAt(checkpoint[j].position);   //Eles "olham" para o centro, ou seja, eles vão estar melhor posicionados em relação a curva
         checkpoint[j].rotateX(Math.PI/2);
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        scene.add(checkpoint[j])
     }
 }
 defineCheckpoints()
@@ -1677,42 +1662,37 @@ function create_arvore(base, tipo, rotation, scale) {
  */
 function randomTreePosition(num_arvores){
     for(var i=0; i<num_arvores ;i++){
-        var regiao = Math.round(getRandom(0,4.4));
+        var regiao = Math.round(getRandom(0,3.4));
         switch (regiao){
             case 0:
-            create_arvore(new THREE.Vector3(getRandom(-2400, -60), getRandom(-2400, 800), 0), 1, 0, getRandom(2,5)) //2 - 5
-            create_arvore(new THREE.Vector3(getRandom(-2400, -60), getRandom(-2400, 800), 0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
-            create_arvore(new THREE.Vector3(getRandom(-2400, -60), getRandom(-2400, 800), 0), 3, 0, getRandom(8,10))
+            create_arvore(new THREE.Vector3(getRandom(-3300, 4000), getRandom(-4000, -1200), 0), 1, 0, getRandom(5,10)) //2 - 5
+            create_arvore(new THREE.Vector3(getRandom(-3300, 4000), getRandom(-4000, -1200), 0), 2, degreesToRadians(getRandom(0,90)), getRandom(10,15)) //rotation entre 0 e 90 e 4 até 6
+            create_arvore(new THREE.Vector3(getRandom(-3300, 4000), getRandom(-4000, -1200), 0), 3, 0, getRandom(15,20))
             break;
 
             case 1:
-            create_arvore(new THREE.Vector3(getRandom(60, 2400), getRandom(-2400, 800), 0), 1, 0, getRandom(2,5)) //2 - 5
-            create_arvore(new THREE.Vector3(getRandom(60, 2400), getRandom(-2400, 800), 0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
-            create_arvore(new THREE.Vector3(getRandom(60, 2400), getRandom(-2400, 800), 0), 3, 0, getRandom(8,10))
+            create_arvore(new THREE.Vector3(getRandom(1500, 4000), getRandom(-1200, 1200), 0), 1, 0, getRandom(10,15)) //2 - 5
+            create_arvore(new THREE.Vector3(getRandom(1500, 4000), getRandom(-1200, 1200), 0), 2, degreesToRadians(getRandom(0,90)), getRandom(15,20)) //rotation entre 0 e 90 e 4 até 6
+            create_arvore(new THREE.Vector3(getRandom(1500, 4000), getRandom(-1200, 1200), 0), 3, 0, getRandom(5,10))
             break;
 
             case 2:
-            create_arvore(new THREE.Vector3(getRandom(300,2400), getRandom(810,2400), 0), 1, 0, getRandom(2,5)) //2 - 5
-            create_arvore(new THREE.Vector3(getRandom(300,2400), getRandom(810,2400), 0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
-            create_arvore(new THREE.Vector3(getRandom(300,2400), getRandom(810,2400), 0), 3, 0, getRandom(8,10))
+            create_arvore(new THREE.Vector3(getRandom(-4000, 4000), getRandom(1200,4000), 0), 1, 0, getRandom(15,20)) //2 - 5
+            create_arvore(new THREE.Vector3(getRandom(-4000, 4000), getRandom(1200,4000), 0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
+            create_arvore(new THREE.Vector3(getRandom(-4000, 4000), getRandom(1200,4000), 0), 3, 0, getRandom(10,15))
             break;
 
             case 3:
-            create_arvore(new THREE.Vector3(getRandom(-2400,300), getRandom(1800,2400), 0), 1, 0, getRandom(2,5)) //2 - 5
-            create_arvore(new THREE.Vector3(getRandom(-2400,300), getRandom(1800,2400), 0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
-            create_arvore(new THREE.Vector3(getRandom(-2400,300), getRandom(1800,2400), 0), 3, 0, getRandom(8,10))
+            create_arvore(new THREE.Vector3(getRandom(-4000,-1500), getRandom(-1500,1200), 0), 1, 0, getRandom(15,20)) //2 - 5
+            create_arvore(new THREE.Vector3(getRandom(-4000,-1500), getRandom(-1500,1200), 0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
+            create_arvore(new THREE.Vector3(getRandom(-4000,-1500), getRandom(-1500,1200), 0), 3, 0, getRandom(10,15))
             break;
 
-            case 4:
-            create_arvore(new THREE.Vector3(getRandom(-2400, -910), getRandom(800, 1800), 0), 1, 0, getRandom(2,5)) //2 - 5
-            create_arvore(new THREE.Vector3(getRandom(-2400, -910), getRandom(800, 1800), 0), 2, degreesToRadians(getRandom(0,90)), getRandom(5,10)) //rotation entre 0 e 90 e 4 até 6
-            create_arvore(new THREE.Vector3(getRandom(-2400, -910), getRandom(800, 1800), 0), 3, 0, getRandom(8,10))
-            break;
         }
     }
 
 }
-//randomTreePosition(25);
+randomTreePosition(80);
 
 
 //-------------------- Trabalho 02 - Parte 3 - Modo cockpit --------------------
@@ -3054,8 +3034,9 @@ function moveLightAndTarget()
                                     aviao_obj.fuselagem._estacionaria.position.z);   
   dynamicLight.target.updateMatrixWorld();
 
+  /*
   spotHelper.update();
-  shadowHelper.update();
+  shadowHelper.update();*/
 }
 
 
@@ -3172,9 +3153,9 @@ function render() {
     keyboardUpdate();
     if(isSimulacao){
         trackballControls.update();
-        plano.visible = false;
+        // plano.visible = false;
         axesHelper.visible = true;
-        controlaVisibilidade(false);
+        // controlaVisibilidade(false);
     }else{
         plano.visible = true;
         axesHelper.visible = false;
