@@ -18,23 +18,55 @@ var scene = new THREE.Scene(); // Create main scene
 var renderer = initRenderer(); // View function in util/utils
 var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100000);
 
-// Inicia o carregamento de texturas
-var textureLoader = new THREE.TextureLoader();
-
 // Painel de FPS
 function createStats() {
     stats.setMode(0);
-    
     stats.domElement.style.position = 'absolute';
     stats.domElement.style.left = '0';
     stats.domElement.style.top = '0';
-  
     return stats;
-  }
-  // To show FPS
-  stats = createStats();
-  document.body.appendChild( stats.domElement );
+}
+// To show FPS
+stats = createStats();
+document.body.appendChild( stats.domElement );
 
+/**
+ * Função do trabalho 3 para criar a tela de loading
+ */
+const loadingManager = new THREE.LoadingManager( () => {
+    
+    const loadingScreen = document.getElementById( 'loading-screen' );
+    loadingScreen.classList.add( 'fade-out' );
+
+    // optional: remove loader from DOM via event listener
+    loadingScreen.addEventListener( 'transitionend', onTransitionEnd );
+
+} );
+var textArray = new Array()
+function onTransitionEnd( event ) {
+    event.target.remove();
+}
+
+var textureLoader = new THREE.TextureLoader( loadingManager ) /* Loader */
+var start = false
+var textArray = 0
+var concret_wall = textureLoader.load('Texturas/concrete-wall.jpg',loading) //1
+var concrete_block = textureLoader.load('Texturas/concrete-block.jpg',loading) //2
+var glass_wall = textureLoader.load('Texturas/glass-wall.jpg',loading) //3
+var glass_window = textureLoader.load('Texturas/glass-window.jpg',loading) //....
+var metal_plate = textureLoader.load('Texturas/metal-plate.jpg',loading)
+var stone_column = textureLoader.load('Texturas/stone-column.png',loading)
+var telha = textureLoader.load('Texturas/telha.jpg',loading)
+var texture_wall = textureLoader.load('Texturas/texture-wall.jpg',loading)
+var vitral = textureLoader.load('Texturas/vitral.jpg',loading)
+var wall_stone = textureLoader.load('Texturas/wall-stone.jpg',loading) //10
+
+function loading(obj){
+    textArray++
+    if (textArray/114) {
+        showInfoOnScreen('Press D for play')
+    }
+}
 
 //============================================ FLIGHT SIMULATOR - Trabalho 01 ============================================
 //========================================================================================================================
@@ -61,15 +93,18 @@ var aviao_obj = {
 
 // Geometria do aviao
 function cria_afuselagem(ponto) {
+    var aux
     if (ponto == undefined) {
-        var aux = new THREE.Vector3(0, 0, 0);
+        aux = new THREE.Vector3(0, 0, 0);
     } else {
-        var aux = new THREE.Vector3(ponto.x, ponto.y, ponto.z);
+        aux = new THREE.Vector3(ponto.x, ponto.y, ponto.z);
     }
 
     var fuselagem = aviao_obj;
     fuselagem.ponto = aux;
+
     var fuselagem_objeto = new THREE.Mesh();
+
     // Material do aviao
     var casco = new THREE.MeshPhongMaterial({color: 0xffffff, shininess:"100", side: THREE.DoubleSide});
     var metal_cilindro = new THREE.MeshPhongMaterial({color: 0x700202, shininess:"100", side: THREE.DoubleSide}); //595959
@@ -514,7 +549,6 @@ function cria_afuselagem(ponto) {
     // Boias
     // var suporte_boia_superior_geometria = new THREE.CylinderGeometry(1,1,3,30)
     // var suporte_boia_inferior_geometria = new THREE.CylinderGeometry(1,1,5,30)
-
     fuselagem.fuselagem._estacionaria = fuselagem_objeto;
     aviao_obj = fuselagem;
 
@@ -568,14 +602,14 @@ var trackballControls = new TrackballControls(camera, renderer.domElement);
 //trackballControls.noPan = true;
 // Camera padrão
 camera.position.set(
-    aviao_obj.fuselagem._estacionaria.position.x, 
-    aviao_obj.fuselagem._estacionaria.position.y-80.0, 
-    aviao_obj.fuselagem._estacionaria.position.z+20.0);
+    aviao_obj.fuselagem._estacionaria.position.x,
+    aviao_obj.fuselagem._estacionaria.position.y - 80.0,
+    aviao_obj.fuselagem._estacionaria.position.z + 20.0);
 
 camera.lookAt(aviao_obj.fuselagem._estacionaria.position.x,
     aviao_obj.fuselagem._estacionaria.position.y,
     aviao_obj.fuselagem._estacionaria.position.z);
-
+    
 var isSimulacao = true;  // true => Modo de Inspeção || false => Simulação
 
 // CameraHolder
@@ -774,8 +808,18 @@ function keyboardUpdate() {
     }
 
     // Tecla de Debug para testes
+    if (keyboard.up("J")) {
+        console.log(camera.position)
+        console.log(camera)
+        console.log(aviao_obj)
+    }
     
+    //Tleca de inicio
     if (keyboard.up("D")) {
+        if(!start){
+            start = !start
+            showInfoOnScreen("Atravesse o primeiro checkpoint para começar!")
+        }
     }
 
     //Oculta as instruções
@@ -1112,7 +1156,7 @@ function showInfoOnScreen(text){
     //information.changeMessage(text);
     information.textnode.nodeValue = text;
 }
-showInfoOnScreen("Atravesse o primeiro checkpoint para começar!")
+
 
 
 var contadorChecks=0;
@@ -1711,14 +1755,11 @@ function saiCockpit(){
 var objeto = new THREE.Object3D();
 function loadOBJFile(modelPath, modelName, position, desiredScale, angle1, angle2=0, angle3=0, visibility, texture=false, materialPath="")
 {
-    var currentModel = modelName;
-    var manager = new THREE.LoadingManager( );
-
-    var mtlLoader = new MTLLoader( manager );
+    var mtlLoader = new MTLLoader( loadingManager );
     mtlLoader.setPath( modelPath );
     mtlLoader.load( modelName + '.mtl', function ( materials ) {
         materials.preload();
-        var objLoader = new OBJLoader( manager );
+        var objLoader = new OBJLoader( loadingManager );
         objLoader.setMaterials(materials);
         objLoader.setPath(modelPath);
 
@@ -1851,7 +1892,7 @@ function predios_Bases(params,tipo_teto,rotation) {
         laje_Text.castShadow=true;
         predio.add(laje_Text)
         laje_Text.position.set(0,0,altura)
-        laje_Text.material.map = new THREE.TextureLoader().load('texturas/concreto/concreto3.jpg')
+        laje_Text.material.map = new THREE.TextureLoader().load('texturas/concreto/concreto3.jpg',loading)
         laje_Text.material.map.repeat.set(5,5)
         laje_Text.material.map.wrapS = THREE.RepeatWrapping
         laje_Text.material.map.wrapT = THREE.RepeatWrapping
@@ -1863,7 +1904,7 @@ function predios_Bases(params,tipo_teto,rotation) {
           laje_empire.position.set(0,0,altura)
           laje_empire.castShadow = true;
           laje_empire.receiveShadow = true;
-          laje_empire.material.map = new THREE.TextureLoader().load('texturas/concrete-wall.jpg')
+          laje_empire.material.map = new THREE.TextureLoader().load('texturas/concrete-wall.jpg',loading)
           laje_empire.material.map.repeat.set(1,1)
           laje_empire.material.map.wrapS = THREE.RepeatWrapping
           laje_empire.material.map.wrapT = THREE.RepeatWrapping
@@ -1874,21 +1915,21 @@ function predios_Bases(params,tipo_teto,rotation) {
           base_cilindro.rotateX(Math.PI/2)
           base_cilindro.castShadow=true;
           base_cilindro.receiveShadow=true;
-          base_cilindro.material.map = new THREE.TextureLoader().load('texturas/concrete-wall.jpg')
+          base_cilindro.material.map = new THREE.TextureLoader().load('texturas/concrete-wall.jpg',loading)
           base_cilindro.material.map.repeat.set(5,1)
           base_cilindro.material.map.wrapS = THREE.RepeatWrapping
           base_cilindro.material.map.wrapT = THREE.RepeatWrapping
 
   
           let obs = new THREE.Mesh(new THREE.SphereGeometry(4,30,30,0,Math.PI), new THREE.MeshPhongMaterial({side: THREE.DoubleSide}))
-          obs.material.map = new THREE.TextureLoader().load('texturas/concrete-wall.jpg')
+          obs.material.map = new THREE.TextureLoader().load('texturas/concrete-wall.jpg',loading)
           obs.castShadow=true;
           obs.receiveShadow=true;
           predio.add(obs)
           obs.position.set(0,0, altura+base_cilindro.geometry.parameters.height)
   
           let empire_raio = new THREE.Mesh(new THREE.ConeGeometry(1,10,30,30), new THREE.MeshPhongMaterial({side: THREE.DoubleSide}))
-          empire_raio.material.map = new THREE.TextureLoader().load('texturas/concrete-wall.jpg')
+          empire_raio.material.map = new THREE.TextureLoader().load('texturas/concrete-wall.jpg',loading)
           empire_raio.castShadow=true;
           empire_raio.receiveShadow=true;
           obs.add(empire_raio)
@@ -1904,7 +1945,7 @@ function predios_Bases(params,tipo_teto,rotation) {
             triangulo_1.rotateY(Math.PI/3)
             triangulo_1.rotateZ(Math.PI/2)
             triangulo_1.position.set(dis_frent*Math.cos(Math.PI/3)/2,0,altura + (dis_frent*Math.sin(Math.PI/3)/2))
-            triangulo_1.material.map = new THREE.TextureLoader().load('texturas/telhado/telhado2.jpg')
+            triangulo_1.material.map = new THREE.TextureLoader().load('texturas/telhado/telhado2.jpg',loading)
             triangulo_1.material.map.repeat.set(5,3)
             triangulo_1.material.map.wrapS = THREE.RepeatWrapping
             triangulo_1.material.map.wrapT = THREE.RepeatWrapping
@@ -1916,7 +1957,7 @@ function predios_Bases(params,tipo_teto,rotation) {
             triangulo_2.rotateY(-Math.PI/3)
             triangulo_2.rotateZ(Math.PI/2)
             triangulo_2.position.set(-dis_frent*Math.cos(Math.PI/3)/2,0,altura + (dis_frent*Math.sin(Math.PI/3)/2))
-            triangulo_2.material.map = new THREE.TextureLoader().load('texturas/telhado/telhado2.jpg')
+            triangulo_2.material.map = new THREE.TextureLoader().load('texturas/telhado/telhado2.jpg',loading)
             triangulo_2.material.map.repeat.set(5,3)
             triangulo_2.material.map.wrapS = THREE.RepeatWrapping
             triangulo_2.material.map.wrapT = THREE.RepeatWrapping
@@ -1929,7 +1970,7 @@ function predios_Bases(params,tipo_teto,rotation) {
                                                             new THREE.MeshPhongMaterial({side: THREE.DoubleSide}))
             tri_F.castShadow = true;
             tri_F.receiveShadow = true;
-            tri_F.material.map = new THREE.TextureLoader().load('texturas/telhado/telhado2.jpg');
+            tri_F.material.map = new THREE.TextureLoader().load('texturas/telhado/telhado2.jpg',loading);
             tri_F.material.map.repeat.set(5,3);
             tri_F.material.map.wrapS = THREE.RepeatWrapping;
             tri_F.material.map.wrapT = THREE.RepeatWrapping;
@@ -1942,7 +1983,7 @@ function predios_Bases(params,tipo_teto,rotation) {
                                                             new THREE.MeshPhongMaterial({side: THREE.DoubleSide}))
             tri_T.castShadow=true;
             tri_T.castShadow = true;
-            tri_T.material.map = new THREE.TextureLoader().load('texturas/telhado/telhado2.jpg');
+            tri_T.material.map = new THREE.TextureLoader().load('texturas/telhado/telhado2.jpg',loading);
             tri_T.material.map.repeat.set(5,3);
             tri_T.material.map.wrapS = THREE.RepeatWrapping;
             tri_T.material.map.wrapT = THREE.RepeatWrapping;
@@ -2129,7 +2170,7 @@ function new_Predio(base, tipo, rotation, desiredScale) {
         predio.add(vidro_detalhe)
         vidro_detalhe.position.set(base.x,base.y-35.1,base.z+20)
         vidro_detalhe.rotateX(Math.PI/2)
-        vidro_detalhe.material.map = new THREE.TextureLoader().load('texturas/vitral.jpg')
+        vidro_detalhe.material.map = new THREE.TextureLoader().load('texturas/vitral.jpg',loading)
         vidro_detalhe.material.map.repeat.set(1,1)
         vidro_detalhe.material.map.wrapS = THREE.RepeatWrapping
         vidro_detalhe.material.map.wrapT = THREE.RepeatWrapping
@@ -2163,7 +2204,7 @@ function new_Predio(base, tipo, rotation, desiredScale) {
             cilindro_e.castShadow = true;
             cilindro_e.receiveShadow = true;
             cilindro_e.position.set(base.x-30,base.y,base.z+cilindro_e.geometry.parameters.height/2)
-            let textura_cilindro_cc = new THREE.TextureLoader().load('texturas/metal-plate.jpg')
+            let textura_cilindro_cc = new THREE.TextureLoader().load('texturas/metal-plate.jpg',loading)
             cilindro_e.material.map = textura_cilindro_cc
             cilindro_e.material.map.repeat.set(25,5)
             cilindro_e.material.map.wrapS = THREE.RepeatWrapping
@@ -2183,7 +2224,7 @@ function new_Predio(base, tipo, rotation, desiredScale) {
             cilindro_m.castShadow = true;
             cilindro_m.receiveShadow = true;
             cilindro_m.position.set(base.x,base.y,base.z+cilindro_m.geometry.parameters.height/2)
-            cilindro_m.material.map = new THREE.TextureLoader().load('texturas/glass-window.jpg')
+            cilindro_m.material.map = new THREE.TextureLoader().load('texturas/glass-window.jpg',loading)
             cilindro_m.material.map.repeat.set(6,5)
             cilindro_m.material.map.wrapS = THREE.RepeatWrapping
             cilindro_m.material.map.wrapT = THREE.RepeatWrapping
@@ -2304,7 +2345,7 @@ function new_Predio(base, tipo, rotation, desiredScale) {
         louvre.rotateY(Math.PI/4)
         louvre.receiveShadow=true;
         louvre.position.set(base.x,base.y,base.z+louvre.geometry.parameters.height/2)
-        louvre.material.map = new THREE.TextureLoader().load('texturas/glass-window.jpg')
+        louvre.material.map = new THREE.TextureLoader().load('texturas/glass-window.jpg',loading)
         louvre.material.map.repeat.set(3,5)
         louvre.material.map.wrapS = THREE.RepeatWrapping
         louvre.material.map.wrapT = THREE.RepeatWrapping
@@ -2323,7 +2364,7 @@ function new_Predio(base, tipo, rotation, desiredScale) {
             piza.receiveShadow = true;
             piza.rotateX(Math.PI/2)
             piza.position.set(base.x,base.y,base.z+(piza.geometry.parameters.height/2) -2 +(apoio.geometry.parameters.height+piza.geometry.parameters.height)*i)
-            piza.material.map = new THREE.TextureLoader().load('texturas/stone-column.png')
+            piza.material.map = new THREE.TextureLoader().load('texturas/stone-column.png',loading)
             piza.material.map.repeat.set(5,1)
             piza.material.map.wrapS = THREE.RepeatWrapping
             piza.material.map.wrapT = THREE.RepeatWrapping
@@ -2333,7 +2374,7 @@ function new_Predio(base, tipo, rotation, desiredScale) {
             predio.add(apoio)
             apoio.rotateX(Math.PI/2)
             apoio.position.set(base.x,base.y,base.z+(apoio.geometry.parameters.height/2) -2 + piza.geometry.parameters.height +(apoio.geometry.parameters.height+piza.geometry.parameters.height)*i)
-            apoio.material.map = new THREE.TextureLoader().load('texturas/wall-stone.jpg')
+            apoio.material.map = new THREE.TextureLoader().load('texturas/wall-stone.jpg',loading)
             apoio.material.map.repeat.set(5,0.3)
             apoio.material.map.wrapS = THREE.RepeatWrapping
             apoio.material.map.wrapT = THREE.RepeatWrapping
@@ -2369,7 +2410,7 @@ var calcada1 = new THREE.Mesh(new THREE.PlaneGeometry(200,300), new THREE.MeshLa
 calcada1.receiveShadow = true;
 calcada1.position.x = calcada1.geometry.parameters.width/2 + 50;
 calcada1.position.z = 0.1
-calcada1.material.map = new THREE.TextureLoader().load('texturas/chao/chao10.jpg')
+calcada1.material.map = new THREE.TextureLoader().load('texturas/chao/chao10.jpg',loading)
 calcada1.material.map.repeat.set(10,10)
 calcada1.material.map.wrapS = THREE.RepeatWrapping
 calcada1.material.map.wrapT = THREE.RepeatWrapping
@@ -2380,7 +2421,7 @@ var calcada2 = new THREE.Mesh(new THREE.PlaneGeometry(200,300), new THREE.MeshLa
 calcada2.receiveShadow = true;
 calcada2.position.x = -calcada2.geometry.parameters.width/2 - 50;
 calcada2.position.z = 0.1
-calcada2.material.map = new THREE.TextureLoader().load('texturas/chao/chao11.jpg')
+calcada2.material.map = new THREE.TextureLoader().load('texturas/chao/chao11.jpg',loading)
 calcada2.material.map.repeat.set(10,10)
 calcada2.material.map.wrapS = THREE.RepeatWrapping
 calcada2.material.map.wrapT = THREE.RepeatWrapping
@@ -2392,7 +2433,7 @@ calcada3.receiveShadow = true;
 calcada3.position.x = -calcada3.geometry.parameters.width/2 - 50;
 calcada3.position.y = calcada3.geometry.parameters.height;
 calcada3.position.z = 0.1
-calcada3.material.map = new THREE.TextureLoader().load('texturas/chao/chao12.jpg')
+calcada3.material.map = new THREE.TextureLoader().load('texturas/chao/chao12.jpg',loading)
 calcada3.material.map.repeat.set(5,5)
 calcada3.material.map.wrapS = THREE.RepeatWrapping
 calcada3.material.map.wrapT = THREE.RepeatWrapping
@@ -2404,7 +2445,7 @@ calcada4.receiveShadow = true;
 calcada4.position.x = calcada4.geometry.parameters.width/2 + 50;
 calcada4.position.y = calcada4.geometry.parameters.height;
 calcada4.position.z = 0.1
-calcada4.material.map = new THREE.TextureLoader().load('texturas/chao/chao14.jpg')
+calcada4.material.map = new THREE.TextureLoader().load('texturas/chao/chao14.jpg',loading)
 calcada4.material.map.repeat.set(5,5)
 calcada4.material.map.wrapS = THREE.RepeatWrapping
 calcada4.material.map.wrapT = THREE.RepeatWrapping
@@ -2416,7 +2457,7 @@ calcada5.receiveShadow = true;
 calcada5.position.x = -(calcada5.geometry.parameters.width/2 + 50);
 calcada5.position.y = -calcada5.geometry.parameters.height;
 calcada5.position.z = 0.1
-calcada5.material.map = new THREE.TextureLoader().load('texturas/chao/chao15.jpg')
+calcada5.material.map = new THREE.TextureLoader().load('texturas/chao/chao15.jpg',loading)
 calcada5.material.map.repeat.set(1,1)
 calcada5.material.map.wrapS = THREE.RepeatWrapping
 calcada5.material.map.wrapT = THREE.RepeatWrapping
@@ -2428,7 +2469,7 @@ calcada6.receiveShadow = true;
 calcada6.position.x = (calcada6.geometry.parameters.width/2 + 50);
 calcada6.position.y = -calcada6.geometry.parameters.height;
 calcada6.position.z = 0.1
-calcada6.material.map = new THREE.TextureLoader().load('texturas/chao/chao16.jpg')
+calcada6.material.map = new THREE.TextureLoader().load('texturas/chao/chao16.jpg',loading)
 calcada6.material.map.repeat.set(1,3)
 calcada6.material.map.wrapS = THREE.RepeatWrapping
 calcada6.material.map.wrapT = THREE.RepeatWrapping
@@ -2439,7 +2480,7 @@ var calcada7 = new THREE.Mesh(new THREE.PlaneGeometry(265,300), new THREE.MeshLa
 calcada7.receiveShadow = true;
 calcada7.position.y = -440;
 calcada7.position.z = 0.1;
-calcada7.material.map = new THREE.TextureLoader().load('texturas/chao/chao8.jpg')
+calcada7.material.map = new THREE.TextureLoader().load('texturas/chao/chao8.jpg',loading)
 calcada7.material.map.repeat.set(3,3);
 calcada7.material.map.wrapS = THREE.RepeatWrapping;
 calcada7.material.map.wrapT = THREE.RepeatWrapping;
@@ -2454,7 +2495,7 @@ var calcada8 = new THREE.Mesh(new THREE.PlaneGeometry(265,300), new THREE.MeshLa
 calcada8.receiveShadow = true;
 calcada8.position.y = 440;
 calcada8.position.z = 0.1;
-calcada8.material.map = new THREE.TextureLoader().load('texturas/chao/chao21.jpg')
+calcada8.material.map = new THREE.TextureLoader().load('texturas/chao/chao21.jpg',loading)
 calcada8.material.map.repeat.set(3,3);
 calcada8.material.map.wrapS = THREE.RepeatWrapping;
 calcada8.material.map.wrapT = THREE.RepeatWrapping;
@@ -2500,9 +2541,9 @@ scene.add(caminho1);
 
 
 //-- Use TextureLoader to load texture files
-var pracaTexture1 = textureLoader.load('texturas\\chao\\chao7.jpg');
-var pracaTexture2 = textureLoader.load('texturas\\chao\\chao4.jpg');
-var caminhoTexture = textureLoader.load('texturas\\chao\\chao7.jpg');
+var pracaTexture1 = textureLoader.load('texturas\\chao\\chao7.jpg',loading);
+var pracaTexture2 = textureLoader.load('texturas\\chao\\chao4.jpg',loading);
+var caminhoTexture = textureLoader.load('texturas\\chao\\chao7.jpg',loading);
 
 praca1.material.map = pracaTexture1;
 praca1.material.map.repeat.set(10, 10);
@@ -2570,7 +2611,7 @@ rua1.receiveShadow = true;
 scene.add(rua1);
 
 //-- Use TextureLoader to load texture files
-var ruaTexture = textureLoader.load('texturas\\estrada\\estrada2.jpg');
+var ruaTexture = textureLoader.load('texturas\\estrada\\estrada2.jpg',loading);
 rua1.material.map = ruaTexture;
 rua1.material.map.repeat.set(1, 5);
 rua1.anisotropy = renderer.capabilities.getMaxAnisotropy();
@@ -2589,11 +2630,6 @@ rua3.receiveShadow = true;
 rua3.scale.set(1.5, 1.5, 1);
 scene.add(rua3);
 
-
-
-
-
-
 var cruzamentoGeometria = new THREE.PlaneGeometry( 100, 100 );
 var cruzamentoMaterial = new THREE.MeshPhongMaterial( {color: 0xffffff, side: THREE.DoubleSide} );
 var cruzamento1 = new THREE.Mesh(cruzamentoGeometria, cruzamentoMaterial);
@@ -2605,7 +2641,7 @@ scene.add(cruzamento1);
 
 cruzamento1.receiveShadow = true;
 
-var cruzamento1Texture = textureLoader.load('texturas\\estrada\\encruzilhada2.jpg');
+var cruzamento1Texture = textureLoader.load('texturas\\estrada\\encruzilhada2.jpg',loading);
 cruzamento1Texture.rotation = -Math.PI/2;
 cruzamento1.material.map = cruzamento1Texture;
 cruzamento1.material.map.wrapS = THREE.RepeatWrapping;
@@ -2640,7 +2676,7 @@ cruzamento3.position.y = (rua2.geometry.parameters.height - 150);
 cruzamento3.position.z = 0.5;
 cruzamento3.scale.set(1.5, 1.5, 1);
 
-var cruzamento3Texture = textureLoader.load('texturas\\estrada\\encruzilhada2.jpg');
+var cruzamento3Texture = textureLoader.load('texturas\\estrada\\encruzilhada2.jpg',loading);
 cruzamento3Texture.rotation = Math.PI/2;
 cruzamento3.material.map = cruzamento3Texture;
 cruzamento3.receiveShadow = true;
@@ -2660,7 +2696,7 @@ cruzamento5.position.y = (rua2.geometry.parameters.height - 150);
 cruzamento5.position.z = 0.5;
 cruzamento5.scale.set(1.5, 1.5, 1);
 
-var cruzamento5Texture = textureLoader.load('texturas\\estrada\\curva1.jpg');
+var cruzamento5Texture = textureLoader.load('texturas\\estrada\\curva1.jpg',loading);
 cruzamento5Texture.rotation = Math.PI/2;
 cruzamento5.material.map = cruzamento5Texture;
 cruzamento5.receiveShadow = true;
@@ -2675,7 +2711,7 @@ cruzamento6.position.y = (rua2.geometry.parameters.height - 150);
 cruzamento6.position.z = 0.5;
 cruzamento6.scale.set(1.5, 1.5, 1);
 
-var cruzamento6Texture = textureLoader.load('texturas\\estrada\\curva1.jpg');
+var cruzamento6Texture = textureLoader.load('texturas\\estrada\\curva1.jpg',loading);
 //cruzamento6Texture.rotation = -Math.PI/2;
 cruzamento6.material.map = cruzamento6Texture;
 cruzamento6.receiveShadow = true;
@@ -2690,7 +2726,7 @@ cruzamento7.position.y = -rua2.geometry.parameters.height + 150;
 cruzamento7.position.z = 0.5;
 cruzamento7.scale.set(1.5, 1.5, 1);
 
-var cruzamento7Texture = textureLoader.load('texturas\\estrada\\curva1.jpg');
+var cruzamento7Texture = textureLoader.load('texturas\\estrada\\curva1.jpg',loading);
 cruzamento7Texture.rotation = Math.PI;
 cruzamento7.material.map = cruzamento7Texture;
 cruzamento7.receiveShadow = true;
@@ -2705,7 +2741,7 @@ cruzamento8.position.y = -(rua2.geometry.parameters.height - 150);
 cruzamento8.position.z = 0.5;
 cruzamento8.scale.set(1.5, 1.5, 1);
 
-var cruzamento8Texture = textureLoader.load('texturas\\estrada\\curva1.jpg');
+var cruzamento8Texture = textureLoader.load('texturas\\estrada\\curva1.jpg',loading);
 cruzamento8Texture.rotation = -Math.PI/2;
 cruzamento8.material.map = cruzamento8Texture;
 cruzamento8.receiveShadow = true;
@@ -2856,17 +2892,13 @@ loadOBJFile("objetos\\Gazebo\\", "gazebo", OBJposition, 15, 90, -24, 0, true)
 
 // Carrega a estatua no centro do louvre
 var OBJposition = new THREE.Vector3(0, -450, 0.1)
-var statueTexture = textureLoader.load('objetos\\Estatua\\Statue.jpg');
+var statueTexture = textureLoader.load('objetos\\Estatua\\Statue.jpg',loading);
 loadOBJFile("objetos\\Estatua\\", "Statue", OBJposition, 0.35, 0, 0, 0, true, true, statueTexture)
 
 // Carrega a casa dentro do lote da igreja
 var OBJposition = new THREE.Vector3(-50, -1000, 0.1)
-var houseTexture = textureLoader.load('objetos\\casas\\20960_Front_Gable_House_texture.jpg');
+var houseTexture = textureLoader.load('objetos\\casas\\20960_Front_Gable_House_texture.jpg',loading);
 loadOBJFile("objetos\\Casas\\", "20960_Front_Gable_House_v1_NEW", OBJposition, 10, 0, 0, 0, true, true, houseTexture)
-
-
-
-
 
 
 
@@ -2898,12 +2930,12 @@ loadOBJFile("objetos\\Casas\\", "20960_Front_Gable_House_v1_NEW", OBJposition, 1
 //------------------------------------------------------------------------------
 
 //Referência: https://codinhood.com/post/create-skybox-with-threejs
-const ft = new THREE.TextureLoader().load("texturas\\clouds\\clouds_north.bmp");
-const bk = new THREE.TextureLoader().load("texturas\\clouds\\clouds_south.bmp");
-const up = new THREE.TextureLoader().load("texturas\\clouds\\clouds_up.bmp");
-const dn = new THREE.TextureLoader().load("texturas\\clouds\\clouds_down.bmp");
-const rt = new THREE.TextureLoader().load("texturas\\clouds\\clouds_west.bmp");
-const lf = new THREE.TextureLoader().load("texturas\\clouds\\clouds_east.bmp");
+const ft = new THREE.TextureLoader().load("texturas\\clouds\\clouds_north.bmp",loading);
+const bk = new THREE.TextureLoader().load("texturas\\clouds\\clouds_south.bmp",loading);
+const up = new THREE.TextureLoader().load("texturas\\clouds\\clouds_up.bmp",loading);
+const dn = new THREE.TextureLoader().load("texturas\\clouds\\clouds_down.bmp",loading);
+const rt = new THREE.TextureLoader().load("texturas\\clouds\\clouds_west.bmp",loading);
+const lf = new THREE.TextureLoader().load("texturas\\clouds\\clouds_east.bmp",loading);
 
 function createPathStrings(filename) {
     const basePath = "texturas\\clouds\\";
@@ -3038,16 +3070,10 @@ function FinishSound(audioListener, audioLoader){
     return audio;
 };
 
-
 var ambienteS = ambientSound(audioListener, audioLoader);
 var airplaneS = airplaneSound(audioListener, audioLoader);
 var CheckS = CheckSound(audioListener, audioLoader);
 var FinishS = FinishSound(audioListener, audioLoader);
-
-
-
-
-
 
 
 // Primeira renderizacao
@@ -3064,7 +3090,10 @@ function render() {
     stats.update(); // Update FPS
     requestAnimationFrame(render);
     renderer.setClearColor(0x0193df);
+    // if(start)
+    //     renderer.render(scene, camera); // Render scene
     renderer.render(scene, camera); // Render scene
+    
     keyboardUpdate();
     if(isSimulacao){
         trackballControls.update();
