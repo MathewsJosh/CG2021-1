@@ -1,5 +1,1 @@
-# CG
-Files for the Computer Graphics course in Three.js
-
-
-Versão 01 do Trabalho de simulação de voo e modelagem de avião:
+Repositório com o trabalho desenvolvido para a disciplina de DCC065 - Computação Gráfica da UFJF.
